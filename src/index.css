@@ -5,9 +5,393 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-transform: capitalize ;
+  scroll-behavior: smooth;
+  overflow-x: hidden;
 }
-
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+.cursor-pointer{
+  cursor: pointer;
+}
+.first-z{
+  z-index: 3333;
+}
+:root{
+  --dark-blue : #003566 ;
+  --light-blue : #0077E4 ;
+  --light-blueBtns : #319DFF ;
+  --normal-blue-text : #1B5A7D ;
+  --main-orange : #FF6000 ;
+  --light-grey-txt : #7D8FA9;
+  --grey-color : #586A84 ;
+  --dark-grey-color : #1D232C ;
+  --grey-bgColor : #EEF0F4 ;
+  --grey-border-color : #D4D4D4 ;
+  --White-color : #FFFFFF ;
+  --light-bgGreen : #CF0 ;
+  --light-txtGreen : #8CE744 ;
+  --dark-green : #0DA678 ;
+  --pink-color : #FF316A ;
+  --red-color : #FF3333 ;
+  --red-colorIcons : #FF0000 ;
+  --star-color : #FFC045 ;
+}
+.brdr{ 
+  border-radius: 25px; 
+  border: 1px solid var(--grey-bgColor, #EEF0F4); 
+  background: var(--White-color , #FFF);
+   -webkit-border-radius: 25px;
+    -moz-border-radius: 25px; 
+    -ms-border-radius: 25px; 
+    -o-border-radius: 25px;
+}
+.blue-brdr{
+  border: 1px solid rgba(0, 53, 102, 0.50) !important;
+}
+.grey-brdr{
+  border: 1px solid var(--grey-border-color);
+}
+.star{
+  color: var(--star-color);
+}
+.brdr-blue{
+  border: 1px solid var(--dark-blue);
+}
+.dark-blue-text{
+  color: var(--dark-blue);
+}
+.normal-blue-text{
+  color: var(--normal-blue-text);
+}
+.light-blue-text{
+  color: var(--light-blue);
+}
+.light-blueBtns-text{
+  color: var(--light-blueBtns);
+}
+.main-orange-text{
+  color: var(--main-orange);
+}
+.main-grey-text{
+  color: var(--grey-color);
+}
+.dark-grey-text{
+  color: var(--dark-grey-color);
+}
+.light-grey-text{
+  color: var(--light-grey-txt);
+}
+.light-green-text{
+  color: var(--light-txtGreen);
+}
+.dark-green-text{
+  color: var(--dark-green);
+}
+.pink-text{
+  color: var(--pink-color);
+}
+.dark-red-text{
+  color: var(--red-colorIcons);
+}
+.light-red-text{
+  color: var(--red-color);
+}
+.white-text{
+  color: var(--White-color);
+}
+.dark-blue-bg{
+  background-color: var(--dark-blue);
+}
+.light-blue-bg{
+  background-color: var(--light-blue);
+}
+.light-blueBtns-bg{
+  background: var(--light-blueBtns);
+}
+.main-orange-bg{
+  background-color: var(--main-orange);
+}
+.btn-orange{
+  background-color: var(--main-orange);
+  color: var(--White-color);
+  border: 1px solid var(--main-orange);
+  transition: all .15s ease-in;
+  -webkit-transition: all .15s ease-in;
+  -moz-transition: all .15s ease-in;
+  -ms-transition: all .15s ease-in;
+  -o-transition: all .15s ease-in;
+}
+.btn-orange:hover , 
+.btn-orange:disabled , 
+.btn-orange:focus-visible , 
+.btn-orange:active  {
+  background-color: var(--light-blueBtns) ;
+  border: 1px solid var(--light-blueBtns);
+  color: var(--White-color) ;
+}
+.dark-blue-btn {
+  background-color: var(--dark-blue);
+  color: var(--White-color);
+  border: 1px solid var(--dark-blue);
+}
+.dark-blue-btn:visited ,
+.dark-blue-btn:hover ,
+.dark-blue-btn:active,
+.dark-blue-btn:disabled{
+  background-color:#002548 ;
+}
+.btm-primary{
+  background: var(--light-blueBtns) !;
+}
+.main-grey-bg{
+  background-color: var(--grey-color);
+}
+.dark-grey-bg{
+  background-color: var(--dark-grey-color);
+}
+.light-grey-bg{
+  background-color: var(--grey-bgColor);
+}
+.grey-outline-btn{
+  border: 1px solid var(--grey-color);
+  color: var(--grey-color);
+  background-color: var(--White-color);
+  transition: all .15s ease-in-out;
+  -webkit-transition: all .15s ease-in-out;
+  -moz-transition: all .15s ease-in-out;
+  -ms-transition: all .15s ease-in-out;
+  -o-transition: all .15s ease-in-out;
+  border-radius: 25px;
+  -webkit-border-radius: 25px;
+  -moz-border-radius: 25px;
+  -ms-border-radius: 25px;
+  -o-border-radius: 25px;
+}
+.grey-outline-btn:hover{
+  background-color: var(--grey-bgColor);
+  color: var(--dark-grey-color);
+  border: 1px solid var(--grey-bgColor)
+}
+.green-bg{
+  background-color: var(--light-txtGreen);
+}
+.light-gtreen-bg{
+  background-color: var(--light-bgGreen);
+  color: var(--dark-green);
+}
+.dark-green-bg{
+  background-color: var(--dark-green);
+}
+.pink-bg{
+  background-color: var(--pink-color);
+}
+.dark-red-bg{
+  background-color: var(--red-colorIcons);
+}
+.light-red-bg{
+  background-color: var(--red-color);
+}
+.white-bg{
+  background-color: var(--White-color);
+}
+.rotate{
+  rotate: 40deg;
+}
+.small-icon{
+  font-size: 14px;
+}
+.font-quest{
+  font-family: 'Questrial', sans-serif ;
+}
+.font-Rowdies{
+  font-family: 'Rowdies', sans-serif ;
+}
+.font-roboto{
+  font-family: 'Roboto', sans-serif;
+}
+.font-Poppins{
+  font-family: 'Poppins', sans-serif;
+}
+label{
+  color: var(--Gray-Scale-Gray-900, #1A1A1A);
+}
+
+.Tabel {
+  margin-bottom: 50px;
+}
+
+.p-datatable .p-datatable-tbody > tr > td ,
+.p-datatable .p-datatable-thead > tr > th {
+  text-align: center !important;
+  justify-content: center !important;
+}
+.Tabel .p-column-header-content {
+  justify-content: center !important;
+}
+
+.Tabel th {
+  background-color: white !important;
+  text-align: center !important;
+}
+.p-column-header-content{
+  width: fit-content;
+  margin-inline: auto;
+}
+.Tabel th div {
+  justify-content: center !important;
+}
+.dataTabel.APPOINTMENTS{
+  overflow-y: auto;
+}
+.dataTabel {
+  border: 1px solid #eee;
+  border-radius: 20px;
+  -webkit-border-radius: 20px;
+  -moz-border-radius: 20px;
+  -ms-border-radius: 20px;
+  -o-border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0px 1px 15px 10px rgb(204 204 204 / 13%) !important;
+  margin-top: 10px;
+}
+.p-column-filter-element{
+  margin-right: 5px;
+}
+.p-column-filter-row-items{
+  padding: 0;
+}
+.p-column-filter-overlay{
+  z-index: 9999 !important;
+
+}
+.Tabel thead {
+  background-color: var(--border_color) !important;
+}
+
+.TB_Content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.TabelButtonChar {
+  flex-basis: 40%;
+  border: 1px solid black;
+  background-color: transparent;
+  padding: 5px 15px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.TabelButton {
+  background-color: transparent;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+  border: 1px solid black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.2s;
+  -webkit-transition: all 0.2s;
+  -moz-transition: all 0.2s;
+  -ms-transition: all 0.2s;
+  -o-transition: all 0.2s;
+  cursor: pointer;
+}
+
+.TabelButton:hover {
+  transform: scale(1.1);
+  -webkit-transform: scale(1.1);
+  -moz-transform: scale(1.1);
+  -ms-transform: scale(1.1);
+  -o-transform: scale(1.1);
+}
+
+.approve {
+  border-color: #8bc34a !important;
+  color: #8bc34a !important;
+}
+.Cancel , 
+.p-dialog .p-dialog-header .p-dialog-header-icon {
+  color: red !important;
+  border-color: red;
+}
+
+.addBTN {
+  border: none;
+  min-width: 50px;
+  padding: 10px 15px;
+  background-color: var(--border_color);
+  color: white;
+  border-radius: 10px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  -ms-border-radius: 10px;
+  -o-border-radius: 10px;
+  font-size: clamp(15px, 2vw, 20px);
+  cursor: pointer;
+}
+
+.Dialog_Div input,
+.Dialog_Div textarea {
+  width: 100%;
+}
+
+.numberInput {
+  font-size: 1rem;
+  color: #495057;
+  background: #ffffff;
+  padding: 0.75rem 0.75rem;
+  border: 1px solid #ced4da;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s,
+    box-shadow 0.2s;
+  appearance: none;
+  border-radius: 6px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  flex-wrap: wrap;
+}
+.tabel_header {
+  justify-content: space-between !important;
+  align-items: center !important;
+}
+.tabel_header button {
+  min-width: 300px;
+}
+@media (max-width: 769px) {
+  .tabel_header {
+    justify-content: center !important;
+    align-items: center !important;
+  }
+  .tabel_header button {
+    margin-top: 10px;
+  }
+}
+.p-dialog , 
+.p-dialog form{
+  min-height: 70%;
+  margin-block: auto;
+}
+@media screen and (min-width : 769px) {
+  .p-dialog {
+    width: 65%;
+  }
+
+}
+.pagenatio {
+  margin: 30px 20px;
 }
