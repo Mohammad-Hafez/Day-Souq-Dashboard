@@ -7,12 +7,14 @@ import { Icon } from 'react-icons-kit'
 import {eye} from 'react-icons-kit/feather/eye';
 import {eyeOff} from 'react-icons-kit/feather/eyeOff'
 import { IoPersonAdd } from "react-icons/io5";
+import {alertCircle} from 'react-icons-kit/feather/alertCircle'
+import toast from 'react-hot-toast';
 
-const Register = () => {
+const Register = ({handleAuthChange}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [passwordShown, setPasswordShown] = useState(false);
   const [passwordConfirmShown, setpasswordConfirmShown] = useState(false);
-
+  const [ErrMsg, setErrMsg] = useState()
   const formik = useFormik({
     initialValues: {
       firstName: '',
@@ -37,21 +39,31 @@ const Register = () => {
 
     onSubmit: (values) => Signup(values)
   });
-  async function Signup(values) {
-    setIsLoading(true);
-    try {
-      const {data} = await axios.post(ApiBaseUrl + 'auth/register', values);
-      console.log(data);
-      // localStorage.setItem("DaySooqDashUser",data.token)
-      setIsLoading(false);
-      formik.resetForm();
-      // navigate(`/`)
-    } catch (error) {
-      console.error(error);
-      setIsLoading(false);
-    }
-  }
 
+  function Signup(values) {
+    setIsLoading(true);
+    setErrMsg(null);
+    axios.post(ApiBaseUrl + 'auth/register', values)
+      .then(response => {
+        toast.success(`Register Successfully.Login and Enjoy Your Journey`, {
+          className: 'first-z mt-5 bg-main-light ',
+          duration: 2000,
+        });
+        handleAuthChange('login')
+        setIsLoading(false);
+        formik.resetForm();
+      })
+      .catch(error => {
+        setErrMsg(error.response.data.message);
+        toast.error(error.response.data.message, {
+          className: 'first-z mt-5 bg-main-light ',
+          duration: 2000,
+        });
+        console.error(error);
+        setIsLoading(false);
+      });
+  }
+  
   const togglePassword = () => {
     setPasswordShown(!passwordShown);
   };
@@ -123,6 +135,9 @@ const Register = () => {
                 {formik.errors.passwordConfirm && formik.touched.passwordConfirm ? <div className="alert alert-danger">{formik.errors.passwordConfirm}</div> : null}
               </div>
             </div>
+          </div>
+          <div className="col-8 offset-2">
+          {ErrMsg ? <div className="Err alert alert-danger"><Icon size={20} icon={alertCircle}> </Icon> {ErrMsg}</div> : null }
           </div>
           <div className="btns col-6 offset-3 mt-2">
             {/* loading & signup btns */}

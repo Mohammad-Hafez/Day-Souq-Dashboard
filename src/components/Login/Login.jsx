@@ -20,31 +20,35 @@ export default function Login({saveUserData}) {
   };
   let navigate = useNavigate()
 
-  async function makeLogged(values){
-    setIsLoading(true)
-    setErrMsg(null)
-    try {
-      let {data} = await axios.post(ApiBaseUrl + `auth/login` , values);
-      toast.success(`Login Successfully. Enjoy Your Journey`, {
-        className: 'first-z mt-5 bg-main-light ',
-        duration: 2000,
-    });
-      localStorage.setItem("DaySooqDashUser", data.token)
-      saveUserData()
-      formik.resetForm();
-      setIsLoading(false)
-      navigate("/")
-    } catch (error) {
-      toast.error("An Error Occured. Please Try again", {
-        className: 'first-z mt-5 bg-main-light ',
-        duration: 2000,
-      });  
-      console.error(error);
-      setIsLoading(false)
-      setErrMsg(`Login Failed: Your email or password is incorrect`)
-    }
+  function makeLogged(values) {
+    setIsLoading(true);
+    setErrMsg(null);
+  
+    axios.post(ApiBaseUrl + `auth/login`, values)
+      .then(response => {
+        const { data } = response;
+        toast.success(`Login Successfully. Enjoy Your Journey`, {
+          className: 'first-z mt-5 bg-main-light ',
+          duration: 2000,
+        });
+        localStorage.setItem("DaySooqDashUser", data.token);
+        saveUserData();
+        formik.resetForm();
+        setIsLoading(false);
+        navigate("/");
+      })
+      .catch(error => {
+        toast.error(error.response.data.message, {
+          className: 'first-z mt-5 bg-main-light ',
+          duration: 2000,
+        });
+        console.error(error);
+        setIsLoading(false);
+        setErrMsg(error.response.data.message);
+      });
   }
-  let mySchema =Yup.object( {
+  
+    let mySchema =Yup.object( {
     email:Yup.string().required("User Name is required"),
     password:Yup.string().required("password is required")
   })

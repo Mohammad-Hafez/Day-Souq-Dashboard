@@ -23,7 +23,7 @@ export default function Authorization({saveUserData}) {
           SIGN UP
         </button>
       </div>
-      {SelectAuth === 'login' ? <Login saveUserData={saveUserData}/> : <Signup saveUserData={saveUserData}/>}
+      {SelectAuth === 'login' ? <Login saveUserData={saveUserData}/> : <Signup saveUserData={saveUserData} handleAuthChange={handleAuthChange}/>}
     </div>
     </>
 }
