@@ -401,3 +401,9 @@ label{
   padding-inline: 0;
   min-height: fit-content;
 }
+/* *ANCHOR - Home */
+.numOfUsers , 
+.productsQuantity{
+  border: 5px solid var(--dark-blue);
+  width: fit-content;
+}

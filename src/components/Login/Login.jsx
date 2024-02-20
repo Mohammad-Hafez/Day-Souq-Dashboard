@@ -23,7 +23,6 @@ export default function Login({saveUserData}) {
   function makeLogged(values) {
     setIsLoading(true);
     setErrMsg(null);
-  
     axios.post(ApiBaseUrl + `auth/login`, values)
       .then(response => {
         const { data } = response;

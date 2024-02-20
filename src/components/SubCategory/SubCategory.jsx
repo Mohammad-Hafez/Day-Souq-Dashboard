@@ -9,10 +9,12 @@ import { Dialog } from 'primereact/dialog';
 import axios from 'axios';
 import { ApiBaseUrl, ImgBaseURL } from '../ApiBaseUrl';
 import { useQuery } from 'react-query';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
-export default function Categories() {
+export default function SubCategory() {
+
   let navigate = useNavigate()
+  let {CategoryName,id} = useParams()
   const user = localStorage.getItem("DaySooqDashUser") ;
   let headers = {
       'Authorization': `Bearer ${user}` 
@@ -21,16 +23,18 @@ export default function Categories() {
   const [displayEditDialog, setDisplayEditDialog] = useState(false)
   const [displayDeleteDialog, setDisplayDeleteDialog] = useState(false)
   const [displayAddNewDialog, setDisplayAddNewDialog] = useState(false)
-  const [SelectedCategory, setSelectedCategory] = useState(null)
+  const [SelectedSubCategory, setSelectedSubCategory] = useState(null)
   const [LoaderBtn, setLoaderBtn] = useState(false)
-  const [Categories, setCategories] = useState()
-  const getCategories = ()=> axios.get(ApiBaseUrl + `categories`)
-  let {data , refetch} = useQuery('All-Categories' , getCategories , {cacheTime : 50000})
+  const [SubCategory, setSubCategory] = useState()
+  const getSubCategory = ()=> axios.get(ApiBaseUrl + `categories/${id}/subCategories`)
+  let {data , refetch} = useQuery('sub category' , getSubCategory , {cacheTime : 50000})
   useEffect(()=>{
     if (data) {
-      setCategories (data?.data.data.data)
+      setSubCategory (data?.data.data.data);
     }
   },[data]);
+  // *ANCHOR - Add new sub category 
+  // *NOTE - add new sub category formik
   let AddNewInitial = {
     name :'', 
     image : ''
@@ -42,24 +46,27 @@ export default function Categories() {
       name :Yup.string().required('Category Name Is Required') ,
       image : Yup.string().required('Category Image is Required')
     }),
-    onSubmit:(values)=>AddNewCategory(values)
+    onSubmit:(values)=>AddNewSubCategory(values)
   })
-  const AddNewCategory = async (values) => {
+  // *NOTE - add new sub category function
+  const AddNewSubCategory = async (values) => {
     setLoaderBtn(true)
     const AddformData = new FormData();
     AddformData.append('name', values.name);
     AddformData.append('image', values.image); 
+    AddformData.append('category', id); 
     try {
-      await axios.post(ApiBaseUrl + `categories`, AddformData, { headers });
-      hideDialog()
+      await axios.post(ApiBaseUrl + `subCategories`, AddformData, { headers });
       refetch()
       setLoaderBtn(false)
+      hideDialog()
     } catch (error) {
       console.error(error);
       setLoaderBtn(false)
     }
   };
-
+  // *ANCHOR - edit selected sub category
+  // *NOTE - edit new sub category formik
   let editInitial = {
     name :'', 
     image : ''
@@ -71,53 +78,53 @@ export default function Categories() {
       name :Yup.string().required('Category Name Is Required') ,
       image : Yup.string().required('Category Image is Required')
     }),
-    onSubmit:(values)=>editCategory(SelectedCategory._id , values)
+    onSubmit:(values)=>editCategory(SelectedSubCategory._id , values)
   })
-
+  // *NOTE - set selected sub category values in edit form 
   useEffect(()=>{
-    if (SelectedCategory) {
+    if (SelectedSubCategory) {
       editFormik.setValues( {
-        name: SelectedCategory.name,
+        name: SelectedSubCategory.name,
         image: ''
       }  )
     }
-  },[SelectedCategory]);
-
+  },[SelectedSubCategory]);
+  // *NOTE - add new sub category function
   const editCategory = async (id, values) => {
     setLoaderBtn(true)
-    const editFormData = new FormData();
-    editFormData.append('name', values.name);
-    editFormData.append('image', values.image); 
+    const formData = new FormData();
+    formData.append('name', values.name);
+    formData.append('image', values.image); 
     try {
-      await axios.patch(ApiBaseUrl + `categories/${id}`, editFormData, { headers });
-      hideDialog()
+      await axios.patch(ApiBaseUrl + `subcategories/${id}`, formData, { headers });
       refetch()
       setLoaderBtn(false)
+      hideDialog()
     } catch (error) {
       console.error(error);
       setLoaderBtn(false)
     }
   };
-  
+  // *ANCHOR - delete a sub category
   const deleteCategory =async (id)=>{
     try {
-      let {data} = await axios.delete(ApiBaseUrl + `categories/${id}` , { headers })
+      await axios.delete(ApiBaseUrl + `SubCategory/${id}` , { headers })
       refetch()
       hideDialog()
     } catch (error) {
       console.error(error);
     }
   }
-  
+  // *ANCHOR - actions at table for each row
   const actionTemplate = (rowData) => {
     return (
       <div className='d-flex justify-content-center align-items-center '>
-        <Button  icon="pi pi-pencil" className='TabelButton approve rounded-circle mx-1' onClick={() => {setDisplayEditDialog(true); setSelectedCategory(rowData)}} />
-        <Button  icon="pi pi-trash" className='TabelButton Cancel rounded-circle mx-1' onClick={() => {setSelectedCategory(rowData._id) ; setDisplayDeleteDialog(true)}} />
+        <Button  icon="pi pi-pencil" className='TabelButton approve rounded-circle mx-1' onClick={() => {setDisplayEditDialog(true); setSelectedSubCategory(rowData)}} />
+        <Button  icon="pi pi-trash" className='TabelButton Cancel rounded-circle mx-1' onClick={() => {setSelectedSubCategory(rowData._id) ; setDisplayDeleteDialog(true)}} />
       </div>
     );
   };
-
+  // *ANCHOR - inage format 
   const catImage = (rowData) => {
     return rowData.image ? <img src={ImgBaseURL + rowData.image} alt={rowData.name + ' image'} className='w-25' /> : null;
   };
@@ -125,7 +132,7 @@ export default function Categories() {
   const createdAtBody = (rowData) => {
     return rowData.createdAt ? rowData.createdAt.slice(0, 10) : null;
   };
-
+  // *ANCHOR - hide all modals
   const hideDialog = () => {
     setDisplayEditDialog(false);
     setDisplayDeleteDialog(false)
@@ -134,11 +141,11 @@ export default function Categories() {
     AddNewFormik.resetForm();
   };
 
-  const categoriesHeaderBody = ()=>{
+  const SubCategoryHeaderBody = ()=>{
     return(
       <div className='d-flex align-items-center justify-content-between'>
         <div className="headerLabel">
-          <h3>All Categories</h3>
+          <h3>SubCategory For {CategoryName}</h3>
         </div>
         <div className="addCategory">
           <button className='btn btn-secondary' onClick={()=>{setDisplayAddNewDialog(true)}}>Add New</button>
@@ -146,21 +153,22 @@ export default function Categories() {
       </div>
     )
   }
-  const getSubCategory = (rowData)=> <Button onClick={()=>navigate(`/SubCategory/${rowData.name}/${rowData._id}`)} icon="pi pi-eye" className='TabelButton dark-blue-text blue-brdr bg-transparent rounded-circle mx-auto'/>
+    
+  const getProductsForSub = (rowData)=> <Button onClick={()=>navigate(`/Products/${rowData.name}/${rowData._id}`)} icon="pi pi-eye" className='TabelButton dark-blue-text blue-brdr bg-transparent rounded-circle mx-auto'/>
   
   return <>
     <Helmet>
-      <title>Categories</title>
+      <title>Sub Category</title>
     </Helmet>
     <div className="container">
-      <DataTable value={Categories} header={categoriesHeaderBody} paginator selectionMode="single" className={`dataTabel mb-4 text-capitalize AllList`} dataKey="_id" scrollable scrollHeight="100vh" tableStyle={{ minWidth: "50rem" }} rows={10} responsive="scroll">
+      <DataTable value={SubCategory} header={SubCategoryHeaderBody} paginator selectionMode="single" className={`dataTabel mb-4 text-capitalize AllList`} dataKey="_id" scrollable scrollHeight="100vh" tableStyle={{ minWidth: "50rem" }} rows={10} responsive="scroll">
         <Column field="image" header="Image" body={catImage} style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
         <Column field="name" header="Name" sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
         <Column field="createdAt" header="Created At" body={createdAtBody} sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
-        <Column header="Sub Categories" body={getSubCategory}  style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
+        <Column header="Products" body={getProductsForSub}  style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
         <Column header="edit" body={actionTemplate}  style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
       </DataTable>
-      <Dialog header={'Edit Category'} className='container editDialog' visible={displayEditDialog} onHide={hideDialog} modal>
+      <Dialog header={'Edit SubCategory'} className='container editDialog' visible={displayEditDialog} onHide={hideDialog} modal>
           <form onSubmit={editFormik.handleSubmit} className='bg-light p-3 border shadow-sm rounded'>
               <div className= "form-floating">
                 {/*name input */}
@@ -184,20 +192,20 @@ export default function Categories() {
                 ) : null}
               </div>
               <div className="btns ms-auto w-100 d-flex justify-content-center mt-3">
-              {LoaderBtn ? <button className='btn btn-primary text-light w-50' disabled><i className="fa fa-spin fa-spinner"></i></button>:
+              {LoaderBtn ?   <button className='btn btn-primary text-light w-50' disabled><i className="fa fa-spin fa-spinner"></i></button>:
                 <Button label="SUBMIT" type="submit" icon="pi pi-check" disabled={!(editFormik.isValid && editFormik.dirty)} className="btn btn-primary text-light w-50"/>
               }
               </div>
           </form>
       </Dialog>
-      <Dialog header={'Delete Category'} className='container editDialog' visible={displayDeleteDialog} onHide={hideDialog} modal>
-        <h5>you want delete this category ?</h5>
+      <Dialog header={'Delete SubCategory'} className='container editDialog' visible={displayDeleteDialog} onHide={hideDialog} modal>
+        <h5>you want delete this subcategory ?</h5>
         <div className="d-flex align-items-center justify-content-around">
-        <button className='btn btn-danger px-4' onClick={()=>{deleteCategory(SelectedCategory)}}>Yes</button>
+        <button className='btn btn-danger px-4' onClick={()=>{deleteCategory(SelectedSubCategory)}}>Yes</button>
         <button className='btn btn-primary  px-4' onClick={()=>{setDisplayDeleteDialog(false)}}>No</button>
         </div>
-      </Dialog>  
-      <Dialog header={'Add New Category'} className='container editDialog' visible={displayAddNewDialog} onHide={hideDialog} modal>
+      </Dialog> 
+      <Dialog header={'Add New SubCategory'} className='container editDialog' visible={displayAddNewDialog} onHide={hideDialog} modal>
         <form onSubmit={AddNewFormik.handleSubmit} className='bg-light p-3 border shadow-sm rounded'>
               <div className= "form-floating">
                 {/*name input */}
@@ -227,6 +235,7 @@ export default function Categories() {
               </div>
           </form>
       </Dialog>
+      
     </div>
     </>
 }

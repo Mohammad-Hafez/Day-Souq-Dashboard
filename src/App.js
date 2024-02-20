@@ -14,6 +14,7 @@ import Layout from './components/Layout/Layout';
 import Categories from './components/Categories/Categories';
 import ProtectedRoutes from './components/ProtectedRoutes/ProtectedRoutes';
 import Home from './components/Home/Home';
+import SubCategory from './components/SubCategory/SubCategory';
 import NotFound from './components/NotFound/NotFound';
 function App() {
   const [UserToken, setUserToken] = useState(null);
@@ -52,6 +53,7 @@ function App() {
             <Route path="ResetPassword" element={<ResetPassword saveUserData={saveUserData}/>} /> 
             <Route index element={<ProtectedRoutes> <Home UserToken={UserToken}/> </ProtectedRoutes> } /> 
             <Route path="Categories" element={<ProtectedRoutes> <Categories UserToken={UserToken}/> </ProtectedRoutes> } /> 
+            <Route path="SubCategory/:CategoryName/:id" element={<ProtectedRoutes> <SubCategory UserToken={UserToken}/> </ProtectedRoutes> } /> 
             <Route path="*" element={<NotFound/>} /> 
             </Route>
           </Routes>
