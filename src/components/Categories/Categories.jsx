@@ -187,9 +187,10 @@ export default function Categories({headers}) {
       </Dialog>
       <Dialog header={'Delete Category'} className='container editDialog' visible={displayDeleteDialog} onHide={hideDialog} modal>
         <h5>you want delete this category ?</h5>
+        <hr />
         <div className="d-flex align-items-center justify-content-around">
-        <button className='btn btn-danger px-4' onClick={()=>{deleteCategory(SelectedCategory)}}>Yes</button>
-        <button className='btn btn-primary  px-4' onClick={()=>{setDisplayDeleteDialog(false)}}>No</button>
+        <button className='btn w-50 mx-2 btn-danger px-4' onClick={()=>{deleteCategory(SelectedCategory)}}>Yes</button>
+        <button className='btn w-50 mx-2 btn-primary  px-4' onClick={()=>{setDisplayDeleteDialog(false)}}>No</button>
         </div>
       </Dialog>  
       <Dialog header={'Add New Category'} className='container editDialog' visible={displayAddNewDialog} onHide={hideDialog} modal>

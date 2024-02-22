@@ -30,8 +30,8 @@ export default function Products({headers}) {
   const [Products, setProducts] = useState()
 
   const getAllBrands = ()=> axios.get(ApiBaseUrl + `brands`)
-  const getProducts = ()=> axios.get(ApiBaseUrl + `subCategories/${subCategoryId}/products`)
-  const getBrandProducts = ()=> axios.get(ApiBaseUrl + `products?brand=${BrandId}`)
+  const getProducts = ()=> axios.get(ApiBaseUrl + `products?subCategory=${subCategoryId}&dashboard=true`)
+  const getBrandProducts = ()=> axios.get(ApiBaseUrl + `products?brand=${BrandId}&dashboard=true`)
 
   let {isLoading:brandsLoading , data:bransResponse} = useQuery('get brands' , getAllBrands , {cacheTime : 10000 , enabled: !!CategoryName})
   let {data: ProductsResponse , refetch: ProductsRefetch , isLoading: ProductsLoading} = useQuery('subCategory Products' , getProducts , {cacheTime : 50000 , enabled: !!CategoryName})
@@ -80,13 +80,13 @@ export default function Products({headers}) {
     );
   };
   // *ANCHOR - image format 
-  const productImage = (rowData) => rowData?.variants?.map((variant , index) => <img key={index} src={ImgBaseURL + variant.imageCover } alt={variant.name + 'image'} className='w-50' />).slice(0,1)
+  const productImage = (rowData) => rowData?.variants?.map((variant , index) => <img key={index} src={ImgBaseURL + variant.imageCover } alt={variant.name + 'image'} className='w-50' />)?.slice(0,1)
   
   const ProductsHeaderBody = ()=>{
     return(
       <div className='d-flex align-items-center justify-content-between'>
         <div className="headerLabel">
-          {CategoryName && <h3>Products For {CategoryName} <i className='pi pi-arrow-right'></i> {SubCategoryName}</h3>}
+          {CategoryName && <h3>Products For <span className='cursor-pointer' onClick={()=>{navigate(`/SubCategory/${CategoryName}/${categoryId}`)}}>{CategoryName}</span> <i className='pi pi-arrow-right'></i> {SubCategoryName}</h3>}
           {BrandName && <h3>Products For {BrandName} </h3>}
         </div>
         <div className="addCategory">
@@ -119,13 +119,14 @@ export default function Products({headers}) {
             <Column header="status" body={productStatus} sortable style={{ width: "5%", borderBottom: '1px solid #dee2e6' }} />
             <Column header="Variants" body={getProductVariants}  style={{ width: "5%", borderBottom: '1px solid #dee2e6' }} />
             {/* {CategoryName === "Auction" && <Column header="Auction" body={RiAuctionLine}  style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />} */}
-            <Column header="edit" body={actionTemplate}  style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
+            <Column header="Actions" body={actionTemplate}  style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
           </DataTable>
           <Dialog header={'Delete Product'} className='container editDialog' visible={displayDeleteDialog} onHide={hideDialog} modal>
             <h5>you want delete this Products ?</h5>
             <div className="d-flex align-items-center justify-content-around">
-            <button className='btn btn-danger px-4' onClick={()=>{deleteProduct(SelectedProducts)}}>Yes</button>
-            <button className='btn btn-primary  px-4' onClick={()=>{setDisplayDeleteDialog(false)}}>No</button>
+              <hr />
+            <button className='btn btn-danger   px-4 w-50 mx-2' onClick={()=>{deleteProduct(SelectedProducts)}}>Yes</button>
+            <button className='btn btn-primary  px-4 w-50 mx-2' onClick={()=>{setDisplayDeleteDialog(false)}}>No</button>
             </div>
           </Dialog> 
           <Dialog header={'Product Description'} className='container editDialog' visible={ProductDescriptionDialog} onHide={hideDialog} modal>

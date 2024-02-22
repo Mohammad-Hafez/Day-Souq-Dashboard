@@ -73,7 +73,7 @@ export default function AddProduct({ LoaderBtn, subCategoryId, categoryId , Cate
           </div>
           <div className="form-floating mb-2">
             <select className="form-select" id="brand" name="brand" value={AddNewFormik.values.brand} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur}>
-              <option value="">Select Brand</option>
+              <option value="" disabled>Select Brand</option>
               {bransResponse?.map(brand => (
                 <option key={brand._id} value={brand._id}>{brand.name}</option>
               ))}

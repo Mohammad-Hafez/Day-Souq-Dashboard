@@ -74,7 +74,7 @@ export default function HeaderSearch({ UserToken , Logout}) {
                   <NavItem  name={'Categories'} to={'Categories'} activeLink={'Categories'} onClick={setActiveLink} />
                   <NavItem  name={'Brands'} to={'Brands'} activeLink={'Brands'} onClick={setActiveLink} />
                   <NavItem  name={'Banners'} to={'Banners'} activeLink={'Banners'} onClick={setActiveLink} />
-                  <NavItem  name={"Ad's"} to={"Ad's"} activeLink={"Ad's"} onClick={setActiveLink} />
+                  <NavItem  name={"Users"} to={"Users"} activeLink={"Users"} onClick={setActiveLink} />
                 </ul>
               </div>
             </div>

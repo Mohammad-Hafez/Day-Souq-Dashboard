@@ -196,9 +196,10 @@ export default function SubCategory({headers}) {
       </Dialog>
       <Dialog header={'Delete SubCategory'} className='container editDialog' visible={displayDeleteDialog} onHide={hideDialog} modal>
         <h5>you want delete this subcategory ?</h5>
+        <hr />
         <div className="d-flex align-items-center justify-content-around">
-        <button className='btn btn-danger px-4' onClick={()=>{deleteCategory(SelectedSubCategory)}}>Yes</button>
-        <button className='btn btn-primary  px-4' onClick={()=>{setDisplayDeleteDialog(false)}}>No</button>
+        <button className='btn w-50 mx-2 btn-danger px-4' onClick={()=>{deleteCategory(SelectedSubCategory)}}>Yes</button>
+        <button className='btn w-50 mx-2 btn-primary  px-4' onClick={()=>{setDisplayDeleteDialog(false)}}>No</button>
         </div>
       </Dialog> 
       <Dialog header={'Add New SubCategory'} className='container editDialog' visible={displayAddNewDialog} onHide={hideDialog} modal>

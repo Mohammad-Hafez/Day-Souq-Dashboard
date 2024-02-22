@@ -16,6 +16,7 @@ import ProtectedRoutes from './components/ProtectedRoutes/ProtectedRoutes';
 import Home from './components/Home/Home';
 import SubCategory from './components/SubCategory/SubCategory';
 import Products from './components/Products/Products';
+import Banners from './components/Banners/Banners';
 import Brands from './components/Brands/Brands';
 import NotFound from './components/NotFound/NotFound';
 import { generateToken } from './notifications/firebase';
@@ -62,6 +63,7 @@ function App() {
           <Route path="ResetPassword" element={<ResetPassword saveUserData={saveUserData}/>} /> 
           <Route index element={<ProtectedRoutes> <Home UserToken={UserToken}/> </ProtectedRoutes> } /> 
           <Route path="Brands" element={<ProtectedRoutes> <Brands headers={Headers}  UserToken={UserToken}/> </ProtectedRoutes> } /> 
+          <Route path="Banners" element={<ProtectedRoutes> <Banners headers={Headers}  UserToken={UserToken}/> </ProtectedRoutes> } /> 
           <Route path="Categories" element={<ProtectedRoutes> <Categories headers={Headers}  UserToken={UserToken}/> </ProtectedRoutes> } /> 
           <Route path="SubCategory/:CategoryName/:id" element={<ProtectedRoutes> <SubCategory headers={Headers}  UserToken={UserToken}/> </ProtectedRoutes> } /> 
           <Route path="Products/:BrandName/:BrandId" element={<ProtectedRoutes> <Products headers={Headers}  UserToken={UserToken}/> </ProtectedRoutes> } /> 
