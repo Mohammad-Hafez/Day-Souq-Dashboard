@@ -14,7 +14,7 @@ export default function Authorization({saveUserData}) {
     <Helmet>
       <title>Authorization </title>
     </Helmet>
-    <div className="container p-2 d-flex justify-content-center align-items-center flex-column mt-3">
+    <div className="container d-flex justify-content-center align-items-center flex-column bg-light">
       <div className="selectAuth mb-0">
         <button className={`dark-blue-text mx-2 bg-transparent border-0 fs-4 ${ActiveAuth ==='login' ? 'activeAuth' : ''}`} onClick={()=>handleAuthChange('login')}>
           LOGIN

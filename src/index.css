@@ -215,6 +215,12 @@ code {
 .font-Poppins{
   font-family: 'Poppins', sans-serif;
 }
+.alert{
+  font-size: .8rem;
+  background-color: transparent !important;
+  padding-block: .5rem !important;
+  margin-bottom: 6px !important;
+}
 label{
   color: var(--Gray-Scale-Gray-900, #1A1A1A);
 }
@@ -296,7 +302,7 @@ label{
   -moz-border-radius: 50%;
   -ms-border-radius: 50%;
   -o-border-radius: 50%;
-  border: 1px solid black;
+  border: 1px solid ;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -406,4 +412,57 @@ label{
 .productsQuantity{
   border: 5px solid var(--dark-blue);
   width: fit-content;
+}
+/* *ANCHOR - Auth */
+.selectAuth{
+  padding-inline: 20px;
+  border-bottom: 2px solid var(--dark-blue);
+  overflow: hidden;
+  position: relative;
+}
+
+.selectAuth::after{
+  content: '';
+  position: absolute;
+  top: 2px;
+  right: 50%;
+  width: 4px;
+  height: 30px;
+  background-color: #1D232C;
+  transform: translateX(-50%);
+  -webkit-transform: translateX(-50%);
+  -moz-transform: translateX(-50%);
+  -ms-transform: translateX(-50%);
+  -o-transform: translateX(-50%);
+}
+.activeAuth{
+  position: relative;
+}
+
+.activeAuth::after{
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 5px;
+  width: 100%;
+  background-color: var(--main-orange);
+  transform: translateY(50%);
+  -webkit-transform: translateY(50%);
+  -moz-transform: translateY(50%);
+  -ms-transform: translateY(50%);
+  -o-transform: translateY(50%);
+  border-radius: 5px ;
+  -webkit-border-radius: 5px ;
+  -moz-border-radius: 5px ;
+  -ms-border-radius: 5px ;
+  -o-border-radius: 5px ;
+}
+.AuthForm-inputs{
+  border:1px solid var(--dark-blue) ;
+  border-radius: 10px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  -ms-border-radius: 10px;
+  -o-border-radius: 10px;
 }

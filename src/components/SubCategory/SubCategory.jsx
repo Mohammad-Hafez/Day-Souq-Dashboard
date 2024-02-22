@@ -11,14 +11,10 @@ import { ApiBaseUrl, ImgBaseURL } from '../ApiBaseUrl';
 import { useQuery } from 'react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 
-export default function SubCategory() {
+export default function SubCategory({headers}) {
 
   let navigate = useNavigate()
   let {CategoryName,id} = useParams()
-  const user = localStorage.getItem("DaySooqDashUser") ;
-  let headers = {
-      'Authorization': `Bearer ${user}` 
-  }
 
   const [displayEditDialog, setDisplayEditDialog] = useState(false)
   const [displayDeleteDialog, setDisplayDeleteDialog] = useState(false)
@@ -154,7 +150,7 @@ export default function SubCategory() {
     )
   }
     
-  const getProductsForSub = (rowData)=> <Button onClick={()=>navigate(`/Products/${rowData.name}/${rowData._id}`)} icon="pi pi-eye" className='TabelButton dark-blue-text blue-brdr bg-transparent rounded-circle mx-auto'/>
+  const getProductsForSub = (rowData)=> <Button onClick={()=>navigate(`/Products/${CategoryName}/${id}/${rowData.name}/${rowData._id}`)} icon="pi pi-eye" className='TabelButton dark-blue-text blue-brdr bg-transparent rounded-circle mx-auto'/>
   
   return <>
     <Helmet>

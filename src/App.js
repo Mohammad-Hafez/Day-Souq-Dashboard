@@ -15,12 +15,19 @@ import Categories from './components/Categories/Categories';
 import ProtectedRoutes from './components/ProtectedRoutes/ProtectedRoutes';
 import Home from './components/Home/Home';
 import SubCategory from './components/SubCategory/SubCategory';
+import Products from './components/Products/Products';
+import Brands from './components/Brands/Brands';
 import NotFound from './components/NotFound/NotFound';
+import { generateToken } from './notifications/firebase';
+import ProductVariants from './components/ProductVariants/ProductVariants';
+
 function App() {
   const [UserToken, setUserToken] = useState(null);
+  const [Headers, setHeaders] = useState(null)
   function saveUserData(){
     let encodedPharmacistToken = localStorage.getItem("DaySooqDashUser");
     setUserToken(encodedPharmacistToken)
+  
   }
 
   const Logout = () => {
@@ -32,32 +39,38 @@ function App() {
     const storedUserToken = localStorage.getItem('DaySooqDashUser');
     if (storedUserToken) {
       const decodedUserToken = jwtDecode(storedUserToken);
+      setHeaders({'Authorization': `Bearer ${storedUserToken}`} )
       if (decodedUserToken.exp * 1000 < Date.now()) {
         Logout();
       } else {
         setUserToken(storedUserToken);
+        generateToken()
       }
     }
   }, []);        
 
   return (
     <PrimeReactProvider>
-        <Offline> <div className='network p-3 bg-danger text-light rounded align-items-center d-flex position-absolute bottom-0 start-0 m-4'> <Icon icon={wifiOff} className='me-2'></Icon> Faild Network Conection</div> </Offline>
-        <Toaster/>
+      <Offline> <div className='network p-3 bg-danger text-light rounded align-items-center d-flex position-absolute bottom-0 start-0 m-4'> <Icon icon={wifiOff} className='me-2'></Icon> Faild Network Conection</div> </Offline>
+      <Toaster/>
       <Router>
-          <Routes>
-            <Route path="" element={<Layout UserToken={UserToken} Logout={Logout}/>}>
-            <Route path="Authorization" element={<Authorization saveUserData={saveUserData}/>} />
-            <Route path="ForgetPassword" element={<ForgetPassword saveUserData={saveUserData}/>} /> 
-            <Route path="PasswordOtp" element={<PasswordOtp saveUserData={saveUserData}/>} /> 
-            <Route path="ResetPassword" element={<ResetPassword saveUserData={saveUserData}/>} /> 
-            <Route index element={<ProtectedRoutes> <Home UserToken={UserToken}/> </ProtectedRoutes> } /> 
-            <Route path="Categories" element={<ProtectedRoutes> <Categories UserToken={UserToken}/> </ProtectedRoutes> } /> 
-            <Route path="SubCategory/:CategoryName/:id" element={<ProtectedRoutes> <SubCategory UserToken={UserToken}/> </ProtectedRoutes> } /> 
-            <Route path="*" element={<NotFound/>} /> 
-            </Route>
-          </Routes>
-          </Router>
+        <Routes>
+          <Route path="" element={<Layout UserToken={UserToken} Logout={Logout}/>}>
+          <Route path="Authorization" element={<Authorization saveUserData={saveUserData}/>} />
+          <Route path="ForgetPassword" element={<ForgetPassword saveUserData={saveUserData}/>} /> 
+          <Route path="PasswordOtp" element={<PasswordOtp saveUserData={saveUserData}/>} /> 
+          <Route path="ResetPassword" element={<ResetPassword saveUserData={saveUserData}/>} /> 
+          <Route index element={<ProtectedRoutes> <Home UserToken={UserToken}/> </ProtectedRoutes> } /> 
+          <Route path="Brands" element={<ProtectedRoutes> <Brands headers={Headers}  UserToken={UserToken}/> </ProtectedRoutes> } /> 
+          <Route path="Categories" element={<ProtectedRoutes> <Categories headers={Headers}  UserToken={UserToken}/> </ProtectedRoutes> } /> 
+          <Route path="SubCategory/:CategoryName/:id" element={<ProtectedRoutes> <SubCategory headers={Headers}  UserToken={UserToken}/> </ProtectedRoutes> } /> 
+          <Route path="Products/:BrandName/:BrandId" element={<ProtectedRoutes> <Products headers={Headers}  UserToken={UserToken}/> </ProtectedRoutes> } /> 
+          <Route path="Products/:CategoryName/:categoryId/:SubCategoryName/:subCategoryId" element={<ProtectedRoutes> <Products headers={Headers}  UserToken={UserToken}/> </ProtectedRoutes> } /> 
+          <Route path="ProductVariants/:productName/:productId" element={<ProtectedRoutes> <ProductVariants headers={Headers}  UserToken={UserToken}/> </ProtectedRoutes> } /> 
+          <Route path="*" element={<NotFound/>} /> 
+          </Route>
+        </Routes>
+      </Router>
     </PrimeReactProvider>
   );
 }

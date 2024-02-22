@@ -1,6 +1,6 @@
 import React from 'react'
 import { Helmet } from 'react-helmet'
-export default function Product() {
+export default function BiddingOnProduct() {
   return <>
     <Helmet>
       <title>title</title>

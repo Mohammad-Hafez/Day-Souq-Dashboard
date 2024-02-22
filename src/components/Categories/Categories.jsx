@@ -11,13 +11,8 @@ import { ApiBaseUrl, ImgBaseURL } from '../ApiBaseUrl';
 import { useQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 
-export default function Categories() {
+export default function Categories({headers}) {
   let navigate = useNavigate()
-  const user = localStorage.getItem("DaySooqDashUser") ;
-  let headers = {
-      'Authorization': `Bearer ${user}` 
-  }
-
   const [displayEditDialog, setDisplayEditDialog] = useState(false)
   const [displayDeleteDialog, setDisplayDeleteDialog] = useState(false)
   const [displayAddNewDialog, setDisplayAddNewDialog] = useState(false)

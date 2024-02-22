@@ -73,7 +73,6 @@ export default function HeaderSearch({ UserToken , Logout}) {
                 <ul className="navbar-nav me-auto mb-2 mb-lg-0 d-flex align-items-center justify-content-around w-100">
                   <NavItem  name={'Categories'} to={'Categories'} activeLink={'Categories'} onClick={setActiveLink} />
                   <NavItem  name={'Brands'} to={'Brands'} activeLink={'Brands'} onClick={setActiveLink} />
-                  <NavItem  name={'Bidding Products'} to={'Bidding Products'} activeLink={'Bidding Products'} onClick={setActiveLink} />
                   <NavItem  name={'Banners'} to={'Banners'} activeLink={'Banners'} onClick={setActiveLink} />
                   <NavItem  name={"Ad's"} to={"Ad's"} activeLink={"Ad's"} onClick={setActiveLink} />
                 </ul>
