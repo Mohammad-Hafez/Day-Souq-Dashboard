@@ -17,6 +17,7 @@ export default function AllUsers({headers}) {
   const [SelectedUser, setSelectedUser] = useState(null)
   const [displayDeleteDialog, setDisplayDeleteDialog] = useState(false)
   const [displaySendAllDialog, setdisplaySendAllDialog] = useState(false)
+  const [displayToUser, setdisplayToUser] = useState(false)
 
   const getAllUsers = ()=> axios.get(ApiBaseUrl + `users`,{headers})
   let {data:UsersResponse , isLoading:UserLoading , refetch:userRefetch} = useQuery("get All Users" , getAllUsers , {cacheTime : 10000})
@@ -85,7 +86,7 @@ export default function AllUsers({headers}) {
     return (
       <div className='d-flex justify-content-center align-items-center '>
         <Button  icon="pi pi-trash" className='TabelButton Cancel rounded-circle mx-1' onClick={() => { setDisplayDeleteDialog(true); setSelectedUser(rowData._id)}} />
-        <Button  icon="pi pi-bell" className='TabelButton rounded-circle mx-1' outlined severity="secondary" onClick={() => { setDisplayDeleteDialog(true); setSelectedUser(rowData._id)}} />
+        <Button  icon="pi pi-bell" className='TabelButton rounded-circle mx-1' outlined severity="secondary" onClick={() => { setdisplaySendAllDialog(true)}} />
       </div>
     );
   };
@@ -129,6 +130,28 @@ export default function AllUsers({headers}) {
         </div>
       </Dialog>  
       <Dialog header={'Send Notification To All Users'} className='container editDialog' visible={displaySendAllDialog} onHide={hideDialog} modal>
+        <form onSubmit={SendToAllFormik.handleSubmit} className='bg-light p-3 border shadow-sm rounded'>
+              <div className= "form-floating mb-2">
+                {/*title input */}
+                <input type="text" placeholder='title' className="form-control " id="title" name="title"value={SendToAllFormik.values.title}onChange={SendToAllFormik.handleChange}onBlur={SendToAllFormik.handleBlur}/>
+                <label className='ms-2' htmlFor="username">title</label>
+                {SendToAllFormik.errors.title && SendToAllFormik.touched.title ? (<div className="alert text-danger">{SendToAllFormik.errors.title}</div>) : null}
+              </div>
+              <div className= "form-floating mb-2">
+                {/*body input */}
+                <input type="text" placeholder='body' className="form-control " id="body" name="body"value={SendToAllFormik.values.body}onChange={SendToAllFormik.handleChange}onBlur={SendToAllFormik.handleBlur}/>
+                <label className='ms-2' htmlFor="username">Notification Body</label>
+                {SendToAllFormik.errors.body && SendToAllFormik.touched.body ? (<div className="alert text-danger">{SendToAllFormik.errors.body}</div>) : null}
+              </div>
+
+              <div className="btns ms-auto w-100 d-flex justify-content-center mt-3">
+              {LoaderBtn ? <button className='btn btn-primary text-light w-50' disabled><i className="fa fa-spin fa-spinner"></i></button>:
+                <Button label="SUBMIT" type="submit" icon="pi pi-check" disabled={!(SendToAllFormik.isValid && SendToAllFormik.dirty)} className="btn btn-primary text-light w-50"/>
+              }
+              </div>
+          </form>
+      </Dialog>
+      <Dialog header={'Send Notification'} className='container editDialog' visible={displayToUser} onHide={hideDialog} modal>
         <form onSubmit={SendToAllFormik.handleSubmit} className='bg-light p-3 border shadow-sm rounded'>
               <div className= "form-floating mb-2">
                 {/*title input */}
