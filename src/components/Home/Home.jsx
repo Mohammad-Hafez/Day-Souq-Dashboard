@@ -3,6 +3,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import { ApiBaseUrl } from '../ApiBaseUrl';
 import { useQuery } from 'react-query';
+import Loader from '../Loader/Loader';
 
 export default function Home() {
   const user = localStorage.getItem('DaySooqDashUser');
@@ -26,7 +27,7 @@ export default function Home() {
         <title>title</title>
       </Helmet>
       {usersLoading || productQuantityLoading ? (
-        <div className="text-center">Loading...</div>
+        <Loader/>
       ) : (
         <div className="container d-flex flex-column align-items-center text-center justify-content-center my-3">
           <h1 className="text-muted fs-3">
