@@ -69,6 +69,7 @@ export default function HeaderSearch({ UserToken , Logout}) {
                   <CiMenuBurger />
                 </span>
               </button>
+              {localStorage.getItem('DaySooqDashUser') &&
               <div className="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul className="navbar-nav me-auto mb-2 mb-lg-0 d-flex align-items-center justify-content-around w-100">
                   <NavItem  name={'Categories'} to={'Categories'} activeLink={'Categories'} onClick={setActiveLink} />
@@ -77,6 +78,7 @@ export default function HeaderSearch({ UserToken , Logout}) {
                   <NavItem  name={"Users"} to={"Users"} activeLink={"Users"} onClick={setActiveLink} />
                 </ul>
               </div>
+              }
             </div>
           </nav>
 

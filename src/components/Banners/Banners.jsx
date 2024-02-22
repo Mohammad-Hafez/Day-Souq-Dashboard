@@ -135,8 +135,8 @@ export default function Banners({headers}) {
                   <option value="" disabled>
                     Select type
                   </option>
-                  <option value="Ads">Ads</option>
-                  <option value="Slider">Slider</option>
+                  <option value="ads">Ads</option>
+                  <option value="slider">Slider</option>
                 </select>
                 <label className='ms-2' htmlFor="username">Type</label>
                 {AddNewFormik.errors.type && AddNewFormik.touched.type ? (<div className="alert text-danger">{AddNewFormik.errors.type}</div>) : null}
