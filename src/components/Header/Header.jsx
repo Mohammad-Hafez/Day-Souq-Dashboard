@@ -97,12 +97,12 @@ export default function HeaderSearch({ UserToken, Logout }) {
                         Profile Details
                       </Link>
                     </span> */}
-                    <span className="nav-itemdropdown-menu text-center" aria-labelledby="navbarDropdown">
+                    {/* <span className="nav-itemdropdown-menu text-center" aria-labelledby="navbarDropdown">
                       <Link className={`dropdown-item text-main${activeLink === 'ChangePassword' ? ' active' : ''}`} to={`ChangePassword`} onClick={() => setActiveLink('ChangePassword')}>
                         change Password
                       </Link>
-                    </span>
-                    <hr className="my-1" />
+                    </span> */}
+                    {/* <hr className="my-1" /> */}
                     <span className="nav-itemdropdown-menu text-center" aria-labelledby="navbarDropdown">
                       <Link className={`dropdown-item text-main`} onClick={Logout}>
                         Logout <FiLogOut className="fs-4 pb-1 cursor-pointer" />

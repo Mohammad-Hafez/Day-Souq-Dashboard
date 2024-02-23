@@ -84,7 +84,7 @@ export default function Home() {
                     <p className="fs-3 productsQuantity fw-bolder p-3 text-center rounded-circle mx-auto">
                       {biddingCount?.data?.numOfDocs}
                     </p>
-                    <h3 className="fs-4 fw-bold my-2">Products on Auction Now</h3>
+                    <h3 className="fs-4 fw-bold my-2">Products Auction on it</h3>
                   </div>
                 )}
               </div>
