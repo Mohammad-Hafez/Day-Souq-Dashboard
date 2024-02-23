@@ -92,11 +92,11 @@ export default function HeaderSearch({ UserToken, Logout }) {
                     <Icon size={22} icon={androidPerson} className="main-grey-text me-2 cursor-pointer"></Icon>
                   </span>
                   <div className="dropdown-menu profile-menu text-center font-Poppins" aria-labelledby="navbarDropdown">
-                    <span className="nav-itemdropdown-menu text-center" aria-labelledby="navbarDropdown">
+                    {/* <span className="nav-itemdropdown-menu text-center" aria-labelledby="navbarDropdown">
                       <Link className={`dropdown-item text-main ${activeLink === 'ProfileDetails' ? ' active' : ''}`} to={`ProfileDetails`} onClick={() => setActiveLink('ProfileDetails')}>
                         Profile Details
                       </Link>
-                    </span>
+                    </span> */}
                     <span className="nav-itemdropdown-menu text-center" aria-labelledby="navbarDropdown">
                       <Link className={`dropdown-item text-main${activeLink === 'ChangePassword' ? ' active' : ''}`} to={`ChangePassword`} onClick={() => setActiveLink('ChangePassword')}>
                         change Password
