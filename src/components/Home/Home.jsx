@@ -15,7 +15,7 @@ export default function Home() {
   const { data: biddingCount, isLoading: BiddingsLoading , error: biddingQuantityError } = useQuery('get Biddings', getAllBiddings, { cacheTime: 10000 });
 
   const getAllUsers = () => axios.get(ApiBaseUrl + 'users', { headers });
-  const { data: userCount, isLoading: usersLoading } = useQuery('get users', getAllUsers, { cacheTime: 10000 });
+  const { data: userCount, isLoading: usersLoading , error: usersError } = useQuery('get users', getAllUsers, { cacheTime: 10000 });
 
   const getAllOrders = () => axios.get(ApiBaseUrl + 'orders', { headers });
   const { data: orderCount, isLoading: orderLoading , error: orderQuantityError } = useQuery('get orders', getAllOrders, { cacheTime: 10000 });
@@ -37,16 +37,20 @@ export default function Home() {
         <Loader/>
       ) : (
         <div className="container d-flex flex-column align-items-center text-center justify-content-center my-3">
-          <h1 className="text-muted fs-3">
-            Welcome In Day Sooq Dashboard
+          <h1 className="text-muted fs-3 text-uppercase mb-4">
+            Day Sooq Dashboard
           </h1>
           <div className="homeContent w-100">
             <div className="row g-3">
               <div className="col-md-3">
+              {usersError ? (
+                  <span className="text-center">Error fetching All Users quantity</span>
+                ) : (
                 <div className="users shadow-sm rounded p-3 bg-light h-100 text-center">
                   <p className="numOfUsers fs-3 fw-bolder p-3 text-center rounded-circle mx-auto">{userCount?.data?.numOfDocs}</p>
                   <h3 className="fs-4 fw-bold my-2">Website Users</h3>
                 </div>
+                )}
               </div>
               <div className="col-md-3">
                 {productQuantityError ? (
