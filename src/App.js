@@ -66,6 +66,7 @@ function App() {
           <Route path="Categories" element={<ProtectedRoutes> <Categories headers={Headers}  UserToken={UserToken}/> </ProtectedRoutes> } /> 
           <Route path="Users" element={<ProtectedRoutes> <AllUsers headers={Headers}  UserToken={UserToken}/> </ProtectedRoutes> } /> 
           <Route path="SubCategory/:CategoryName/:id" element={<ProtectedRoutes> <SubCategory headers={Headers}  UserToken={UserToken}/> </ProtectedRoutes> } /> 
+          <Route path="Products/:all" element={<ProtectedRoutes> <Products headers={Headers}  UserToken={UserToken}/> </ProtectedRoutes> } /> 
           <Route path="Products/:BrandName/:BrandId" element={<ProtectedRoutes> <Products headers={Headers}  UserToken={UserToken}/> </ProtectedRoutes> } /> 
           <Route path="Products/:CategoryName/:categoryId/:SubCategoryName/:subCategoryId" element={<ProtectedRoutes> <Products headers={Headers}  UserToken={UserToken}/> </ProtectedRoutes> } /> 
           <Route path="ProductVariants/:productName/:productId" element={<ProtectedRoutes> <ProductVariants headers={Headers}  UserToken={UserToken}/> </ProtectedRoutes> } /> 

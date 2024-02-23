@@ -18,7 +18,7 @@ export default function Products({ headers }) {
 
   let navigate = useNavigate()
 
-  let { CategoryName, SubCategoryName, categoryId, subCategoryId, BrandId, BrandName } = useParams()
+  let { CategoryName, SubCategoryName, categoryId, subCategoryId, BrandId, BrandName , all } = useParams()
 
   const [displayEditDialog, setDisplayEditDialog] = useState(false)
   const [displayDeleteDialog, setDisplayDeleteDialog] = useState(false)
@@ -33,7 +33,9 @@ export default function Products({ headers }) {
   const getAllBrands = () => axios.get(ApiBaseUrl + `brands`)
   const getProducts = () => axios.get(ApiBaseUrl + `products?subCategory=${subCategoryId}&dashboard=true`)
   const getBrandProducts = () => axios.get(ApiBaseUrl + `products?brand=${BrandId}&dashboard=true`)
+  const getAllGeneralProducts = () => axios.get(ApiBaseUrl + `products?dashboard=true`)
 
+  let { isLoading: AllLoading, data: AllResponse } = useQuery('get all products for general', getAllGeneralProducts, { cacheTime: 10000, enabled: !!all })
   let { isLoading: brandsLoading, data: bransResponse } = useQuery('get brands', getAllBrands, { cacheTime: 10000, enabled: !!CategoryName })
   let { data: ProductsResponse, refetch: ProductsRefetch, isLoading: ProductsLoading } = useQuery('subCategory Products', getProducts, { cacheTime: 50000, enabled: !!CategoryName })
   let { data: BrandProductsResponse, refetch: BrandProductsRefetch, isLoading: BrandProductsLoading } = useQuery('Brand Products', getBrandProducts, { cacheTime: 50000, enabled: !!BrandName })
@@ -45,8 +47,11 @@ export default function Products({ headers }) {
     } else if (BrandProductsResponse) {
       setProducts(BrandProductsResponse?.data.data.data);
       setFilteredProducts(BrandProductsResponse?.data.data.data);
+    }else if (AllResponse) {
+      setProducts(AllResponse?.data.data);
+      setFilteredProducts(AllResponse?.data.data.data);
     }
-  }, [ProductsResponse, BrandProductsResponse]);
+  }, [ProductsResponse, BrandProductsResponse , AllResponse]);
 
   // *ANCHOR - delete product
   const deleteProduct = async (id) => {
@@ -91,6 +96,7 @@ export default function Products({ headers }) {
         <div className="headerLabel">
           {CategoryName && <h3>Products For <span className='cursor-pointer' onClick={() => { navigate(`/SubCategory/${CategoryName}/${categoryId}`) }}>{CategoryName}</span> <i className='pi pi-arrow-right'></i> {SubCategoryName}</h3>}
           {BrandName && <h3>Products For {BrandName} </h3>}
+          {all && <h3>All Products</h3>}
         </div>
         <div className="d-flex flex-column">
         <div className="searchCategory mb-2">
@@ -124,7 +130,7 @@ export default function Products({ headers }) {
       <title>Products</title>
     </Helmet>
     <div className="container-fluid">
-      {brandsLoading || ProductsLoading || BrandProductsLoading ? <div>
+      {brandsLoading || ProductsLoading || BrandProductsLoading || AllLoading ? <div>
         <Loader />
       </div> : <>
           <DataTable value={filteredProducts} header={ProductsHeaderBody} paginator selectionMode="single" className={`dataTabel mb-4 text-capitalize AllList`} dataKey="_id" scrollable scrollHeight="100vh" tableStyle={{ minWidth: "50rem" }} rows={10} responsive="scroll">

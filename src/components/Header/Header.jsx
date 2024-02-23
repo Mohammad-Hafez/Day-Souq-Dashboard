@@ -42,14 +42,14 @@ export default function HeaderSearch({ UserToken, Logout }) {
     <>
       <Sidebar visible={visibleSidebar} onHide={() => setVisibleSidebar(false)}>
         <ul className="menu-items">
-          <NavItem  to={'Home'} activeLink={activeLink} onClick={setActiveLink} name={'Home'}  icon={'pi-home'}/>
-          <NavItem  to={'All Products'} activeLink={activeLink} onClick={setActiveLink} name={'All Products'} icon={'pi-box'} />
-          <NavItem  to={'Bidding Products'} activeLink={activeLink} onClick={setActiveLink} name={'Bidding Products'} icon={'auction'} />
+          <NavItem  to={'/'} activeLink={activeLink} onClick={setActiveLink} name={'Home'}  icon={'pi-home'}/>
+          <NavItem  to={'Products/:all'} activeLink={activeLink} onClick={setActiveLink} name={'All Products'} icon={'pi-box'} />
+          <NavItem  to={'BiddingProducts'} activeLink={activeLink} onClick={setActiveLink} name={'Bidding Products'} icon={'auction'} />
           <NavItem  to={'Categories'} activeLink={activeLink} onClick={setActiveLink} name={'Categories'} icon={'pi-th-large'} />
           <NavItem  to={'SubCategories'} activeLink={activeLink} onClick={setActiveLink} name={'SubCategories'} icon={'pi-sitemap'} />
           <NavItem  to={'Brands'} activeLink={activeLink} onClick={setActiveLink} name={'Brands'} icon={"pi-tags"}/>
           <NavItem  to={'Banners'} activeLink={activeLink} onClick={setActiveLink} name={'Banners'} icon={'pi-flag-fill'} />
-          <NavItem  to={'All Orders'} activeLink={activeLink} onClick={setActiveLink} name={'All Orders'} icon={'pi-truck'} />
+          <NavItem  to={'AllOrders'} activeLink={activeLink} onClick={setActiveLink} name={'All Orders'} icon={'pi-truck'} />
           <NavItem  to={'Coupon'} activeLink={activeLink} onClick={setActiveLink} name={'Coupon'} icon={'pi-money-bill'} />
           <NavItem  to={'Users'} activeLink={activeLink} onClick={setActiveLink} name={'Users'} icon={'pi-users'}/>
           <Link className={`nav-link px-1 my-4 dark-grey-text`} onClick={Logout}>
