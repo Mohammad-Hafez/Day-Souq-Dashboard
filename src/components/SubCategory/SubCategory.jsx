@@ -12,6 +12,8 @@ import { useQuery } from 'react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 
 export default function SubCategory({headers}) {
+  
+  console.log(headers);
 
   let navigate = useNavigate()
   let {CategoryName,id} = useParams()

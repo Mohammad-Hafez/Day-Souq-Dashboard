@@ -1,17 +1,13 @@
 import React from 'react'
-import { RotatingTriangles } from "react-loader-spinner";
+import { InfinitySpin } from "react-loader-spinner";
 
 const Loader = () => {
     return ( <div className="loader-container  d-flex align-items-center justify-content-center">
-      <RotatingTriangles
+  <InfinitySpin className="mx-auto text-center"
   visible={true}
-  height="50%"
-  width="20%"
-  color="#4fa94d"
-  ariaLabel="rotating-triangles-loading"
-  wrapperStyle={{}}
-  wrapperClass=""
-  />    
+  color="#FF6000"
+  ariaLabel="infinity-spin-loading"
+  />
 
     </div>
   )

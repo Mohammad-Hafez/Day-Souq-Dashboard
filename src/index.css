@@ -224,7 +224,16 @@ code {
 label{
   color: var(--Gray-Scale-Gray-900, #1A1A1A);
 }
-
+/* *ANCHOR -  Sidebar */
+.sidebar-toggle {
+  outline: none;
+  border: #002548;
+  background: transparent;
+}
+.menu-items{
+list-style: none;
+}
+/* *ANCHOR -  tables */
 .Tabel {
   margin-bottom: 50px;
 }
@@ -273,6 +282,7 @@ label{
   z-index: 9999 !important;
 
 }
+
 .Tabel thead {
   background-color: var(--border_color) !important;
 }

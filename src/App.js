@@ -20,7 +20,6 @@ import Banners from './components/Banners/Banners';
 import Brands from './components/Brands/Brands';
 import AllUsers from './components/AllUsers/AllUsers';
 import NotFound from './components/NotFound/NotFound';
-import { generateToken } from './notifications/firebase';
 import ProductVariants from './components/ProductVariants/ProductVariants';
 
 function App() {
@@ -46,7 +45,6 @@ function App() {
         Logout();
       } else {
         setUserToken(storedUserToken);
-        generateToken()
       }
     }
   }, []);        
