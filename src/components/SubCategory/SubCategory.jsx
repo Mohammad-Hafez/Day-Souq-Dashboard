@@ -169,6 +169,7 @@ export default function SubCategory({ headers }) {
     );
     setFilteredSubCategory(filteredData);
   };
+  const getProductsForSub = (rowData)=> <Button onClick={()=>navigate(`/Products/${CategoryName}/${id}/${rowData.name}/${rowData._id}`)} icon="pi pi-eye" className='TabelButton dark-blue-text blue-brdr bg-transparent rounded-circle mx-auto'/>
 
   return (
     <>
@@ -181,6 +182,7 @@ export default function SubCategory({ headers }) {
           <Column field="image" header="Image" body={catImage} style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
           <Column field="name" header="Name" sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
           <Column field="createdAt" header="Created At" body={createdAtBody} sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
+          <Column header="Products" body={getProductsForSub}  style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
           <Column header="edit" body={actionTemplate} style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
         </DataTable>
         <Dialog header={'Edit SubCategory'} className='container editDialog' visible={displayEditDialog} onHide={hideDialog} modal>
