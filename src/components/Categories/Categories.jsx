@@ -10,6 +10,7 @@ import axios from 'axios';
 import { ApiBaseUrl, ImgBaseURL } from '../ApiBaseUrl';
 import { useQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
+import Loader from '../Loader/Loader';
 
 export default function Categories({ headers }) {
   let navigate = useNavigate();
@@ -21,7 +22,7 @@ export default function Categories({ headers }) {
   const [Categories, setCategories] = useState([]);
   const [filteredCategories, setFilteredCategories] = useState([]);
   const getCategories = () => axios.get(ApiBaseUrl + `categories`);
-  let { data, refetch } = useQuery('All-Categories', getCategories, { cacheTime: 50000 });
+  let { data, refetch , isLoading} = useQuery('All-Categories', getCategories, { cacheTime: 50000 });
   useEffect(() => {
     if (data) {
       setCategories(data?.data.data.data);
@@ -149,6 +150,8 @@ export default function Categories({ headers }) {
     <Helmet>
       <title>Categories</title>
     </Helmet>
+    {isLoading ? <Loader/>
+    :
     <div className="container">
       <DataTable value={filteredCategories} header={categoriesHeaderBody} paginator selectionMode="single" className={`dataTabel mb-4 text-capitalize AllList`} dataKey="_id" scrollable scrollHeight="100vh" tableStyle={{ minWidth: "50rem" }} rows={10} responsive="scroll">
         <Column field="image" header="Image" body={catImage} style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
@@ -226,5 +229,6 @@ export default function Categories({ headers }) {
         </form>
       </Dialog>
     </div>
+    }
   </>;
 }
