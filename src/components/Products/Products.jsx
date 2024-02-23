@@ -48,7 +48,7 @@ export default function Products({ headers }) {
       setProducts(BrandProductsResponse?.data.data.data);
       setFilteredProducts(BrandProductsResponse?.data.data.data);
     }else if (AllResponse) {
-      setProducts(AllResponse?.data.data);
+      setProducts(AllResponse?.data.data.data);
       setFilteredProducts(AllResponse?.data.data.data);
     }
   }, [ProductsResponse, BrandProductsResponse , AllResponse]);
