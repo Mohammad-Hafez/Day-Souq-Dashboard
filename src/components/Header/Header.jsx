@@ -49,6 +49,7 @@ export default function HeaderSearch({ UserToken, Logout }) {
           <NavItem  to={'SubCategories'} activeLink={activeLink} onClick={setActiveLink} name={'SubCategories'} icon={'pi-sitemap'} />
           <NavItem  to={'Brands'} activeLink={activeLink} onClick={setActiveLink} name={'Brands'} icon={"pi-tags"}/>
           <NavItem  to={'Banners'} activeLink={activeLink} onClick={setActiveLink} name={'Banners'} icon={'pi-flag-fill'} />
+          <NavItem  to={'Blogs'} activeLink={activeLink} onClick={setActiveLink} name={'Blogs'} icon={'pi-flag-fill'} />
           <NavItem  to={'AllOrders'} activeLink={activeLink} onClick={setActiveLink} name={'All Orders'} icon={'pi-truck'} />
           <NavItem  to={'Coupon'} activeLink={activeLink} onClick={setActiveLink} name={'Coupon'} icon={'pi-money-bill'} />
           <NavItem  to={'Users'} activeLink={activeLink} onClick={setActiveLink} name={'Users'} icon={'pi-users'}/>

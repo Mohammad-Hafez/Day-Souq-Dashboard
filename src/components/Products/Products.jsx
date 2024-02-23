@@ -145,9 +145,9 @@ export default function Products({ headers }) {
             <Column header="Actions" body={actionTemplate} style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
           </DataTable>
           <Dialog header={'Delete Product'} className='container editDialog' visible={displayDeleteDialog} onHide={hideDialog} modal>
-            <h5>you want delete this Products ?</h5>
+            <h5 className='mb-2'>you want delete this Products ?</h5>
             <div className="d-flex align-items-center justify-content-around">
-              <hr />
+              <hr/>
               <button className='btn btn-danger px-4 w-50 mx-2' onClick={() => { deleteProduct(SelectedProducts) }}>Yes</button>
               <button className='btn btn-primary px-4 w-50 mx-2' onClick={() => { setDisplayDeleteDialog(false) }}>No</button>
             </div>
