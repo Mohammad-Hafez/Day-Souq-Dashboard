@@ -1,5 +1,5 @@
-import React, { useEffect, useState  } from 'react'
-import { Helmet } from 'react-helmet'
+import React, { useEffect, useState } from 'react';
+import { Helmet } from 'react-helmet';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { DataTable } from 'primereact/datatable';
@@ -10,22 +10,37 @@ import axios from 'axios';
 import { ApiBaseUrl, ImgBaseURL } from '../ApiBaseUrl';
 import { useQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
+import Loader from '../Loader/Loader';
 
-export default function Brands({headers}) {
-  let navigate = useNavigate()
-  const [displayEditDialog, setDisplayEditDialog] = useState(false)
-  const [displayDeleteDialog, setDisplayDeleteDialog] = useState(false)
-  const [displayAddNewDialog, setDisplayAddNewDialog] = useState(false)
-  const [SelectedBrand, setSelectedBrand] = useState(null)
-  const [LoaderBtn, setLoaderBtn] = useState(false)
-  const [Brands, setBrands] = useState()
-  const getBrands = ()=> axios.get(ApiBaseUrl + `brands`)
-  let {data , refetch} = useQuery('All-Brands' , getBrands , {cacheTime : 50000})
-  useEffect(()=>{
+export default function Brands({ headers }) {
+  let navigate = useNavigate();
+  const [displayEditDialog, setDisplayEditDialog] = useState(false);
+  const [displayDeleteDialog, setDisplayDeleteDialog] = useState(false);
+  const [displayAddNewDialog, setDisplayAddNewDialog] = useState(false);
+  const [SelectedBrand, setSelectedBrand] = useState(null);
+  const [LoaderBtn, setLoaderBtn] = useState(false);
+  const [Brands, setBrands] = useState([]);
+  const [filteredBrands, setFilteredBrands] = useState([]);
+
+  const getBrands = () => axios.get(ApiBaseUrl + `brands`);
+  let { data, refetch , isLoading } = useQuery('All-Brands', getBrands, { cacheTime: 50000 });
+
+  useEffect(() => {
     if (data) {
-      setBrands (data?.data.data.data)
+      setBrands(data?.data.data.data);
+      setFilteredBrands(data?.data.data.data);
     }
-  },[data]);
+  }, [data]);
+
+  // Handle search functionality
+  const handleSearch = (e) => {
+    const searchValue = e.target.value.toLowerCase();
+    const filteredData = Brands.filter((brand) =>
+      brand.name.toLowerCase().includes(searchValue)
+    );
+    setFilteredBrands(filteredData);
+  };
+  
   let AddNewInitial = {
     name :'', 
     image : ''
@@ -63,8 +78,8 @@ export default function Brands({headers}) {
   let editFormik = useFormik({
     initialValues : editInitial, 
     validationSchema : Yup.object().shape({
-      name :Yup.string().required('Category Name Is Required') ,
-      image : Yup.string().required('Category Image is Required')
+      name :Yup.string().required('Brand Name Is Required') ,
+      image : Yup.string().required('Brand Image is Required')
     }),
     onSubmit:(values)=>editCategory(SelectedBrand._id , values)
   })
@@ -84,7 +99,7 @@ export default function Brands({headers}) {
     editFormData.append('name', values.name);
     editFormData.append('image', values.image); 
     try {
-      await axios.patch(ApiBaseUrl + `categories/${id}`, editFormData, { headers });
+      await axios.patch(ApiBaseUrl + `brands/${id}`, editFormData, { headers });
       hideDialog()
       refetch()
       setLoaderBtn(false)
@@ -96,7 +111,7 @@ export default function Brands({headers}) {
   
   const deleteCategory =async (id)=>{
     try {
-      await axios.delete(ApiBaseUrl + `categories/${id}` , { headers })
+      await axios.delete(ApiBaseUrl + `brands/${id}` , { headers })
       refetch()
       hideDialog()
     } catch (error) {
@@ -129,26 +144,40 @@ export default function Brands({headers}) {
     AddNewFormik.resetForm();
   };
 
-  const categoriesHeaderBody = ()=>{
-    return(
-      <div className='d-flex align-items-center justify-content-between'>
+  const categoriesHeaderBody = () => {
+    return (
+      <div className="d-flex align-items-center justify-content-between">
         <div className="headerLabel">
           <h3>All Brands</h3>
         </div>
+        <div className="d-flex flex-column">
+        <div className="searchCategory mb-2">
+          <input
+            type="text"
+            placeholder="Search by brand name"
+            className="form-control"
+            onChange={handleSearch}
+          />
+        </div>
         <div className="addCategory">
-          <button className='btn btn-secondary' onClick={()=>{setDisplayAddNewDialog(true)}}>Add New</button>
+          <button className="btn btn-secondary w-100" onClick={() => { setDisplayAddNewDialog(true); }} >
+            Add New
+          </button>
+        </div>
         </div>
       </div>
-    )
-  }
+    );
+  };
+
   const getBrandProducts = (rowData)=> <Button onClick={()=>navigate(`/Products/${rowData.name}/${rowData._id}`)} icon="pi pi-eye" className='TabelButton dark-blue-text blue-brdr bg-transparent rounded-circle mx-auto'/>
   
   return <>
     <Helmet>
       <title>Brands</title>
     </Helmet>
+    {isLoading ? <Loader/> :
     <div className="container">
-      <DataTable value={Brands} header={categoriesHeaderBody} paginator selectionMode="single" className={`dataTabel mb-4 text-capitalize AllList`} dataKey="_id" scrollable scrollHeight="100vh" tableStyle={{ minWidth: "50rem" }} rows={10} responsive="scroll">
+      <DataTable value={filteredBrands} header={categoriesHeaderBody} paginator selectionMode="single" className={`dataTabel mb-4 text-capitalize AllList`} dataKey="_id" scrollable scrollHeight="100vh" tableStyle={{ minWidth: "50rem" }} rows={10} responsive="scroll">
         <Column field="image" header="Image" body={catImage} style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
         <Column field="name" header="Name" sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
         <Column field="createdAt" header="Created At" body={createdAtBody} sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
@@ -157,13 +186,13 @@ export default function Brands({headers}) {
       </DataTable>
       <Dialog header={'Edit Brands'} className='container editDialog' visible={displayEditDialog} onHide={hideDialog} modal>
           <form onSubmit={editFormik.handleSubmit} className='bg-light p-3 border shadow-sm rounded'>
-              <div className= "form-floating">
+              <div className= "form-floating mb-2">
                 {/*name input */}
-                <input type="text" placeholder='Name' className="form-control mb-2" id="name" name="name"value={editFormik.values.name}onChange={editFormik.handleChange}onBlur={editFormik.handleBlur}/>
+                <input type="text" placeholder='Name' className="form-control " id="name" name="name"value={editFormik.values.name}onChange={editFormik.handleChange}onBlur={editFormik.handleBlur}/>
                 <label className='ms-2' htmlFor="username">NAME</label>
-                {editFormik.errors.name && editFormik.touched.name ? (<div className="alert alert-danger">{editFormik.errors.name}</div>) : null}
+                {editFormik.errors.name && editFormik.touched.name ? (<div className="alert text-danger ">{editFormik.errors.name}</div>) : null}
               </div>
-              <div className="">
+              <div className="mb-2">
                 {/* image input */}
                 <input
                   type="file"
@@ -175,7 +204,7 @@ export default function Brands({headers}) {
                   }}
                 />
                 {editFormik.errors.image && editFormik.touched.image ? (
-                  <div className="alert alert-danger py-1">{editFormik.errors.image}</div>
+                  <div className="alert text-danger  py-1">{editFormik.errors.image}</div>
                 ) : null}
               </div>
               <div className="btns ms-auto w-100 d-flex justify-content-center mt-3">
@@ -195,13 +224,13 @@ export default function Brands({headers}) {
       </Dialog>  
       <Dialog header={'Add New Brands'} className='container editDialog' visible={displayAddNewDialog} onHide={hideDialog} modal>
         <form onSubmit={AddNewFormik.handleSubmit} className='bg-light p-3 border shadow-sm rounded'>
-              <div className= "form-floating">
+              <div className= "form-floating mb-2">
                 {/*name input */}
-                <input type="text" placeholder='Name' className="form-control mb-2" id="name" name="name"value={AddNewFormik.values.name}onChange={AddNewFormik.handleChange}onBlur={AddNewFormik.handleBlur}/>
+                <input type="text" placeholder='Name' className="form-control " id="name" name="name"value={AddNewFormik.values.name}onChange={AddNewFormik.handleChange}onBlur={AddNewFormik.handleBlur}/>
                 <label className='ms-2' htmlFor="username">NAME</label>
-                {AddNewFormik.errors.name && AddNewFormik.touched.name ? (<div className="alert alert-danger">{AddNewFormik.errors.name}</div>) : null}
+                {AddNewFormik.errors.name && AddNewFormik.touched.name ? (<div className="alert text-danger ">{AddNewFormik.errors.name}</div>) : null}
               </div>
-              <div className="">
+              <div className="mb-2">
                 {/* image input */}
                 <input
                   type="file"
@@ -213,7 +242,7 @@ export default function Brands({headers}) {
                   }}
                 />
                 {AddNewFormik.errors.image && AddNewFormik.touched.image ? (
-                  <div className="alert alert-danger py-1">{AddNewFormik.errors.image}</div>
+                  <div className="alert text-danger  py-1">{AddNewFormik.errors.image}</div>
                 ) : null}
               </div>
               <div className="btns ms-auto w-100 d-flex justify-content-center mt-3">
@@ -224,5 +253,6 @@ export default function Brands({headers}) {
           </form>
       </Dialog>
     </div>
+    }
     </>
 }
