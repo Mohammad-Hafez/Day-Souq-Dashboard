@@ -8,7 +8,7 @@ import { ApiBaseUrl } from '../ApiBaseUrl';
 import { AiOutlineLogin } from 'react-icons/ai';
 import { useQuery } from 'react-query';
 import { Sidebar } from 'primereact/sidebar';
-
+import { RiAuctionLine } from "react-icons/ri";
 export default function HeaderSearch({ UserToken, Logout }) {
   let navigate = useNavigate();
 
@@ -24,16 +24,16 @@ export default function HeaderSearch({ UserToken, Logout }) {
   const getMyProfile = () => axios.get(ApiBaseUrl + `users/profile`, { headers });
   const { data } = useQuery('my-profile', getMyProfile, { cacheTime: 5000, enabled: !!user });
 
-  const NavItem = ({ to, activeLink, onClick, name }) => (
+  const NavItem = ({ to, activeLink, onClick, name , icon }) => (
     <li className="nav-item">
       <Link
         to={to}
-        className={`nav-link px-1 my-3 dark-grey-text ${activeLink === name ? 'active' : ''}`}
+        className={`nav-link px-1 my-4 dark-grey-text ${activeLink === name ? 'active' : ''}`}
         onClick={() => {
           onClick(name);
         }}
       >
-        {name}
+        {icon === 'auction' ? <RiAuctionLine className='me-2 fs-5'/> : <i className={`pi ${icon} me-2 fs-5`}></i> } {name}
       </Link>
     </li>
   );
@@ -42,15 +42,19 @@ export default function HeaderSearch({ UserToken, Logout }) {
     <>
       <Sidebar visible={visibleSidebar} onHide={() => setVisibleSidebar(false)}>
         <ul className="menu-items">
-          <NavItem  to={'Categories'} activeLink={activeLink} onClick={setActiveLink} name={'Categories'} />
-          <NavItem  to={'Brands'} activeLink={activeLink} onClick={setActiveLink} name={'Brands'} />
-          <NavItem  to={'Banners'} activeLink={activeLink} onClick={setActiveLink} name={'Banners'} />
-          <NavItem  to={'All Products'} activeLink={activeLink} onClick={setActiveLink} name={'All Products'} />
-          <NavItem  to={'SubCategories'} activeLink={activeLink} onClick={setActiveLink} name={'SubCategories'} />
-          <NavItem  to={'Bidding Products'} activeLink={activeLink} onClick={setActiveLink} name={'Bidding Products'} />
-          <NavItem  to={'All Orders'} activeLink={activeLink} onClick={setActiveLink} name={'All Orders'} />
-          <NavItem  to={'Coupon'} activeLink={activeLink} onClick={setActiveLink} name={'Coupon'} />
-          <NavItem  to={'Users'} activeLink={activeLink} onClick={setActiveLink} name={'Users'} />
+          <NavItem  to={'Home'} activeLink={activeLink} onClick={setActiveLink} name={'Home'}  icon={'pi-home'}/>
+          <NavItem  to={'All Products'} activeLink={activeLink} onClick={setActiveLink} name={'All Products'} icon={'pi-box'} />
+          <NavItem  to={'Bidding Products'} activeLink={activeLink} onClick={setActiveLink} name={'Bidding Products'} icon={'auction'} />
+          <NavItem  to={'Categories'} activeLink={activeLink} onClick={setActiveLink} name={'Categories'} icon={'pi-th-large'} />
+          <NavItem  to={'SubCategories'} activeLink={activeLink} onClick={setActiveLink} name={'SubCategories'} icon={'pi-sitemap'} />
+          <NavItem  to={'Brands'} activeLink={activeLink} onClick={setActiveLink} name={'Brands'} icon={"pi-tags"}/>
+          <NavItem  to={'Banners'} activeLink={activeLink} onClick={setActiveLink} name={'Banners'} icon={'pi-flag-fill'} />
+          <NavItem  to={'All Orders'} activeLink={activeLink} onClick={setActiveLink} name={'All Orders'} icon={'pi-truck'} />
+          <NavItem  to={'Coupon'} activeLink={activeLink} onClick={setActiveLink} name={'Coupon'} icon={'pi-money-bill'} />
+          <NavItem  to={'Users'} activeLink={activeLink} onClick={setActiveLink} name={'Users'} icon={'pi-users'}/>
+          <Link className={`nav-link px-1 my-4 dark-grey-text`} onClick={Logout}>
+             <FiLogOut className="fs-4 pb-1 cursor-pointer"/> Logout
+          </Link>
         </ul>
       </Sidebar>
       <div className="search-header container-fluid mb-2 py-3 px-1 bg-light">
