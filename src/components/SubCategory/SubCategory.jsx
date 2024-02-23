@@ -106,7 +106,7 @@ export default function SubCategory({ headers }) {
   // Delete a sub category
   const deleteCategory = async (id) => {
     try {
-      await axios.delete(ApiBaseUrl + `SubCategory/${id}`, { headers });
+      await axios.delete(ApiBaseUrl + `subcategories/${id}`, { headers });
       refetch();
       hideDialog();
     } catch (error) {
