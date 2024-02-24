@@ -14,7 +14,7 @@ import Loader from '../Loader/Loader';
 
 export default function SubCategory({ headers }) {
   let navigate = useNavigate();
-  let { CategoryName, id } = useParams();
+  let { CategoryName, id , all} = useParams();
 
   const [displayEditDialog, setDisplayEditDialog] = useState(false);
   const [displayDeleteDialog, setDisplayDeleteDialog] = useState(false);
@@ -23,15 +23,16 @@ export default function SubCategory({ headers }) {
   const [LoaderBtn, setLoaderBtn] = useState(false);
   const [SubCategory, setSubCategory] = useState([]);
   const [filteredSubCategory, setFilteredSubCategory] = useState([]);
+
   const getSubCategory = () => axios.get(ApiBaseUrl + `categories/${id}/subCategories`);
-  let { data, refetch , isLoading} = useQuery('sub category', getSubCategory, { cacheTime: 50000 });
+  let { data:subForCategoryResponse, refetch: subForCategoryRefetch , isLoading: subForCategoryLoading} = useQuery('sub category', getSubCategory, { cacheTime: 50000 , enabled : !!CategoryName });
 
   useEffect(() => {
-    if (data) {
-      setSubCategory(data?.data.data.data);
-      setFilteredSubCategory(data?.data.data.data);
+    if (subForCategoryResponse) {
+      setSubCategory(subForCategoryResponse?.data.data.data);
+      setFilteredSubCategory(subForCategoryResponse?.data.data.data);
     }
-  }, [data]);
+  }, [subForCategoryResponse]);
 
   // Add new sub category
   let AddNewInitial = {
@@ -55,7 +56,7 @@ export default function SubCategory({ headers }) {
     AddformData.append('category', id);
     try {
       await axios.post(ApiBaseUrl + `subCategories`, AddformData, { headers });
-      refetch();
+      subForCategoryRefetch();
       setLoaderBtn(false);
       hideDialog();
     } catch (error) {
@@ -94,7 +95,7 @@ export default function SubCategory({ headers }) {
     formData.append('image', values.image);
     try {
       await axios.patch(ApiBaseUrl + `subcategories/${id}`, formData, { headers });
-      refetch();
+      subForCategoryRefetch();
       setLoaderBtn(false);
       hideDialog();
     } catch (error) {
@@ -107,7 +108,7 @@ export default function SubCategory({ headers }) {
   const deleteCategory = async (id) => {
     try {
       await axios.delete(ApiBaseUrl + `subcategories/${id}`, { headers });
-      refetch();
+      subForCategoryRefetch();
       hideDialog();
     } catch (error) {
       console.error(error);
@@ -147,7 +148,7 @@ export default function SubCategory({ headers }) {
     return (
       <div className='d-flex align-items-center justify-content-between'>
         <div className="headerLabel">
-          <h3>SubCategory For <span onClick={() => navigate(`/Categories`)} className='cursor-pointer'>{CategoryName}</span></h3>
+          <h3>SubCategory  <span onClick={() => navigate(`/Categories`)} className='cursor-pointer'>{CategoryName && `For ${CategoryName}` }</span></h3>
         </div>
         <div className="d-flex flex-column">
         <div className="searchCategory mb-2">
@@ -176,7 +177,7 @@ export default function SubCategory({ headers }) {
       <Helmet>
         <title>Sub Category</title>
       </Helmet>
-      {isLoading ? <Loader/> : 
+      {subForCategoryLoading ? <Loader/> : 
       <div className="container">
         <DataTable value={filteredSubCategory} header={SubCategoryHeaderBody} paginator selectionMode="single" className={`dataTabel mb-4 text-capitalize AllList`} dataKey="_id" scrollable scrollHeight="100vh" tableStyle={{ minWidth: "50rem" }} rows={10} responsive="scroll">
           <Column field="image" header="Image" body={catImage} style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />

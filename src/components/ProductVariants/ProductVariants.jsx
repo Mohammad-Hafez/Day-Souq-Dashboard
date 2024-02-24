@@ -72,12 +72,12 @@ export default function ProductVariants({headers}) {
     setLoaderBtn(true)
     const formData = new FormData();
     formData.append('quantity', values.quantity);
-    formData.append('imageCover', values.imageCover);
     formData.append('size', values.size);
     formData.append('color', values.color);
-    formData.append('images', values.images);
     formData.append('sku', values.sku);
     formData.append('extraPrice', values.extraPrice);
+    formData.append('imageCover', values.imageCover);
+    formData.append('images', Array.from(values.images));
     axios.post(ApiBaseUrl + `products/${productId}/variants`, formData, { headers })
       .then( response =>{
       ProductVariantsRefetch()
@@ -114,7 +114,7 @@ export default function ProductVariants({headers}) {
     formData.append('imageCover', values.imageCover);
     formData.append('size', values.size);
     formData.append('color', values.color);
-    formData.append('images', values.images);
+    formData.append('images', Array.from(values.images));
     formData.append('extraPrice', values.extraPrice);
     axios.patch(ApiBaseUrl + `variants/${id}`, formData, { headers })
     .then( response =>{
@@ -272,7 +272,7 @@ export default function ProductVariants({headers}) {
                 {addFormik.errors.imageCover && addFormik.touched.imageCover ? (<div className="alert text-danger">{addFormik.errors.imageCover}</div>) : null}
               </div>
               <div className="form-floating mb-2">
-                <input type="file" className="form-control" id="images" name="images" multiple onChange={(event) => {addFormik.setFieldValue("images", event.currentTarget.files) ; console.log(event.currentTarget.files);}} onBlur={addFormik.handleBlur} />
+                <input type="file" className="form-control" id="images" name="images" multiple onChange={(event) => {addFormik.setFieldValue("images", event.currentTarget.files) ; console.log(Array.from(event.currentTarget.files));}} onBlur={addFormik.handleBlur} />
                 <label className='ms-2 mb-3 pt-2 h-auto p-0' htmlFor="images">Images</label>
                 {addFormik.errors.images && addFormik.touched.images ? (<div className="alert text-danger">{addFormik.errors.images}</div>) : null}
               </div>
