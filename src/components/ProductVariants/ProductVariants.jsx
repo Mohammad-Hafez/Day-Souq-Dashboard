@@ -106,8 +106,6 @@ export default function ProductVariants({headers}) {
     setDisplayEditDialog(false);
     setDisplayDeleteDialog(false);
     setDisplayAddNewDialog(false);
-    setProductDescriptionDialog(false);
-    setProductDescription('')
   };
 
   // *ANCHOR - actions at table for each row
@@ -135,9 +133,6 @@ export default function ProductVariants({headers}) {
     )
   }
     
-  const sizesBody = (rowData) => rowData?.sizes?.map((size , index)=> <span key={index} className='d-block'>{size}</span>)
-  const descriptionBody = (rowData) => <Button onClick={()=>{setProductDescription(rowData.description) ;setProductDescriptionDialog(true) }} icon="pi pi-eye" className='TabelButton dark-blue-text blue-brdr bg-transparent rounded-circle mx-auto'/>
-
   return <>
     <Helmet>
       <title>Products</title>
@@ -168,34 +163,6 @@ export default function ProductVariants({headers}) {
                 {ProductDescription}
               </h5>
             </div>
-          </Dialog>
-          
-          {/* <EditProduct 
-          Dialog={Dialog} 
-          editFormik={editFormik} 
-          displayEditDialog={displayEditDialog} 
-          hideDialog={hideDialog} 
-          Button={Button} 
-          LoaderBtn={LoaderBtn}
-          />
-
-          <AddProduct 
-            headers={headers}
-            useFormik={useFormik}
-            Yup={Yup} 
-            subCategoryId={subCategoryId} 
-            categoryId={categoryId} 
-            axios={axios} 
-            ApiBaseUrl={ApiBaseUrl}  
-            Dialog={Dialog}  
-            displayAddNewDialog={displayAddNewDialog} 
-            hideDialog={hideDialog} 
-            Button={Button} 
-            LoaderBtn={LoaderBtn}
-            setLoaderBtn={setLoaderBtn}
-            ProductsRefetch={ProductsRefetch}
-            ProductVariantsRefetch={ProductVariantsRefetch}
-            bransResponse={bransResponse?.data.data.data}
             CategoryName={CategoryName}
             /> */}
           </>  
