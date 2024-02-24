@@ -44,7 +44,7 @@ export default function HeaderSearch({ UserToken, Logout }) {
         <ul className="menu-items">
           <NavItem  to={'/'} activeLink={activeLink} onClick={setActiveLink} name={'Home'}  icon={'pi-home'}/>
           <NavItem  to={'Products/all'} activeLink={activeLink} onClick={setActiveLink} name={'All Products'} icon={'pi-box'} />
-          <NavItem  to={'BiddingProducts'} activeLink={activeLink} onClick={setActiveLink} name={'Bidding Products'} icon={'auction'} />
+          <NavItem  to={'SubCategory/auction/6517dbc538001813b052bd73'} activeLink={activeLink} onClick={setActiveLink} name={'Bidding Products'} icon={'auction'} />
           <NavItem  to={'Categories'} activeLink={activeLink} onClick={setActiveLink} name={'Categories'} icon={'pi-th-large'} />
           <NavItem  to={'SubCategories'} activeLink={activeLink} onClick={setActiveLink} name={'SubCategories'} icon={'pi-sitemap'} />
           <NavItem  to={'Brands'} activeLink={activeLink} onClick={setActiveLink} name={'Brands'} icon={"pi-tags"}/>
@@ -85,39 +85,15 @@ export default function HeaderSearch({ UserToken, Logout }) {
             <div className="profileContainer d-flex align-items-center justify-content-center">
               {UserToken ? (
                 <>
-                  <span className="fs-6 dark-blue-text font-Rowdies me-3">Hi, {data?.data.data.data.firstName}</span>
-                  <span
-                    className={`cursor-pointer profile-dropdown dropdown-toggle ${activeLink === '' ? ' active' : ''}`}
-                    id="navbarDropdown"
-                    role="button"
-                    data-bs-toggle="dropdown"
-                    aria-haspopup="true"
-                    aria-expanded="false"
-                  >
-                    <Icon size={22} icon={androidPerson} className="main-grey-text me-2 cursor-pointer"></Icon>
+                  <span className={`cursor-pointer  ${activeLink === '' ? ' active' : ''}`} >
+                    <Icon size={22} icon={androidPerson} className="main-grey-text me-2 mb-1 py-0 cursor-pointer"></Icon>
                   </span>
-                  <div className="dropdown-menu profile-menu text-center font-Poppins" aria-labelledby="navbarDropdown">
-                    {/* <span className="nav-itemdropdown-menu text-center" aria-labelledby="navbarDropdown">
-                      <Link className={`dropdown-item text-main ${activeLink === 'ProfileDetails' ? ' active' : ''}`} to={`ProfileDetails`} onClick={() => setActiveLink('ProfileDetails')}>
-                        Profile Details
-                      </Link>
-                    </span> */}
-                    {/* <span className="nav-itemdropdown-menu text-center" aria-labelledby="navbarDropdown">
-                      <Link className={`dropdown-item text-main${activeLink === 'ChangePassword' ? ' active' : ''}`} to={`ChangePassword`} onClick={() => setActiveLink('ChangePassword')}>
-                        change Password
-                      </Link>
-                    </span> */}
-                    {/* <hr className="my-1" /> */}
-                    <span className="nav-itemdropdown-menu text-center" aria-labelledby="navbarDropdown">
-                      <Link className={`dropdown-item text-main`} onClick={Logout}>
-                        Logout <FiLogOut className="fs-4 pb-1 cursor-pointer" />
-                      </Link>
-                    </span>
-                  </div>
+                  <span className="fs-6 dark-blue-text font-Rowdies me-3">Hi, {data?.data.data.data.firstName}</span>
+
                 </>
               ) : (
                 <span className="dark-blue-text cursor-pointer text-uppercase" onClick={() => navigate('/Authorization')}>
-                  Have an Acount ? <AiOutlineLogin size={22} className="ms-1" />
+                  Login <AiOutlineLogin size={22} className="ms-1" />
                 </span>
               )}
             </div>
