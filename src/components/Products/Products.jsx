@@ -16,9 +16,9 @@ import Loader from '../Loader/Loader';
 
 export default function Products({ headers }) {
 
-  let navigate = useNavigate()
+  let navigate = useNavigate();
 
-  let { CategoryName, SubCategoryName, categoryId, subCategoryId, BrandId, BrandName , all } = useParams()
+  let { CategoryName, SubCategoryName, categoryId, subCategoryId, BrandId, BrandName , all } = useParams();
 
   const [displayEditDialog, setDisplayEditDialog] = useState(false)
   const [displayDeleteDialog, setDisplayDeleteDialog] = useState(false)
@@ -31,19 +31,25 @@ export default function Products({ headers }) {
   const [filteredProducts, setFilteredProducts] = useState()
 
   const getAllBrands = () => axios.get(ApiBaseUrl + `brands`)
-  const getProducts = () => axios.get(ApiBaseUrl + `products?subCategory=${subCategoryId}&dashboard=true`)
+  const getAllCategories = () => axios.get(ApiBaseUrl + `categories`)
+  const getAllSubcategories = ()=> axios.get(ApiBaseUrl +`subcategories`)
+
+  const getSubCatProducts = () => axios.get(ApiBaseUrl + `products?subCategory=${subCategoryId}&dashboard=true`)
   const getBrandProducts = () => axios.get(ApiBaseUrl + `products?brand=${BrandId}&dashboard=true`)
   const getAllGeneralProducts = () => axios.get(ApiBaseUrl + `products?dashboard=true`)
 
-  let { isLoading: AllLoading, data: AllResponse } = useQuery('get all products for general', getAllGeneralProducts, { cacheTime: 10000, enabled: !!all })
-  let { isLoading: brandsLoading, data: bransResponse } = useQuery('get brands', getAllBrands, { cacheTime: 10000, enabled: !!CategoryName })
-  let { data: ProductsResponse, refetch: ProductsRefetch, isLoading: ProductsLoading } = useQuery('subCategory Products', getProducts, { cacheTime: 50000, enabled: !!CategoryName })
+  let { isLoading: brandsLoading, data: brandsNameResponse } = useQuery('get brands', getAllBrands, { cacheTime: 10000, enabled: !!CategoryName || !!all})
+  let { isLoading: categoriesLoading, data: categoriesNameResponse } = useQuery('get categories', getAllCategories, { cacheTime: 10000, enabled: !!CategoryName || !!all})
+  let { isLoading: SubcategoriesLoading, data: SubcategoriesNameResponse } = useQuery('get Subcategories', getAllSubcategories, { cacheTime: 10000, enabled: !!SubCategoryName || !!all})
+
+  let { isLoading: AllLoading, data: AllResponse , refetch : AllRefetch } = useQuery('get all products for general', getAllGeneralProducts, { cacheTime: 10000, enabled: !!all })
+  let { data: SubcatProductsResponse, refetch: SubcatProductsRefetch, isLoading: ProductsLoading } = useQuery('subCategory Products', getSubCatProducts, { cacheTime: 50000, enabled: !!CategoryName })
   let { data: BrandProductsResponse, refetch: BrandProductsRefetch, isLoading: BrandProductsLoading } = useQuery('Brand Products', getBrandProducts, { cacheTime: 50000, enabled: !!BrandName })
 
   useEffect(() => {
-    if (ProductsResponse) {
-      setProducts(ProductsResponse?.data.data.data);
-      setFilteredProducts(ProductsResponse?.data.data.data);
+    if (SubcatProductsResponse) {
+      setProducts(SubcatProductsResponse?.data.data.data);
+      setFilteredProducts(SubcatProductsResponse?.data.data.data);
     } else if (BrandProductsResponse) {
       setProducts(BrandProductsResponse?.data.data.data);
       setFilteredProducts(BrandProductsResponse?.data.data.data);
@@ -51,16 +57,18 @@ export default function Products({ headers }) {
       setProducts(AllResponse?.data.data.data);
       setFilteredProducts(AllResponse?.data.data.data);
     }
-  }, [ProductsResponse, BrandProductsResponse , AllResponse]);
+  }, [SubcatProductsResponse, BrandProductsResponse , AllResponse]);
 
   // *ANCHOR - delete product
   const deleteProduct = async (id) => {
     try {
       await axios.delete(ApiBaseUrl + `products/${id}`, { headers })
       if (CategoryName) {
-        ProductsRefetch()
+        SubcatProductsRefetch()
       } else if (BrandName) {
         BrandProductsRefetch()
+      }else if (all) {
+        AllRefetch()
       }
       hideDialog()
     } catch (error) {
@@ -83,7 +91,7 @@ export default function Products({ headers }) {
       <div className='d-flex justify-content-center align-items-center '>
         <Button icon="pi pi-pencil" className='TabelButton approve rounded-circle mx-1' onClick={() => { setDisplayEditDialog(true); setSelectedProducts(rowData) }} />
         <Button onClick={() => navigate(`/Products/${CategoryName}/${rowData?.name}/${rowData._id}`)} icon="pi pi-ban" className='TabelButton rounded-circle mx-auto' outlined severity="secondary" />
-        <Button icon="pi pi-trash" className='TabelButton Cancel rounded-circle mx-1' onClick={() => { setSelectedProducts(rowData._id); setDisplayDeleteDialog(true); console.log(rowData._id); }} />
+        <Button icon="pi pi-trash" className='TabelButton Cancel rounded-circle mx-1' onClick={() => { setSelectedProducts(rowData._id); setDisplayDeleteDialog(true);}} />
       </div>
     );
   };
@@ -105,7 +113,6 @@ export default function Products({ headers }) {
         <div className="addCategory">
           <button className='btn btn-secondary w-100' onClick={() => { setDisplayAddNewDialog(true) }}>Add New</button>
         </div>
-
         </div>
       </div>
     )
@@ -130,7 +137,7 @@ export default function Products({ headers }) {
       <title>Products</title>
     </Helmet>
     <div className="container-fluid">
-      {brandsLoading || ProductsLoading || BrandProductsLoading || AllLoading ? <div>
+      {brandsLoading || ProductsLoading || BrandProductsLoading || AllLoading || categoriesLoading  || SubcategoriesLoading ? <div>
         <Loader />
       </div> : <>
           <DataTable value={filteredProducts} header={ProductsHeaderBody} paginator selectionMode="single" className={`dataTabel mb-4 text-capitalize AllList`} dataKey="_id" scrollable scrollHeight="100vh" tableStyle={{ minWidth: "50rem" }} rows={10} responsive="scroll">
@@ -164,6 +171,7 @@ export default function Products({ headers }) {
               SelectedProducts={SelectedProducts}
               displayEditDialog={displayEditDialog}
               headers={headers}
+              all={all}
               useFormik={useFormik}
               Yup={Yup}
               subCategoryId={subCategoryId}
@@ -175,9 +183,12 @@ export default function Products({ headers }) {
               Button={Button}
               LoaderBtn={LoaderBtn}
               setLoaderBtn={setLoaderBtn}
-              ProductsRefetch={ProductsRefetch}
+              SubcatProductsRefetch={SubcatProductsRefetch}
+              AllRefetch={AllRefetch}
               BrandProductsRefetch={BrandProductsRefetch}
-              bransResponse={bransResponse?.data.data.data}
+              brandsNameResponse={brandsNameResponse?.data.data.data}
+              categoriesNameResponse={categoriesNameResponse?.data.data.data}
+              SubcategoriesNameResponse={SubcategoriesNameResponse?.data.data.data}
               CategoryName={CategoryName}
               BrandName={BrandName}
               BrandId={BrandId}
@@ -188,6 +199,7 @@ export default function Products({ headers }) {
               headers={headers}
               useFormik={useFormik}
               Yup={Yup}
+              all={all}
               subCategoryId={subCategoryId}
               categoryId={categoryId}
               axios={axios}
@@ -198,11 +210,14 @@ export default function Products({ headers }) {
               Button={Button}
               LoaderBtn={LoaderBtn}
               setLoaderBtn={setLoaderBtn}
-              ProductsRefetch={ProductsRefetch}
+              SubcatProductsRefetch={SubcatProductsRefetch}
+              AllRefetch={AllRefetch}
               BrandProductsRefetch={BrandProductsRefetch}
               BrandName={BrandName}
               BrandId={BrandId}
-              bransResponse={bransResponse?.data.data.data}
+              brandsNameResponse={brandsNameResponse?.data.data.data}
+              categoriesNameResponse={categoriesNameResponse?.data.data.data}
+              SubcategoriesNameResponse={SubcategoriesNameResponse?.data.data.data}
               CategoryName={CategoryName}
             />
           }

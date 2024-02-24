@@ -67,7 +67,7 @@ export default function Login({saveUserData}) {
           <div className="col-12 text-start">
             <label className='ms-2' htmlFor="email">email</label>
             <input type="string"  placeholder='email' className='AuthForm-inputs mb-2 form-control' name='email' id='email' value={formik.values.email} onChange={formik.handleChange} onBlur={formik.handleBlur}/>
-            {formik.errors.email && formik.touched.email ?<div className="alert alert-danger">{formik.errors.email}</div>: null}
+            {formik.errors.email && formik.touched.email ?<div className="alert text-danger">{formik.errors.email}</div>: null}
           </div>
           <div className="col-12 text-start">
             <div className="passwordField position-relative">
@@ -75,11 +75,11 @@ export default function Login({saveUserData}) {
               <input type={passwordShown ? "text" : "password"} placeholder='Password' className='AuthForm-inputs mb-2 form-control' name='password' id='password'  onChange={formik.handleChange} onBlur={formik.handleBlur}/>
               <span onClick={togglePassword} className='togglePassword position-absolute top-0 end-0 me-3 mt-4 pt-1 cursor-pointer'>{passwordShown ? <Icon className='text-danger' icon={eye}></Icon>:<Icon className='text-main' icon={eyeOff}></Icon>}</span>
             </div>
-            {formik.errors.password && formik.touched.password ?<div className="alert alert-danger">{formik.errors.password}</div>: null}
+            {formik.errors.password && formik.touched.password ?<div className="alert text-danger">{formik.errors.password}</div>: null}
           </div>
         </div>
         <div className="col-12">
-        {ErrMsg ? <div className="Err alert alert-danger"><Icon size={20} icon={alertCircle}> </Icon> {ErrMsg}</div> : null }
+        {ErrMsg ? <div className="Err alert text-danger"><Icon size={20} icon={alertCircle}> </Icon> {ErrMsg}</div> : null }
         </div>
         <div className="col-12 text-start">
         <Link className='dark-blue-text ms-3' to={'/ForgetPassword'}>forget Yor Password ?</Link>

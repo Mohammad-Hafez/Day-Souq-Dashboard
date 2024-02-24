@@ -43,7 +43,7 @@ export default function HeaderSearch({ UserToken, Logout }) {
       <Sidebar visible={visibleSidebar} onHide={() => setVisibleSidebar(false)}>
         <ul className="menu-items">
           <NavItem  to={'/'} activeLink={activeLink} onClick={setActiveLink} name={'Home'}  icon={'pi-home'}/>
-          <NavItem  to={'Products/:all'} activeLink={activeLink} onClick={setActiveLink} name={'All Products'} icon={'pi-box'} />
+          <NavItem  to={'Products/all'} activeLink={activeLink} onClick={setActiveLink} name={'All Products'} icon={'pi-box'} />
           <NavItem  to={'BiddingProducts'} activeLink={activeLink} onClick={setActiveLink} name={'Bidding Products'} icon={'auction'} />
           <NavItem  to={'Categories'} activeLink={activeLink} onClick={setActiveLink} name={'Categories'} icon={'pi-th-large'} />
           <NavItem  to={'SubCategories'} activeLink={activeLink} onClick={setActiveLink} name={'SubCategories'} icon={'pi-sitemap'} />

@@ -1,14 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-export default function AddProduct({ LoaderBtn, subCategoryId, categoryId , CategoryName, axios, headers, ApiBaseUrl, useFormik, Yup, Button, Dialog, displayAddNewDialog, bransResponse, hideDialog, setLoaderBtn, ProductsRefetch }) {
+export default function AddProduct({ LoaderBtn, subCategoryId, categoryId , CategoryName, BrandName, BrandId, all, axios, headers, ApiBaseUrl, useFormik, Yup, Button, Dialog, displayAddNewDialog, brandsNameResponse, categoriesNameResponse, SubcategoriesNameResponse, hideDialog, setLoaderBtn, SubcatProductsRefetch , BrandProductsRefetch, AllRefetch }) {
+  const [AddNewError, setAddNewError] = useState(null)
   const AddNewInitial = {
     name: '',
     price: '',
     description: '',
-    brand: '',
-    subCategory: subCategoryId,
-    category: categoryId,
-    ...(CategoryName?.toLowerCase() === 'auction' && {
+    brand: BrandName ? BrandId : '',
+    subCategory: CategoryName? subCategoryId : "",
+    category: CategoryName ? categoryId : "",
+  ...(CategoryName?.toLowerCase() === 'auction' && {
       startDate: '',
       biddingPrice: '',
       startBidding: '',
@@ -37,19 +38,25 @@ export default function AddProduct({ LoaderBtn, subCategoryId, categoryId , Cate
     onSubmit: (values) => AddNewProducts(values),
   });
 
-  const AddNewProducts = async (values) => {
+  const AddNewProducts =  (values) => {
     setLoaderBtn(true);
-    console.log(values.brand);
-    try {
-      await axios.post(ApiBaseUrl + `products`, values, { headers });
-      ProductsRefetch();
+    axios.post(ApiBaseUrl + `products`, values, { headers })
+    .then( response =>{
+      if (CategoryName) {
+        SubcatProductsRefetch();
+      } else if (BrandName) {
+        BrandProductsRefetch();
+      }else if (all) {
+        AllRefetch()
+      }
       setLoaderBtn(false);
       hideDialog();
       AddNewFormik.resetForm();
-    } catch (error) {
+    }).catch (error => {
+      setAddNewError(error.response.data.message);
       console.error(error);
       setLoaderBtn(false);
-    }
+    })
   };
 
   return (
@@ -71,21 +78,30 @@ export default function AddProduct({ LoaderBtn, subCategoryId, categoryId , Cate
             <label className='ms-2' htmlFor="description">DESCRIPTION</label>
             {AddNewFormik.errors.description && AddNewFormik.touched.description ? (<div className="alert text-danger ">{AddNewFormik.errors.description}</div>) : null}
           </div>
+          {!CategoryName ? <>
+            <div className="form-floating mb-2">
+              <select className="form-select" id="brand" name="brand" value={AddNewFormik.values.brand} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur}>
+                <option value="" disabled>Select Category</option>
+                {categoriesNameResponse?.map(category => (
+                  <option key={category._id} value={category._id}>{category.name}</option>
+                ))}
+              </select>            
+            <label className='ms-2' htmlFor="category">category</label>
+            {AddNewFormik.errors.category && AddNewFormik.touched.category ? (<div className="alert text-danger ">{AddNewFormik.errors.category}</div>) : null}
+          </div> 
+
           <div className="form-floating mb-2">
-            <select className="form-select" id="brand" name="brand" value={AddNewFormik.values.brand} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur}>
-              <option value="" disabled>Select Brand</option>
-              {bransResponse?.map(brand => (
-                <option key={brand._id} value={brand._id}>{brand.name}</option>
-              ))}
-            </select>            
-            <label className='ms-2' htmlFor="brand">BRAND</label>
-            {AddNewFormik.errors.brand && AddNewFormik.touched.brand ? (<div className="alert text-danger ">{AddNewFormik.errors.brand}</div>) : null}
-          </div>
-          {/* <div className="form-floating mb-2">
-            <input type="text" placeholder='Subcategory' className="form-control" id="subCategory" name="subCategory" value={AddNewFormik.values.subCategory} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur} />
-            <label className='ms-2' htmlFor="subCategory">SUBCATEGORY</label>
+              <select className="form-select" id="brand" name="brand" value={AddNewFormik.values.brand} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur}>
+                <option value="" disabled>Select Category</option>
+                {SubcategoriesNameResponse?.map(subcategory => (
+                  <option key={subcategory._id} value={subcategory._id}>{subcategory.name}</option>
+                ))}
+              </select>            
+            <label className='ms-2' htmlFor="subCategory">subCategory</label>
             {AddNewFormik.errors.subCategory && AddNewFormik.touched.subCategory ? (<div className="alert text-danger ">{AddNewFormik.errors.subCategory}</div>) : null}
-          </div> */}
+          </div> 
+          </> 
+          : null}
           {CategoryName?.toLowerCase() === 'auction' && (
             <>
               <div className="form-floating mb-2">
@@ -115,6 +131,18 @@ export default function AddProduct({ LoaderBtn, subCategoryId, categoryId , Cate
               </div>
             </>
           )}
+          <div className="form-floating mb-2">
+            <select className="form-select" id="brand" name="brand" value={AddNewFormik.values.brand} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur}>
+              <option value="" disabled>Select Brand</option>
+              {brandsNameResponse?.map(brand => (
+                <option key={brand._id} value={brand._id}>{brand.name}</option>
+              ))}
+            </select>            
+            <label className='ms-2' htmlFor="brand">BRAND</label>
+            {AddNewFormik.errors.brand && AddNewFormik.touched.brand ? (<div className="alert text-danger ">{AddNewFormik.errors.brand}</div>) : null}
+          </div>
+
+          {AddNewError ? <div className='alert text-danger'>{AddNewError}</div> :null}
           <div className="btns ms-auto w-100 d-flex justify-content-center mt-3">
             {LoaderBtn ? <button className='btn btn-primary text-light w-50' disabled><i className="fa fa-spin fa-spinner"></i></button> :
               <Button label="SUBMIT" type="submit" icon="pi pi-check" disabled={!(AddNewFormik.isValid && AddNewFormik.dirty)} className="btn btn-primary text-light w-50" />
