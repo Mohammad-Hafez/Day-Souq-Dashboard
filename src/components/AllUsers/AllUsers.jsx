@@ -1,5 +1,5 @@
-import React, { useState} from 'react'
-import { Helmet } from 'react-helmet'
+import React, { useState } from 'react';
+import { Helmet } from 'react-helmet';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { DataTable } from 'primereact/datatable';
@@ -11,17 +11,32 @@ import { ApiBaseUrl } from '../ApiBaseUrl';
 import { useQuery } from 'react-query';
 import Loader from '../Loader/Loader';
 
-export default function AllUsers({headers}) {
+export default function AllUsers({ headers }) {
+  const [LoaderBtn, setLoaderBtn] = useState(false);
+  const [SelectedUser, setSelectedUser] = useState(null);
+  const [displayDeleteDialog, setDisplayDeleteDialog] = useState(false);
+  const [displaySendAllDialog, setDisplaySendAllDialog] = useState(false);
+  const [displayToUser, setDisplayToUser] = useState(false);
+  const [filteredUsers, setFilteredUsers] = useState([]);
 
-  const [LoaderBtn, setLoaderBtn] = useState(false)
-  const [SelectedUser, setSelectedUser] = useState(null)
-  const [displayDeleteDialog, setDisplayDeleteDialog] = useState(false)
-  const [displaySendAllDialog, setdisplaySendAllDialog] = useState(false)
-  const [displayToUser, setdisplayToUser] = useState(false)
+  const getAllUsers = () => axios.get(ApiBaseUrl + `users`, { headers });
+  let { data: UsersResponse, isLoading: UserLoading, refetch: userRefetch } = useQuery(
+    'get All Users',
+    getAllUsers,
+    { cacheTime: 10000 }
+  );
 
-  const getAllUsers = ()=> axios.get(ApiBaseUrl + `users`,{headers})
-  let {data:UsersResponse , isLoading:UserLoading , refetch:userRefetch} = useQuery("get All Users" , getAllUsers , {cacheTime : 10000})
-  console.log(UsersResponse?.data.data.data);
+  // Handle search functionality
+  const handleSearch = (e) => {
+    console.log(e.target.value);
+    const searchValue = e.target.value.toLowerCase();
+    const filteredData = UsersResponse.data.data.data.filter((user) =>
+      user.firstName.toLowerCase().includes(searchValue) ||
+      user.lastName.toLowerCase().includes(searchValue) ||
+      user.phone.toLowerCase().includes(searchValue)
+    );
+    setFilteredUsers(filteredData);
+  };
 
   let SendToAllInitial = {
     title :'', 
@@ -78,7 +93,7 @@ export default function AllUsers({headers}) {
 
   const hideDialog = () => {
     setDisplayDeleteDialog(false)
-    setdisplaySendAllDialog(false)
+    setDisplaySendAllDialog(false)
     SendToAllFormik.resetForm();
   };
 
@@ -86,36 +101,48 @@ export default function AllUsers({headers}) {
     return (
       <div className='d-flex justify-content-center align-items-center '>
         <Button  icon="pi pi-trash" className='TabelButton Cancel rounded-circle mx-1' onClick={() => { setDisplayDeleteDialog(true); setSelectedUser(rowData._id)}} />
-        <Button  icon="pi pi-bell" className='TabelButton rounded-circle mx-1' outlined severity="secondary" onClick={() => { setdisplaySendAllDialog(true)}} />
+        <Button  icon="pi pi-bell" className='TabelButton rounded-circle mx-1' outlined severity="secondary" onClick={() => { setDisplaySendAllDialog(true)}} />
       </div>
     );
   };
 
-  const UsersHeaderBody = ()=>{
-    return(
-      <div className='d-flex align-items-center justify-content-between'>
+  const nameBody = (rowData)=> <h6>{rowData?.firstName} {rowData?.lastName}</h6>
+
+  const UsersHeaderBody = () => {
+    return (
+      <div className="d-flex align-items-center justify-content-between">
         <div className="headerLabel">
-          <h3>
-            Banners
-          </h3>
+          <h3>All users</h3>
+        </div>
+        <div className="d-flex flex-column">
+        <div className="searchCategory mb-2">
+          <input
+            type="text"
+            placeholder="Search by name or phone"
+            className="form-control"
+            onChange={handleSearch}
+          />
         </div>
         <div className="addCategory">
-          <button className='btn btn-secondary' onClick={()=>{setdisplaySendAllDialog(true)}}>Send All</button>
+          <button className="btn btn-secondary w-100" onClick={() => { setDisplaySendAllDialog(true); }}>
+            Notify All Users
+          </button>
+        </div>
+
         </div>
       </div>
-    )
-  }
-
-  const nameBody = (rowData)=> <h6>{rowData?.firstName} {rowData?.lastName}</h6>
+    );
+  };
 
   return <>
     <Helmet>
-      <title>Banners</title>
+      <title>All users</title>
     </Helmet>
     {UserLoading ? <Loader/> : 
     <div className="container">
-      <DataTable value={UsersResponse?.data.data.data}  header={UsersHeaderBody} paginator selectionMode="single" className={`dataTabel mb-4 text-capitalize AllList`} dataKey="_id" scrollable scrollHeight="100vh" tableStyle={{ minWidth: "50rem" }} rows={10} responsive="scroll">
+      <DataTable  value={filteredUsers.length ? filteredUsers : UsersResponse?.data?.data.data}  header={UsersHeaderBody} paginator selectionMode="single" className={`dataTabel mb-4 text-capitalize AllList`} dataKey="_id" scrollable scrollHeight="100vh" tableStyle={{ minWidth: "50rem" }} rows={10} responsive="scroll">
         <Column header="Name" body={nameBody} sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
+        <Column header="id" field="_id" sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
         <Column header="email" field='email' sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
         <Column header="gender" field='gender' sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
         <Column header="phone" field='phone' sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
