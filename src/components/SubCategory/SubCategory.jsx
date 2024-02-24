@@ -27,12 +27,19 @@ export default function SubCategory({ headers }) {
   const getSubCategory = () => axios.get(ApiBaseUrl + `categories/${id}/subCategories`);
   let { data:subForCategoryResponse, refetch: subForCategoryRefetch , isLoading: subForCategoryLoading} = useQuery('sub category', getSubCategory, { cacheTime: 50000 , enabled : !!CategoryName });
 
+  const getAllSubCategories = ()=> axios.get(ApiBaseUrl + `subcategories`)
+  let {data:AllSubcategoriesResponse , isLoading :AllSubLoading , refetch:AllSubRefetch } = useQuery("all sbCategories" , getAllSubCategories , {cacheTime : 10000 , enabled : !!all})
+
   useEffect(() => {
     if (subForCategoryResponse) {
       setSubCategory(subForCategoryResponse?.data.data.data);
       setFilteredSubCategory(subForCategoryResponse?.data.data.data);
+    }else if (AllSubcategoriesResponse) {
+      console.log(AllSubcategoriesResponse?.data.data.data);
+      setSubCategory(AllSubcategoriesResponse?.data.data.data);
+      setFilteredSubCategory(AllSubcategoriesResponse?.data.data.data);
     }
-  }, [subForCategoryResponse]);
+  }, [subForCategoryResponse , AllSubcategoriesResponse]);
 
   // Add new sub category
   let AddNewInitial = {
