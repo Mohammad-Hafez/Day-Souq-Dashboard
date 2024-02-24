@@ -51,7 +51,7 @@ function App() {
 
   return (
     <PrimeReactProvider>
-      <Offline> <div className='network p-3 bg-danger text-light rounded align-items-center d-flex position-absolute bottom-0 start-0 m-4'> <Icon icon={wifiOff} className='me-2'></Icon> Faild Network Conection</div> </Offline>
+      <Offline> <div className='network first-z p-3 bg-danger text-light rounded align-items-center d-flex position-absolute bottom-0 start-0 m-4'> <Icon icon={wifiOff} className='me-2'></Icon> Faild Network Conection</div> </Offline>
       <Toaster/>
       <Router>
         <Routes>

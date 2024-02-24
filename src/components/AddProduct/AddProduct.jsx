@@ -141,7 +141,6 @@ export default function AddProduct({ LoaderBtn, subCategoryId, categoryId , Cate
             <label className='ms-2' htmlFor="brand">BRAND</label>
             {AddNewFormik.errors.brand && AddNewFormik.touched.brand ? (<div className="alert text-danger ">{AddNewFormik.errors.brand}</div>) : null}
           </div>
-
           {AddNewError ? <div className='alert text-danger'>{AddNewError}</div> :null}
           <div className="btns ms-auto w-100 d-flex justify-content-center mt-3">
             {LoaderBtn ? <button className='btn btn-primary text-light w-50' disabled><i className="fa fa-spin fa-spinner"></i></button> :

@@ -233,6 +233,10 @@ label{
 .menu-items{
 list-style: none;
 }
+.p-sidebar-header{
+  padding-bottom: 0;
+  padding-top: 4px;
+}
 /* *ANCHOR -  tables */
 .Tabel {
   margin-bottom: 50px;

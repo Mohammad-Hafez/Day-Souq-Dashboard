@@ -9,14 +9,10 @@ import { Dialog } from 'primereact/dialog';
 import axios from 'axios';
 import { ApiBaseUrl, ImgBaseURL } from '../ApiBaseUrl';
 import { useQuery } from 'react-query';
-import { useNavigate, useParams } from 'react-router-dom';
-import EditProduct from '../EditProduct/EditProduct';
-import AddProduct from '../AddProduct/AddProduct';
+import { useParams } from 'react-router-dom';
 import Loader from '../Loader/Loader';
 
 export default function ProductVariants({headers}) {
-
-  let navigate = useNavigate()
 
   let {productName , productId} = useParams()
 
@@ -24,8 +20,6 @@ export default function ProductVariants({headers}) {
   const [displayDeleteDialog, setDisplayDeleteDialog] = useState(false)
   const [displayAddNewDialog, setDisplayAddNewDialog] = useState(false)
   const [SelectedProducts, setSelectedProducts] = useState(null)
-  const [ProductDescription, setProductDescription] = useState('')
-  const [ProductDescriptionDialog, setProductDescriptionDialog] = useState(false)
   const [LoaderBtn, setLoaderBtn] = useState(false)
   const [Products, setProducts] = useState()
 
@@ -38,62 +32,103 @@ export default function ProductVariants({headers}) {
       setProducts (ProductVariantsResponse?.data.data.data);
     }
   },[ProductVariantsResponse]);
+
   // *NOTE - edit product formik
-  let editInitial = {
-    name :'', 
-    image : '',
-    price:'',
-    description:'',
-    brand:'' ,
-    subCategory : "" ,
-    category : "",
-    startDate:"" ,
-    biddingPrice :"" ,
-    startBidding:"",
-    duration:'',
-    biddingGap :""
+  let initialVariant = {
+    quantity :'', 
+    imageCover : '',
+    size:'',
+    color:"",
+    images:'',
+    extraPrice : "" ,
+    sku : "",
   }
-  let editFormik = useFormik({
-    initialValues : editInitial, 
-    validationSchema : Yup.object().shape({
-      name :Yup.string().required('Category Name Is Required') ,
-      image: Yup.mixed().optional().test( 'fileSize', 'Image file size must be less than 2MB',
-        (value) => value && value.size <= 2097152, // 2MB in bytes
-      ),
-    }),
-    onSubmit:(values)=>editCategory(SelectedProducts._id , values)
+  let validationSchema = Yup.object().shape({
+    quantity :Yup.string().required('quantity Is Required') ,
+    size :Yup.string().required('size Is Required') ,
+    color :Yup.string().required('color Is Required') ,
+    extraPrice :Yup.string().required('extraPrice Is Required') ,
+    sku :Yup.string().required('sku Is Required') ,
+    imageCover: Yup.mixed().required('imageCover Is Required').test( 'fileSize', 'Image file size must be less than 2MB',
+      (value) => value && value.size <= 2097152, // 2MB in bytes
+    ),
+    images: Yup.mixed().required('images Is Required')
   })
+
+  let addFormik = useFormik({
+    initialValues :initialVariant ,
+    validationSchema , 
+
+  })
+
+  let editFormik = useFormik({
+    initialValues : initialVariant, 
+    validationSchema , 
+    onSubmit:(values)=>editVariant(SelectedProducts._id , values)
+  })
+
+  // *ANCHOR - Add new variant
+  const addVariant =  (values) => {
+    setLoaderBtn(true)
+    const formData = new FormData();
+    formData.append('quantity', values.quantity);
+    formData.append('imageCover', values.imageCover);
+    formData.append('size', values.size);
+    formData.append('color', values.color);
+    formData.append('images', values.images);
+    formData.append('sku', values.sku);
+    formData.append('extraPrice', values.extraPrice);
+    axios.post(ApiBaseUrl + `products/${productId}/variants`, formData, { headers })
+      .then( response =>{
+      ProductVariantsRefetch()
+      setLoaderBtn(false)
+      hideDialog()
+      }).catch(error => {
+      console.error(error);
+      setLoaderBtn(false)
+    })
+  };
 
   // *NOTE - set selected product values in edit form 
   useEffect(()=>{
     if (SelectedProducts) {
       editFormik.setValues( {
-        name: SelectedProducts.name,
-        image: ''
+        quantity: SelectedProducts.quantity,
+        imageCover: SelectedProducts.imageCover,
+        size: SelectedProducts.size,
+        color: SelectedProducts.color,
+        images: SelectedProducts.images,
+        sku: SelectedProducts.sku,
+        extraPrice: SelectedProducts.extraPrice,
       }  )
     }
   },[SelectedProducts]);
 
   // *NOTE - edit new product function
-  const editCategory = async (id, values) => {
+  const editVariant =  (id, values) => {
     setLoaderBtn(true)
     const formData = new FormData();
-    formData.append('name', values.name);
-    formData.append('image', values.image); 
-    try {
-      await axios.patch(ApiBaseUrl + `subcategories/${id}`, formData, { headers });
+    formData.append('quantity', values.quantity);
+    formData.append('imageCover', values.imageCover);
+    formData.append('size', values.size);
+    formData.append('color', values.color);
+    formData.append('images', values.images);
+    formData.append('sku', values.sku);
+    formData.append('extraPrice', values.extraPrice);
+    axios.patch(ApiBaseUrl + `variants/${id}`, formData, { headers })
+    .then( response =>{
       ProductVariantsRefetch()
       setLoaderBtn(false)
       hideDialog()
-    } catch (error) {
+    }).catch (error => {
       console.error(error);
       setLoaderBtn(false)
-    }
+    })
   };
   // *ANCHOR - delete product
-  const deleteCategory =async (id)=>{
+  const deleteCategory = async (id)=>{
     try {
-      await axios.delete(ApiBaseUrl + `Product/${id}` , { headers })
+      await axios.delete(ApiBaseUrl + `variants/${id}` , { headers })
         ProductVariantsRefetch()
         hideDialog()
     } catch (error) {
@@ -118,13 +153,14 @@ export default function ProductVariants({headers}) {
     );
   };
   // *ANCHOR - image format 
-  const productImage = (rowData) => rowData?.variants?.map((variant , index) => <img key={index} src={ImgBaseURL + variant.imageCover } alt={variant.name + 'image'} className='w-50' />).slice(0,1)
+  const variantAllImages = (rowData) => rowData?.images?.map((image , index) => <img key={index} src={ImgBaseURL + image } alt={rowData.name + 'image'} className='w-50' />).slice(0,1)
+  const variantImage = (rowData) => <img src={ImgBaseURL + rowData.imageCover } alt={rowData.name + 'image'} className='w-50' />
   
   const ProductsHeaderBody = ()=>{
     return(
       <div className='d-flex align-items-center justify-content-between'>
         <div className="headerLabel">
-          {productName && <h3>Products For {productName} </h3>}
+          {productName && <h3>Variants For {productName} </h3>}
         </div>
         <div className="addCategory">
           <button className='btn btn-secondary' onClick={()=>{setDisplayAddNewDialog(true)}}>Add New</button>
@@ -142,29 +178,23 @@ export default function ProductVariants({headers}) {
         <Loader/>
       </div> :<>
           <DataTable  value={Products}  header={ProductsHeaderBody} paginator selectionMode="single" className={`dataTabel mb-4 text-capitalize AllList`} dataKey="_id" scrollable scrollHeight="100vh" tableStyle={{ minWidth: "50rem" }} rows={10} responsive="scroll">
-            <Column header="Images" body={productImage} style={{ width: "8%", borderBottom: '1px solid #dee2e6' }} />
-            <Column field="name" header="Name" sortable style={{ width: "20%", borderBottom: '1px solid #dee2e6' }} />
-            <Column header="description" body={descriptionBody} sortable style={{ width: "5%", borderBottom: '1px solid #dee2e6' }} />
-            <Column field="price" header="Price (JOD)" sortable style={{ width: "8%", borderBottom: '1px solid #dee2e6' }} />
-            <Column header="size" body={sizesBody} sortable style={{ width: "8%", borderBottom: '1px solid #dee2e6' }} />
-            <Column field="quantity" header="quantity" sortable style={{ width: "5%", borderBottom: '1px solid #dee2e6' }} />
+            <Column header="All Images" body={variantAllImages} style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
+            <Column header="Image" body={variantImage} style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
+            <Column field="quantity" header="quantity" sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
+            <Column header="size" field='size' sortable style={{ width: "5%", borderBottom: '1px solid #dee2e6' }} />
+            <Column field="extraPrice" header="extraPrice (JOD)" sortable style={{ width: "8%", borderBottom: '1px solid #dee2e6' }} />
+            <Column header="color" field='color' sortable style={{ width: "5%", borderBottom: '1px solid #dee2e6' }} />
+            <Column field="sku" header="sku" sortable style={{ width: "5%", borderBottom: '1px solid #dee2e6' }} />
             <Column header="edit" body={actionTemplate}  style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
           </DataTable>
-          <Dialog header={'Delete Product'} className='container editDialog' visible={displayDeleteDialog} onHide={hideDialog} modal>
-            <h5>you want delete this Products ?</h5>
+          <Dialog header={'Delete Variant'} className='container editDialog' visible={displayDeleteDialog} onHide={hideDialog} modal>
+            <h5>you want delete this Variant ?</h5>
+            <hr />
             <div className="d-flex align-items-center justify-content-around">
-            <button className='btn btn-danger px-4' onClick={()=>{deleteCategory(SelectedProducts)}}>Yes</button>
-            <button className='btn btn-primary  px-4' onClick={()=>{setDisplayDeleteDialog(false)}}>No</button>
+            <button className='btn btn-danger  w-50 mx-2 px-4' onClick={()=>{deleteCategory(SelectedProducts)}}>Yes</button>
+            <button className='btn btn-primary w-50 mx-2 px-4' onClick={()=>{setDisplayDeleteDialog(false)}}>No</button>
             </div>
-          </Dialog> 
-          <Dialog header={'Product Description'} className='container editDialog' visible={ProductDescriptionDialog} onHide={hideDialog} modal>
-            <div className="cont">
-              <h5>
-                {ProductDescription}
-              </h5>
-            </div>
-            CategoryName={CategoryName}
-            /> */}
+          </Dialog>           
           </>  
       }
     </div>
