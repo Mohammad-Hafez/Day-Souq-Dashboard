@@ -49,8 +49,9 @@ export default function HeaderSearch({ UserToken, Logout }) {
           <NavItem  to={'SubCategory/all'} activeLink={activeLink} onClick={setActiveLink} name={'SubCategories'} icon={'pi-sitemap'} />
           <NavItem  to={'Brands'} activeLink={activeLink} onClick={setActiveLink} name={'Brands'} icon={"pi-tags"}/>
           <NavItem  to={'Banners'} activeLink={activeLink} onClick={setActiveLink} name={'Banners'} icon={'pi-flag-fill'} />
-          <NavItem  to={'Blogs'} activeLink={activeLink} onClick={setActiveLink} name={'Blogs'} icon={'pi-flag-fill'} />
-          <NavItem  to={'Orders'} activeLink={activeLink} onClick={setActiveLink} name={'All Orders'} icon={'pi-truck'} />
+          <NavItem  to={'Blogs'} activeLink={activeLink} onClick={setActiveLink} name={'Blogs'} icon={'pi-file-edit'} />
+          <NavItem  to={'Orders'} activeLink={activeLink} onClick={setActiveLink} name={'All Orders'} icon={'pi-inbox'} />
+          <NavItem  to={'Shipping'} activeLink={activeLink} onClick={setActiveLink} name={'Shipping'} icon={'pi-truck'} />
           <NavItem  to={'Coupons'} activeLink={activeLink} onClick={setActiveLink} name={'Coupon'} icon={'pi-money-bill'} />
           <NavItem  to={'Users'} activeLink={activeLink} onClick={setActiveLink} name={'Users'} icon={'pi-users'}/>
           <Link className={`nav-link px-1 my-4 dark-grey-text`} onClick={Logout}>
