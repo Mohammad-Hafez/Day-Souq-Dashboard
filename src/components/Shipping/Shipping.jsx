@@ -20,6 +20,7 @@ export default function Shipping() {
   const [displayDeactiveDialog, setDisplayDeactiveDialog] = useState(false);
   const [displayActiveDialog, setDisplayActiveDialog] = useState(false);
   const [displayAddNewDialog, setDisplayAddNewDialog] = useState(false)
+  const [ErrorMsg, setErrorMsg] = useState(null)
 
   const getAllShippings = () => axios.get(ApiBaseUrl + `Shippings`, { headers });
   let { data: AllShippingsResponse, isLoading: AllShippingsLoading, refetch: AllShippingsRefetch } = useQuery(
@@ -34,7 +35,7 @@ export default function Shipping() {
     minimum :'', 
     maximum :'', 
     max_price : '',
-    active :false
+    // active :false
   }
 
   let AddNewFormik = useFormik({
@@ -51,36 +52,40 @@ export default function Shipping() {
 
   const AddNewShipping = async (values) => {
     setLoaderBtn(true)
-    try {
-      await axios.post(ApiBaseUrl + `shippings`, values, { headers });
+      await axios.post(ApiBaseUrl + `shippings`, values, { headers }).then(response =>
+      {
       hideDialog()
       AllShippingsRefetch()
       setLoaderBtn(false)
-    } catch (error) {
+      }).catch (error=> {
+      setErrorMsg(error.response.data.message)
       console.error(error);
       setLoaderBtn(false)
-    }
+    })
   };
 
 
   const deleteShipping = async (id, status) => {
     setLoaderBtn(true);
-    try {
-      await axios.patch(ApiBaseUrl + `shippings/${id}`, { active: status }, { headers });
-      AllShippingsRefetch();
-      hideDialog();
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoaderBtn(false);
-    }
+    console.log(status);
+      await axios.patch(ApiBaseUrl + `shippings/${id}`, { active: status }, { headers })
+      .then(response => {
+        hideDialog()
+        AllShippingsRefetch()
+        setLoaderBtn(false)
+        }).catch (error=> {
+        setErrorMsg(error.response.data.message)
+        console.error(error);
+        setLoaderBtn(false)
+      })
   };
 
   const hideDialog = () => {
     setDisplayDeactiveDialog(false);
     setSelectedShippings(null);
     setDisplayActiveDialog(false);
-    setDisplayAddNewDialog(false)
+    setDisplayAddNewDialog(false);
+    setErrorMsg(null)
     AddNewFormik.resetForm()
   };
 
@@ -144,18 +149,21 @@ export default function Shipping() {
           <Dialog header={'Deactive Shipping Term'} className='container editDialog' visible={displayDeactiveDialog} onHide={hideDialog} modal>
             <h5>Do you want to Deactivate this Shipping?</h5>
             <hr />
+            {ErrorMsg ? <div className='alert text-danger'>{ErrorMsg}</div> :null}
             <div className="d-flex align-items-center justify-content-around">
               {LoaderBtn ? <button className='btn btn-danger  w-50 mx-2 px-4' disabled><i className='fa fa-spin fa-spinner'></i></button> :
-                <button className='btn btn-danger  w-50 mx-2 px-4' onClick={() => { deleteShipping(SelectedShippings._id, 'false') }}>Yes</button>}
+                <button className='btn btn-danger  w-50 mx-2 px-4' onClick={() => { deleteShipping(SelectedShippings._id, false) }}>Yes</button>}
               <button className='btn btn-primary w-50 mx-2  px-4' onClick={() => { setDisplayDeactiveDialog(false) }}>No</button>
             </div>
           </Dialog>
           <Dialog header={'Acctive Shipping Term'} className='container editDialog' visible={displayActiveDialog} onHide={hideDialog} modal>
             <h5>Do you want to Activate this Shipping, It Must Be Only 1 Shipping Active?</h5>
             <hr />
+            {ErrorMsg ? <div className='alert text-danger'>{ErrorMsg}</div> :null}
+
             <div className="d-flex align-items-center justify-content-around">
               {LoaderBtn ? <button className='btn btn-danger  w-50 mx-2 px-4' disabled><i className='fa fa-spin fa-spinner'></i></button> :
-                <button className='btn btn-danger  w-50 mx-2 px-4' onClick={() => { deleteShipping(SelectedShippings._id, 'true') }}>Yes</button>}
+                <button className='btn btn-danger  w-50 mx-2 px-4' onClick={() => { deleteShipping(SelectedShippings._id, true) }}>Yes</button>}
               <button className='btn btn-primary w-50 mx-2  px-4' onClick={() => { setDisplayDeactiveDialog(false) }}>No</button>
             </div>
           </Dialog>
@@ -192,7 +200,7 @@ export default function Shipping() {
                 <label className='ms-2' htmlFor="username">max_price</label>
                 {AddNewFormik.errors.max_price && AddNewFormik.touched.max_price ? (<div className="alert text-danger">{AddNewFormik.errors.max_price}</div>) : null}
               </div>
-
+              {ErrorMsg ? <div className='alert text-danger'>{ErrorMsg}</div> :null}
               <div className="btns ms-auto w-100 d-flex justify-content-center mt-3">
               {LoaderBtn ? <button className='btn btn-primary text-light w-50' disabled><i className="fa fa-spin fa-spinner"></i></button>:
                 <Button label="SUBMIT" type="submit" icon="pi pi-check" disabled={!(AddNewFormik.isValid && AddNewFormik.dirty)} className="btn btn-primary text-light w-50"/>

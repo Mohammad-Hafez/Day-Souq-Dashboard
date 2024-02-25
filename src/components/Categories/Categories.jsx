@@ -80,6 +80,7 @@ export default function Categories() {
       });
     }
   }, [SelectedCategory]);
+  
   const editCategory = async (id, values) => {
     setLoaderBtn(true);
     const editFormData = new FormData();
