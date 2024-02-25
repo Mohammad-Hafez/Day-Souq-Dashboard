@@ -13,7 +13,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import EditProduct from '../EditProduct/EditProduct';
 import AddProduct from '../AddProduct/AddProduct';
 import Loader from '../Loader/Loader';
-
+import { BiSolidDiscount } from "react-icons/bi";
 export default function Products() {
   const user = localStorage.getItem("DaySooqDashUser") ;
   let headers = { 'Authorization': `Bearer ${user}` };
@@ -28,6 +28,7 @@ export default function Products() {
   const [SelectedProducts, setSelectedProducts] = useState(null)
   const [ProductDescription, setProductDescription] = useState('')
   const [ProductDescriptionDialog, setProductDescriptionDialog] = useState(false)
+  const [DiscountDialog, setDiscountDialog] = useState(false)
   const [LoaderBtn, setLoaderBtn] = useState(false)
   const [Products, setProducts] = useState()
   const [filteredProducts, setFilteredProducts] = useState()
@@ -84,13 +85,16 @@ export default function Products() {
     setDisplayDeleteDialog(false);
     setDisplayAddNewDialog(false);
     setProductDescriptionDialog(false);
-    setProductDescription('')
+    setProductDescription('');
+    setSelectedProducts(null);
+    setDiscountDialog(false)
   };
 
   // *ANCHOR - actions at table for each row
   const actionTemplate = (rowData) => {
     return (
       <div className='d-flex justify-content-center align-items-center '>
+        <BiSolidDiscount  className='TabelButton discount rounded-circle mx-1 p-1' onClick={()=>{setDiscountDialog(true); setSelectedProducts(rowData)}}/>
         <Button icon="pi pi-pencil" className='TabelButton approve rounded-circle mx-1' onClick={() => { setDisplayEditDialog(true); setSelectedProducts(rowData) }} />
         <Button onClick={() => navigate(`/Products/${CategoryName}/${rowData?.name}/${rowData._id}`)} icon="pi pi-ban" className='TabelButton rounded-circle mx-auto' outlined severity="secondary" />
         <Button icon="pi pi-trash" className='TabelButton Cancel rounded-circle mx-1' onClick={() => { setSelectedProducts(rowData._id); setDisplayDeleteDialog(true);}} />
@@ -168,6 +172,15 @@ export default function Products() {
               </h5>
             </div>
           </Dialog>
+          <Dialog header={'Product Description'} className='container editDialog' visible={DiscountDialog} onHide={hideDialog} modal>
+            <div className="container">
+              <DataTable value={SelectedProducts} header="Product Discount" paginator selectionMode="single" className={`dataTabel mb-4 text-capitalize AllList`} dataKey="_id" scrollable scrollHeight="100vh" tableStyle={{ minWidth: "50rem" }} rows={5} responsive="scroll">
+                <Column field="Discount Value"  sortable style={{ width: "5%", borderBottom: '1px solid #dee2e6' }} />
+                <Column field="Discount Type"  sortable style={{ width: "5%", borderBottom: '1px solid #dee2e6' }} />
+              </DataTable>
+            </div>
+          </Dialog>
+
           {displayEditDialog &&
             <EditProduct
               SelectedProducts={SelectedProducts}
