@@ -229,9 +229,6 @@ export default function Blogs() {
               </div>
           </form>
       </Dialog>
-
-
-
       </div>
     }
     </>
