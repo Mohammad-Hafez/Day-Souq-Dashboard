@@ -11,7 +11,10 @@ import { ApiBaseUrl, ImgBaseURL } from '../ApiBaseUrl';
 import { useQuery } from 'react-query';
 import Loader from '../Loader/Loader';
 
-export default function Banners({headers}) {
+export default function Banners() {
+  const user = localStorage.getItem("DaySooqDashUser") ;
+  let headers = { 'Authorization': `Bearer ${user}` };
+
   const [LoaderBtn, setLoaderBtn] = useState(false)
   const [SelectedBanner, setSelectedBanner] = useState(null)
   const [displayDeleteDialog, setDisplayDeleteDialog] = useState(false)
@@ -19,7 +22,7 @@ export default function Banners({headers}) {
 
   const getBanners = () => axios.get(ApiBaseUrl + `banners`)
   let {data: bannerResponse , isLoading : bannerLoading  , refetch:bannerRefetch} = useQuery('get banners' , getBanners , {cacheTime : 10000})
-  console.log(bannerResponse?.data.data.data);
+
   let AddNewInitial = {
     description :'', 
     type :'', 
@@ -36,6 +39,7 @@ export default function Banners({headers}) {
     }),
     onSubmit:(values)=>AddNewBanner(values)
   })
+
   const AddNewBanner = async (values) => {
     setLoaderBtn(true)
     const AddformData = new FormData();

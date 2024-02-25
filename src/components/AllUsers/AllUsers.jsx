@@ -11,7 +11,10 @@ import { ApiBaseUrl } from '../ApiBaseUrl';
 import { useQuery } from 'react-query';
 import Loader from '../Loader/Loader';
 
-export default function AllUsers({ headers }) {
+export default function AllUsers() {
+  const user = localStorage.getItem("DaySooqDashUser") ;
+  let headers = { 'Authorization': `Bearer ${user}` };
+
   const [LoaderBtn, setLoaderBtn] = useState(false);
   const [SelectedUser, setSelectedUser] = useState(null);
   const [displayDeleteDialog, setDisplayDeleteDialog] = useState(false);

@@ -12,7 +12,10 @@ import { useQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import Loader from '../Loader/Loader';
 
-export default function Brands({ headers }) {
+export default function Brands() {
+  const user = localStorage.getItem("DaySooqDashUser") ;
+  let headers = { 'Authorization': `Bearer ${user}` };
+
   let navigate = useNavigate();
   const [displayEditDialog, setDisplayEditDialog] = useState(false);
   const [displayDeleteDialog, setDisplayDeleteDialog] = useState(false);

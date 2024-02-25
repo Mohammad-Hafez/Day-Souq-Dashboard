@@ -12,7 +12,10 @@ import { useQuery } from 'react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 import Loader from '../Loader/Loader';
 
-export default function SubCategory({ headers }) {
+export default function SubCategory() {
+  const user = localStorage.getItem("DaySooqDashUser") ;
+  let headers = {'Authorization': `Bearer ${user}`};
+
   let navigate = useNavigate();
   let { CategoryName, id , all} = useParams();
 
@@ -62,7 +65,7 @@ export default function SubCategory({ headers }) {
     AddformData.append('image', values.image);
     AddformData.append('category', id);
     try {
-      await axios.post(ApiBaseUrl + `subCategories`, AddformData, { headers });
+      await axios.post(ApiBaseUrl + `subCategories`, AddformData, {headers});
       subForCategoryRefetch();
       setLoaderBtn(false);
       hideDialog();

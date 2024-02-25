@@ -12,7 +12,9 @@ import { useQuery } from 'react-query';
 import { useParams } from 'react-router-dom';
 import Loader from '../Loader/Loader';
 
-export default function ProductVariants({headers}) {
+export default function ProductVariants() {
+  const user = localStorage.getItem("DaySooqDashUser") ;
+  let headers = { 'Authorization': `Bearer ${user}` };
 
   let {productName , productId} = useParams()
 

@@ -21,10 +21,14 @@ import Brands from './components/Brands/Brands';
 import AllUsers from './components/AllUsers/AllUsers';
 import NotFound from './components/NotFound/NotFound';
 import ProductVariants from './components/ProductVariants/ProductVariants';
+import Orders from './components/Orders/Orders';
+import Blogs from './components/Blogs/Blogs';
+import Coupons from './components/Coupons/Coupons';
+import Shipping from './components/Shipping/Shipping';
 
 function App() {
+
   const [UserToken, setUserToken] = useState(null);
-  const [Headers, setHeaders] = useState(null)
   function saveUserData(){
     let encodedPharmacistToken = localStorage.getItem("DaySooqDashUser");
     setUserToken(encodedPharmacistToken)
@@ -40,7 +44,6 @@ function App() {
     const storedUserToken = localStorage.getItem('DaySooqDashUser');
     if (storedUserToken) {
       const decodedUserToken = jwtDecode(storedUserToken);
-      setHeaders({'Authorization': `Bearer ${storedUserToken}`} )
       if (decodedUserToken.exp * 1000 < Date.now()) {
         Logout();
       } else {
@@ -61,16 +64,20 @@ function App() {
           <Route path="PasswordOtp" element={<PasswordOtp saveUserData={saveUserData}/>} /> 
           <Route path="ResetPassword" element={<ResetPassword saveUserData={saveUserData}/>} /> 
           <Route index element={<ProtectedRoutes> <Home UserToken={UserToken}/> </ProtectedRoutes> } /> 
-          <Route path="Brands" element={<ProtectedRoutes> <Brands headers={Headers}  UserToken={UserToken}/> </ProtectedRoutes> } /> 
-          <Route path="Banners" element={<ProtectedRoutes> <Banners headers={Headers}  UserToken={UserToken}/> </ProtectedRoutes> } /> 
-          <Route path="Categories" element={<ProtectedRoutes> <Categories headers={Headers}  UserToken={UserToken}/> </ProtectedRoutes> } /> 
-          <Route path="Users" element={<ProtectedRoutes> <AllUsers headers={Headers}  UserToken={UserToken}/> </ProtectedRoutes> } /> 
-          <Route path="SubCategory/:all" element={<ProtectedRoutes> <SubCategory headers={Headers}  UserToken={UserToken}/> </ProtectedRoutes> } /> 
-          <Route path="SubCategory/:CategoryName/:id" element={<ProtectedRoutes> <SubCategory headers={Headers}  UserToken={UserToken}/> </ProtectedRoutes> } /> 
-          <Route path="Products/:all" element={<ProtectedRoutes> <Products headers={Headers}  UserToken={UserToken}/> </ProtectedRoutes> } /> 
-          <Route path="Products/:BrandName/:BrandId" element={<ProtectedRoutes> <Products headers={Headers}  UserToken={UserToken}/> </ProtectedRoutes> } /> 
-          <Route path="Products/:CategoryName/:categoryId/:SubCategoryName/:subCategoryId" element={<ProtectedRoutes> <Products headers={Headers}  UserToken={UserToken}/> </ProtectedRoutes> } /> 
-          <Route path="ProductVariants/:productName/:productId" element={<ProtectedRoutes> <ProductVariants headers={Headers}  UserToken={UserToken}/> </ProtectedRoutes> } /> 
+          <Route path="Blogs" element={<ProtectedRoutes> <Blogs UserToken={UserToken}/> </ProtectedRoutes> } /> 
+          <Route path="Coupons" element={<ProtectedRoutes> <Coupons UserToken={UserToken}/> </ProtectedRoutes> } /> 
+          <Route path="Shipping" element={<ProtectedRoutes> <Shipping UserToken={UserToken}/> </ProtectedRoutes> } /> 
+          <Route path="Brands" element={<ProtectedRoutes> <Brands UserToken={UserToken}/> </ProtectedRoutes> } /> 
+          <Route path="Orders" element={<ProtectedRoutes> <Orders UserToken={UserToken}/> </ProtectedRoutes> } /> 
+          <Route path="Banners" element={<ProtectedRoutes> <Banners UserToken={UserToken}/> </ProtectedRoutes> } /> 
+          <Route path="Categories" element={<ProtectedRoutes> <Categories UserToken={UserToken}/> </ProtectedRoutes> } /> 
+          <Route path="Users" element={<ProtectedRoutes> <AllUsers UserToken={UserToken}/> </ProtectedRoutes> } /> 
+          <Route path="SubCategory/:all" element={<ProtectedRoutes> <SubCategory UserToken={UserToken}/> </ProtectedRoutes> } /> 
+          <Route path="SubCategory/:CategoryName/:id" element={<ProtectedRoutes> <SubCategory UserToken={UserToken}/> </ProtectedRoutes> } /> 
+          <Route path="Products/:all" element={<ProtectedRoutes> <Products UserToken={UserToken}/> </ProtectedRoutes> } /> 
+          <Route path="Products/:BrandName/:BrandId" element={<ProtectedRoutes> <Products UserToken={UserToken}/> </ProtectedRoutes> } /> 
+          <Route path="Products/:CategoryName/:categoryId/:SubCategoryName/:subCategoryId" element={<ProtectedRoutes> <Products UserToken={UserToken}/> </ProtectedRoutes> } /> 
+          <Route path="ProductVariants/:productName/:productId" element={<ProtectedRoutes> <ProductVariants UserToken={UserToken}/> </ProtectedRoutes> } /> 
           <Route path="*" element={<NotFound/>} /> 
           </Route>
         </Routes>
@@ -78,5 +85,4 @@ function App() {
     </PrimeReactProvider>
   );
 }
-
 export default App;

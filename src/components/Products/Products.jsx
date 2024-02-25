@@ -14,7 +14,9 @@ import EditProduct from '../EditProduct/EditProduct';
 import AddProduct from '../AddProduct/AddProduct';
 import Loader from '../Loader/Loader';
 
-export default function Products({ headers }) {
+export default function Products() {
+  const user = localStorage.getItem("DaySooqDashUser") ;
+  let headers = { 'Authorization': `Bearer ${user}` };
 
   let navigate = useNavigate();
 

@@ -12,7 +12,10 @@ import { useQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import Loader from '../Loader/Loader';
 
-export default function Categories({ headers }) {
+export default function Categories() {
+  const user = localStorage.getItem("DaySooqDashUser") ;
+  let headers = { 'Authorization': `Bearer ${user}` };
+
   let navigate = useNavigate();
   const [displayEditDialog, setDisplayEditDialog] = useState(false);
   const [displayDeleteDialog, setDisplayDeleteDialog] = useState(false);
@@ -29,6 +32,7 @@ export default function Categories({ headers }) {
       setFilteredCategories(data?.data.data.data);
     }
   }, [data]);
+
   let AddNewInitial = {
     name: '',
     image: ''
