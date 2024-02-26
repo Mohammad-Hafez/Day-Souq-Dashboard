@@ -434,18 +434,11 @@ list-style: none;
   align-items: center;
   justify-content: center ;
 }
-.usersIcon{
-  background: #1b1a5577;
-  color: #1B1A55 ;
-}
+.usersIcon ,
+.BrandsIcon ,
 .OrderIcon{
-  background: #1b1a5577;
-  color: #1B1A55 ;
-
-}
-.BrandsIcon{
-  background: #1b1a5577;
-  color: #1B1A55 ;
+  background: #2320de3b;
+  color: #1412a4e5 ;
 }
 /* *ANCHOR - Auth */
 .selectAuth{
