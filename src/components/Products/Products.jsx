@@ -32,7 +32,8 @@ export default function Products() {
   const [LoaderBtn, setLoaderBtn] = useState(false)
   const [Products, setProducts] = useState()
   const [filteredProducts, setFilteredProducts] = useState()
-
+  const [ErrMsg, setErrMsg] = useState(null)
+  const [SelectedDiscount, setSelectedDiscount] = useState()
   const getAllBrands = () => axios.get(ApiBaseUrl + `brands`)
   const getAllCategories = () => axios.get(ApiBaseUrl + `categories`)
   const getAllSubcategories = ()=> axios.get(ApiBaseUrl +`subcategories`)
@@ -64,8 +65,10 @@ export default function Products() {
 
   // *ANCHOR - delete product
   const deleteProduct = async (id) => {
-    try {
+    setErrMsg(null);
+    setLoaderBtn(true)
       await axios.delete(ApiBaseUrl + `products/${id}`, { headers })
+      .then(response =>{
       if (CategoryName) {
         SubcatProductsRefetch()
       } else if (BrandName) {
@@ -74,9 +77,12 @@ export default function Products() {
         AllRefetch()
       }
       hideDialog()
-    } catch (error) {
+      setLoaderBtn(true)
+    }).catch (error =>{
+      setErrMsg(error.response.data.message);
       console.error(error);
-    }
+      setLoaderBtn(true)
+    })
   }
 
   // *ANCHOR - hide all modals
@@ -87,14 +93,15 @@ export default function Products() {
     setProductDescriptionDialog(false);
     setProductDescription('');
     setSelectedProducts(null);
-    setDiscountDialog(false)
+    setDiscountDialog(false);
+    editDiscountFormik.resetForm()
   };
 
   // *ANCHOR - actions at table for each row
   const actionTemplate = (rowData) => {
     return (
       <div className='d-flex justify-content-center align-items-center '>
-        <BiSolidDiscount  className='TabelButton discount rounded-circle mx-1 p-1' onClick={()=>{setDiscountDialog(true); setSelectedProducts(rowData)}}/>
+        <BiSolidDiscount  className='TabelButton discount rounded-circle mx-1 p-1' onClick={()=>{setDiscountDialog(true); setSelectedDiscount(rowData._id)}}/>
         <Button icon="pi pi-pencil" className='TabelButton approve rounded-circle mx-1' onClick={() => { setDisplayEditDialog(true); setSelectedProducts(rowData) }} />
         <Button onClick={() => navigate(`/Products/${CategoryName}/${rowData?.name}/${rowData._id}`)} icon="pi pi-ban" className='TabelButton rounded-circle mx-auto' outlined severity="secondary" />
         <Button icon="pi pi-trash" className='TabelButton Cancel rounded-circle mx-1' onClick={() => { setSelectedProducts(rowData._id); setDisplayDeleteDialog(true);}} />
@@ -138,7 +145,43 @@ export default function Products() {
   const sizesBody = (rowData) => rowData?.sizes?.map((size, index) => <span key={index} className='d-block'>{size}</span>)
   const descriptionBody = (rowData) => <Button onClick={() => { setProductDescription(rowData.description); setProductDescriptionDialog(true) }} icon="pi pi-eye" className='TabelButton dark-blue-text blue-brdr bg-transparent rounded-circle mx-auto' />
 
-  return <>
+  const editDiscount = (id, values) => {
+    const { type, value } = values;
+    const data = {
+      priceDiscount: {
+        type,
+        value: parseFloat(value) 
+      }
+    };
+    axios.patch(ApiBaseUrl + `products/${id}`, data, { headers })
+      .then(response => {
+        if (CategoryName) {
+          SubcatProductsRefetch();
+        } else if (BrandName) {
+          BrandProductsRefetch();
+        } else if (all) {
+          AllRefetch();
+        }
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  };
+  
+  let editDiscountFormik = useFormik({
+    initialValues:{
+      type :'',
+      value :''
+    },
+    validationSchema : Yup.object().shape({
+      type : Yup.string().required('Discount Type is required'),
+      value : Yup.string().required('Discount value is required')
+    }),
+    onSubmit :(values) => editDiscount( SelectedDiscount ,values)
+  })
+
+  const discountBody = (rowData)=> rowData?.priceDiscount?.type === 'fixed' ? rowData?.priceDiscount?.value + ' JOD' : rowData?.priceDiscount.value + ' %'
+return <>
     <Helmet>
       <title>Products</title>
     </Helmet>
@@ -152,34 +195,60 @@ export default function Products() {
             <Column header="description" body={descriptionBody} sortable style={{ width: "5%", borderBottom: '1px solid #dee2e6' }} />
             <Column field="price" header="Price (JOD)" sortable style={{ width: "8%", borderBottom: '1px solid #dee2e6' }} />
             <Column header="sizes" body={sizesBody} sortable style={{ width: "8%", borderBottom: '1px solid #dee2e6' }} />
+            <Column header="Discount" body={discountBody} sortable style={{ width: "5%", borderBottom: '1px solid #dee2e6' }} />
             <Column field="quantity" header="quantity" sortable style={{ width: "5%", borderBottom: '1px solid #dee2e6' }} />
             <Column header="status" body={productStatus} sortable style={{ width: "5%", borderBottom: '1px solid #dee2e6' }} />
             <Column header="Variants" body={getProductVariants} style={{ width: "5%", borderBottom: '1px solid #dee2e6' }} />
             <Column header="Actions" body={actionTemplate} style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
           </DataTable>
+
           <Dialog header={'Delete Product'} className='container editDialog' visible={displayDeleteDialog} onHide={hideDialog} modal>
             <h5 className='mb-2'>you want delete this Products ?</h5>
             <div className="d-flex align-items-center justify-content-around">
               <hr/>
+              {ErrMsg ? <div className='alert text-danger'>{ErrMsg}</div> :null}
               <button className='btn btn-danger px-4 w-50 mx-2' onClick={() => { deleteProduct(SelectedProducts) }}>Yes</button>
               <button className='btn btn-primary px-4 w-50 mx-2' onClick={() => { setDisplayDeleteDialog(false) }}>No</button>
             </div>
           </Dialog>
+
           <Dialog header={'Product Description'} className='container editDialog' visible={ProductDescriptionDialog} onHide={hideDialog} modal>
-            <div className="cont">
+            <div className="container">
               <h5>
                 {ProductDescription}
               </h5>
             </div>
           </Dialog>
-          <Dialog header={'Product Description'} className='container editDialog' visible={DiscountDialog} onHide={hideDialog} modal>
-            <div className="container">
-              <DataTable value={SelectedProducts} header="Product Discount" paginator selectionMode="single" className={`dataTabel mb-4 text-capitalize AllList`} dataKey="_id" scrollable scrollHeight="100vh" tableStyle={{ minWidth: "50rem" }} rows={5} responsive="scroll">
-                <Column field="Discount Value"  sortable style={{ width: "5%", borderBottom: '1px solid #dee2e6' }} />
-                <Column field="Discount Type"  sortable style={{ width: "5%", borderBottom: '1px solid #dee2e6' }} />
-              </DataTable>
-            </div>
-          </Dialog>
+
+          <Dialog header={'Edit Product Discount'} className='container editDialog' visible={DiscountDialog} onHide={hideDialog} modal>
+      <div className="container">
+        <form className='bg-light p-3 border shadow-sm rounded' onSubmit={editDiscountFormik.handleSubmit}>
+
+          <div className="form-floating mb-2">
+            <select className="form-select" id="type" name="type" value={editDiscountFormik.values.type} onChange={editDiscountFormik.handleChange} onBlur={editDiscountFormik.handleBlur}>
+              <option value="" disabled>Select Discount Type</option>
+              <option value='fixed'>fixed</option>
+              <option value='percentage'>percentage</option>
+            </select>
+            <label className='ms-2' htmlFor="type">Type</label>
+            {editDiscountFormik.errors.type && editDiscountFormik.touched.type && <div className="alert text-danger">{editDiscountFormik.errors.type}</div>}
+          </div>
+
+          <div className="form-floating mb-2">
+            <input type="text" placeholder='value' className="form-control" id="value" name="value" value={editDiscountFormik.values.value} onChange={editDiscountFormik.handleChange} onBlur={editDiscountFormik.handleBlur} />
+            <label className='ms-2' htmlFor="value">Value</label>
+            {editDiscountFormik.errors.value && editDiscountFormik.touched.value && <div className="alert text-danger">{editDiscountFormik.errors.value}</div>}
+          </div>
+
+          {ErrMsg ? <div className='alert text-danger'>{ErrMsg}</div> : null}
+          <div className="btns ms-auto w-100 d-flex justify-content-center mt-3">
+            {LoaderBtn ? <button className='btn btn-primary text-light w-50' disabled><i className="fa fa-spin fa-spinner"></i></button> :
+              <Button label="SUBMIT" type="submit" icon="pi pi-check" disabled={!editDiscountFormik.isValid} className="btn btn-primary text-light w-50" />
+            }
+          </div>
+        </form>
+      </div>
+    </Dialog>
 
           {displayEditDialog &&
             <EditProduct

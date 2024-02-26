@@ -21,7 +21,7 @@ export default function AllUsers() {
   const [displaySendAllDialog, setDisplaySendAllDialog] = useState(false);
   const [displayToUser, setDisplayToUser] = useState(false);
   const [filteredUsers, setFilteredUsers] = useState([]);
-
+  const [ErrMsg, setErrMsg] = useState(null)
   const getAllUsers = () => axios.get(ApiBaseUrl + `users`, { headers });
   let { data: UsersResponse, isLoading: UserLoading, refetch: userRefetch } = useQuery(
     'get All Users',
@@ -76,25 +76,31 @@ export default function AllUsers() {
 
   const sendNotificationToUser = async (userId, values) => {
     setLoaderBtn(true);
-    console.log(userId);
-    try {
-      await axios.post(ApiBaseUrl +`notifications/${userId}`, values, {headers});
-      hideDialog();
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoaderBtn(false);
+    setErrMsg(null)
+      await axios.post(ApiBaseUrl +`notifications/${userId}`, values, {headers})
+      .then( response =>{ 
+        hideDialog()
+        setLoaderBtn(false);
+      } )
+      .catch (error => {
+        setErrMsg(error.response.data.message);
+        console.error(error);
+        setLoaderBtn(false);
+      })
     }
-  };
   
   const deleteUser =async (id)=>{
-    try {
+    setErrMsg(null)
+    setLoaderBtn(true);
       await axios.delete(ApiBaseUrl + `users/${id}` , { headers })
+      .then(response =>{
       userRefetch()
       hideDialog()
-    } catch (error) {
-      console.error(error);
-    }
+      }).catch (error=> {
+        setErrMsg(error.response.data.message);
+        console.error(error);
+        setLoaderBtn(false);
+    })
   }
 
   const hideDialog = () => {
@@ -103,6 +109,8 @@ export default function AllUsers() {
     setDisplayToUser(false)
     setSelectedUser(null)
     SendToAllFormik.resetForm();
+    SendToUserFormik.resetForm();
+    setErrMsg(null);
   };
 
   const actionTemplate = (rowData) => {
@@ -123,11 +131,14 @@ export default function AllUsers() {
           <h3>All users</h3>
         </div>
         <div className="d-flex flex-column">
-        <div className="searchCategory mb-2">
+        <div className="searchCategory mb-2 d-flex">
+          <span className="p-inputgroup-addon">
+            <i className="pi pi-search" />
+          </span>
           <input
             type="text"
             placeholder="Search by name or phone"
-            className="form-control"
+            className="form-control rounded-start-0"
             onChange={handleSearch}
           />
         </div>
@@ -159,8 +170,10 @@ export default function AllUsers() {
       <Dialog header={'Delete User'} className='container editDialog' visible={displayDeleteDialog} onHide={hideDialog} modal>
         <h5>you want delete this User ?</h5>
         <hr />
+        {ErrMsg ? <div className='alert text-danger'>{ErrMsg}</div> :null}
         <div className="d-flex align-items-center justify-content-around">
-        <button className='btn btn-danger  w-50 mx-2 px-4' onClick={()=>{deleteUser(SelectedUser)}}>Yes</button>
+        {LoaderBtn ? <button className='btn btn-danger  w-50 mx-2 px-4' disabled><i className='fa fa-spin fa-spinner'></i></button>: 
+        <button className='btn btn-danger  w-50 mx-2 px-4' onClick={()=>{deleteUser(SelectedUser)}}>Yes</button>}
         <button className='btn btn-primary w-50 mx-2  px-4' onClick={()=>{setDisplayDeleteDialog(false)}}>No</button>
         </div>
       </Dialog>  

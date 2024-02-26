@@ -35,7 +35,6 @@ export default function Shipping() {
     minimum :'', 
     maximum :'', 
     max_price : '',
-    // active :false
   }
 
   let AddNewFormik = useFormik({
@@ -67,7 +66,6 @@ export default function Shipping() {
 
   const deleteShipping = async (id, status) => {
     setLoaderBtn(true);
-    console.log(status);
       await axios.patch(ApiBaseUrl + `shippings/${id}`, { active: status }, { headers })
       .then(response => {
         hideDialog()
@@ -116,8 +114,8 @@ export default function Shipping() {
     );
   };
 
-  const minDays = (rowData)=> <span>{rowData?.delivery_estimate.minimum}</span>
-  const maxDays = (rowData)=> <span>{rowData?.delivery_estimate.maximum}</span>
+  const minDays = (rowData)=> rowData?.delivery_estimate?.minimum
+  const maxDays = (rowData)=> rowData?.delivery_estimate?.maximum
   return (
     <>
       <Helmet>
@@ -138,12 +136,12 @@ export default function Shipping() {
             rows={10}
             responsive="scroll"
           >
-            <Column header="name" field='name' style={{ width: "10%", bShippingBottom: '1px solid #dee2e6' }} />
-            <Column header="amount (JOD)" field='amount' style={{ width: "10%", bShippingBottom: '1px solid #dee2e6' }} />
-            <Column header="minimum Days" body={minDays}  style={{ width: "10%", bShippingBottom: '1px solid #dee2e6' }} />
-            <Column header="maximum Days" body={maxDays}  style={{ width: "10%", bShippingBottom: '1px solid #dee2e6' }} />
-            <Column header="max_price (JOD)" field='max_price' style={{ width: "10%", bShippingBottom: '1px solid #dee2e6' }} />
-            <Column header="active" field='active' style={{ width: "10%", bShippingBottom: '1px solid #dee2e6' }} />
+            <Column header="name" field='name' sortable style={{ width: "10%", bShippingBottom: '1px solid #dee2e6' }} />
+            <Column header="amount (JOD)" field='amount' sortable style={{ width: "10%", bShippingBottom: '1px solid #dee2e6' }} />
+            <Column header="minimum Days" body={minDays} sortable style={{ width: "10%", bShippingBottom: '1px solid #dee2e6' }} />
+            <Column header="maximum Days" body={maxDays} sortable style={{ width: "10%", bShippingBottom: '1px solid #dee2e6' }} />
+            <Column header="max_price (JOD)" field='max_price' sortable style={{ width: "10%", bShippingBottom: '1px solid #dee2e6' }} />
+            <Column header="active" field='active' sortable style={{ width: "10%", bShippingBottom: '1px solid #dee2e6' }} />
             <Column header="Active/Deactive" body={actionTemplate} style={{ width: "10%", bShippingBottom: '1px solid #dee2e6' }} />
           </DataTable>
           <Dialog header={'Deactive Shipping Term'} className='container editDialog' visible={displayDeactiveDialog} onHide={hideDialog} modal>

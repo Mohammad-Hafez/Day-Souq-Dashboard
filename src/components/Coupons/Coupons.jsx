@@ -19,6 +19,7 @@ export default function Coupons() {
   const [filteredCoupons, setFilteredCoupons] = useState([]);
   const [AllCoupons, setAllCoupons] = useState([]);
   const [searchValue, setSearchValue] = useState('');
+  const [ErrMsg, setErrMsg] = useState(null)
 
   const getAllCoupons = ()=> axios.get( ApiBaseUrl + `Coupons`,{headers});
   let { data: AllCouponsResponse, isLoading: AllCouponsLoading, refetch: AllCouponsRefetch } = useQuery(
@@ -45,15 +46,15 @@ export default function Coupons() {
 
   const deleteCoupon = async (id) => {
     setLoaderBtn(true);
-    try {
-      await axios.delete(ApiBaseUrl + `Coupons/${id}`, {headers});
+      await axios.delete(ApiBaseUrl + `Coupons/${id}`, {headers})
+      .then(response => {
       AllCouponsRefetch();
       hideDialog();
-    } catch (error) {
-      console.error(error);
-    } finally {
       setLoaderBtn(false);
-    }
+    }).catch (error=> {
+      console.error(error);
+      setLoaderBtn(false);
+    }) 
   };
 
   const hideDialog = () => {
