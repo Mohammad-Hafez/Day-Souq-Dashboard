@@ -55,6 +55,7 @@ export default function Login({saveUserData}) {
   initialValues:{
     email:"",
     password:"",
+    dashboard:true
   },
   validationSchema:mySchema,
   onSubmit:(values)=> makeLogged(values)

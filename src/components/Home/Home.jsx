@@ -168,7 +168,7 @@ export default function Home() {
                   </div> 
                   <div className="usersNum w-75 ms-auto text-center">
                     <p className="fs-4 fw-bolder text-center rounded-circle mx-auto">
-                      +   {StatisticsData && StatisticsData.data.auctionProducts.find(item => item._id === 'ended') ? StatisticsData.data.auctionProducts.find(item => item._id === 'ended').total : 0}
+                      +  {StatisticsData && StatisticsData.data.auctionProducts.find(item => item._id === 'ended') ? StatisticsData.data.auctionProducts.find(item => item._id === 'ended').total : 0}
 
                     </p> 
                     <h4 className="my-2">Ended Auction</h4>
