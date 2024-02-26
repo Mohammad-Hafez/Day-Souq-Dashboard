@@ -237,6 +237,9 @@ list-style: none;
   padding-bottom: 0;
   padding-top: 4px;
 }
+.p-sidebar .p-sidebar-content{
+  padding-left: .5rem;
+}
 /* *ANCHOR -  tables */
 .Tabel {
   margin-bottom: 50px;

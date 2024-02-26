@@ -25,10 +25,10 @@ export default function HeaderSearch({ UserToken, Logout }) {
   const { data } = useQuery('my-profile', getMyProfile, { cacheTime: 5000, enabled: !!user });
 
   const NavItem = ({ to, activeLink, onClick, name , icon }) => (
-    <li className="nav-item">
+    <li className="nav-item border-0 border-bottom w-100">
       <Link
         to={to}
-        className={`nav-link px-1 my-4 dark-grey-text ${activeLink === name ? 'active' : ''}`}
+        className={`nav-link fw-bolder px-1 my-4 dark-grey-text ${activeLink === name ? 'active' : ''}`}
         onClick={() => {
           onClick(name);
         }}
@@ -41,7 +41,7 @@ export default function HeaderSearch({ UserToken, Logout }) {
   return (
     <>
       <Sidebar visible={visibleSidebar} onHide={() => setVisibleSidebar(false)}>
-        <ul className="menu-items">
+        <ul className="menu-items font-Poppins">
           <NavItem  to={'/'} activeLink={activeLink} onClick={setActiveLink} name={'Home'}  icon={'pi-home'}/>
           <NavItem  to={'Products/all'} activeLink={activeLink} onClick={setActiveLink} name={'All Products'} icon={'pi-box'} />
           <NavItem  to={'SubCategory/auction/6517dbc538001813b052bd73'} activeLink={activeLink} onClick={setActiveLink} name={'Bidding Products'} icon={'auction'} />
@@ -54,7 +54,7 @@ export default function HeaderSearch({ UserToken, Logout }) {
           <NavItem  to={'Shipping'} activeLink={activeLink} onClick={setActiveLink} name={'Shipping'} icon={'pi-truck'} />
           <NavItem  to={'Coupons'} activeLink={activeLink} onClick={setActiveLink} name={'Coupon'} icon={'pi-money-bill'} />
           <NavItem  to={'Users'} activeLink={activeLink} onClick={setActiveLink} name={'Users & notifications'} icon={'pi-users'}/>
-          <Link className={`nav-link px-1 my-4 dark-grey-text`} onClick={Logout}>
+          <Link className={`nav-link px-1 my-4 dark-grey-text fw-bolder`} onClick={Logout}>
              <FiLogOut className="fs-4 pb-1 cursor-pointer"/> Logout
           </Link>
         </ul>
