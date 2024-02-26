@@ -431,6 +431,19 @@ list-style: none;
   align-items: center;
   justify-content: center ;
 }
+.usersIcon{
+  background: #1b1a5577;
+  color: #1B1A55 ;
+}
+.OrderIcon{
+  background: #1b1a5577;
+  color: #1B1A55 ;
+
+}
+.BrandsIcon{
+  background: #1b1a5577;
+  color: #1B1A55 ;
+}
 /* *ANCHOR - Auth */
 .selectAuth{
   padding-inline: 20px;
