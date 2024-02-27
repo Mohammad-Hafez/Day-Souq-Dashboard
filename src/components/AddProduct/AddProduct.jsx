@@ -144,7 +144,7 @@ export default function AddProduct({ LoaderBtn, subCategoryId, categoryId , Cate
           {AddNewError ? <div className='alert text-danger'>{AddNewError}</div> :null}
           <div className="btns ms-auto w-100 d-flex justify-content-center mt-3">
             {LoaderBtn ? <button className='btn btn-primary text-light w-50' disabled><i className="fa fa-spin fa-spinner"></i></button> :
-              <Button label="SUBMIT" type="submit" icon="pi pi-check" disabled={!(AddNewFormik.isValid && AddNewFormik.dirty)} className="btn btn-primary text-light w-50" />
+              <Button label="SUBMIT" type="submit" icon="pi pi-check" className="btn btn-primary text-light w-50" />
             }
           </div>
         </form>
