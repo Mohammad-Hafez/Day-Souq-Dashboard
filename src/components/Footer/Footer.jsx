@@ -10,7 +10,7 @@ export default function Footer() {
   return <>
   <div className="footer rounded-top">
     <div className="container ">
-      <div className="row">
+      {/* <div className="row">
         <div className="col-12 col-md-6">
           <div className="footer-item p-4 text-start">
             <div className="logo mb-3">
@@ -38,7 +38,7 @@ export default function Footer() {
             </div>
           </div>  
         </div>
-        {/* <div className="col-4 col-md-2">
+         <div className="col-4 col-md-2">
           <div className="footer-item p-4 text-start">
             <h6 className='dark-grey-text'>Categories</h6>
             <Link to={''} className='main-grey-text text-decoration-none my-2 d-block'>TV & Audio</Link>
@@ -50,8 +50,8 @@ export default function Footer() {
             <Link to={''} className='main-grey-text text-decoration-none my-2 d-block'>Books</Link>
             <Link to={''} className='main-grey-text text-decoration-none my-2 d-block'>Toys</Link>
           </div>
-        </div> */}
-         <div className="col-4 col-md-2">
+        </div> 
+          <div className="col-4 col-md-2">
           <div className="footer-item p-4 text-start">
             <h6 className='dark-grey-text'>Useful Links</h6>
             <Link to={''} className='main-grey-text text-decoration-none my-2 d-block'>About</Link>
@@ -60,19 +60,19 @@ export default function Footer() {
             <Link to={''} className='main-grey-text text-decoration-none my-2 d-block'>Terms & Conditions</Link>
             <Link to={''} className='main-grey-text text-decoration-none my-2 d-block'>Privacy Policy</Link>
           </div>
-        </div>
-        {/*
+        </div> 
         <div className="col-4 col-md-2">
           <div className="footer-item p-4 text-start">
             <h6 className='dark-grey-text'>Customer Service</h6>
             <Link to={''} className='main-grey-text text-decoration-none my-2 d-block'>My Account</Link>
             <Link to={''} className='main-grey-text text-decoration-none my-2 d-block'>My Cart</Link>
           </div>
-        </div> */}
+        </div>
+      </div> */}
+          <div className="copyright w-100 text-center pb-2">
+        <span className='main-grey-text my-0'>© Daa SooQ 2024 - ALL Rights Reserved </span>
       </div>
-      <div className="copyright w-100 text-center pb-2">
-        <span className='main-grey-text my-0'>© Electrobile Souq 2024 - ALL Rights Reserved </span>
-      </div>
+
     </div>
   </div>
     </>
