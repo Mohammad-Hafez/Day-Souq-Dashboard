@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState ,useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -8,6 +8,8 @@ import axios from 'axios';
 import { ApiBaseUrl } from '../ApiBaseUrl';
 import { useQuery } from 'react-query';
 import Loader from '../Loader/Loader';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
 export default function Coupons() {
   const user = localStorage.getItem("DaySooqDashUser") ;
@@ -20,6 +22,7 @@ export default function Coupons() {
   const [AllCoupons, setAllCoupons] = useState([]);
   const [searchValue, setSearchValue] = useState('');
   const [ErrMsg, setErrMsg] = useState(null)
+  const [displayAddNewDialog, setDisplayAddNewDialog] = useState(false)
 
   const getAllCoupons = ()=> axios.get( ApiBaseUrl + `Coupons`,{headers});
   let { data: AllCouponsResponse, isLoading: AllCouponsLoading, refetch: AllCouponsRefetch } = useQuery(
@@ -34,6 +37,37 @@ export default function Coupons() {
       setFilteredCoupons(AllCouponsResponse?.data.data.data)
     }
   },[AllCouponsResponse])
+
+  let AddNewInitial = {
+    type :'',
+    value :''
+    }
+
+  let AddNewFormik = useFormik({
+    initialValues : AddNewInitial, 
+    validationSchema : Yup.object().shape({
+      name :Yup.string().required('Blog name Is Required') ,
+      amount :Yup.string().required('Blog amount Is Required') ,
+      minimum :Yup.string().required('Blog minimum Is Required') ,
+      maximum :Yup.string().required('Blog maximum Is Required') ,
+      max_price : Yup.mixed().required('Blog max_price is Required')
+    }),
+    onSubmit:(values)=>AddNewShipping(values)
+  })
+
+  const AddNewShipping = async (values) => {
+    setLoaderBtn(true)
+      await axios.post(ApiBaseUrl + `coupons`, values, { headers }).then(response =>
+      {
+      hideDialog()
+      AllCouponsRefetch()
+      setLoaderBtn(false)
+      }).catch (error=> {
+      setErrMsg(error.response.data.message)
+      console.error(error);
+      setLoaderBtn(false)
+    })
+  };
 
   const handleSearch = (e) => {
     const inputValue = e.target.value.trim();
@@ -52,6 +86,7 @@ export default function Coupons() {
       hideDialog();
       setLoaderBtn(false);
     }).catch (error=> {
+      setErrMsg(error.response.data.message)
       console.error(error);
       setLoaderBtn(false);
     }) 
@@ -60,8 +95,11 @@ export default function Coupons() {
   const hideDialog = () => {
     setDisplayDeleteDialog(false);
     setSelectedCoupons(null);
+    setDisplayAddNewDialog(false)
+    AddNewFormik.resetForm();
+    setLoaderBtn(false)
   };
-
+  
   const actionTemplate = (rowData) => {
     return (
       <div className='d-flex justify-content-center align-items-center'>
@@ -84,12 +122,19 @@ export default function Coupons() {
             All Coupons
           </h3>
         </div>
-        <div className="p-inputgroup w-auto">
+        <div className="d-flex flex-column">
+        <div className="p-inputgroup w-auto mb-2">
           <span className="p-inputgroup-addon">
             <i className="pi pi-search" />
           </span>
           <input type="text" className="p-inputtext rounded-start-0" placeholder="Search by promoCode" value={searchValue} onChange={handleSearch} />
         </div>
+        <div className="addCategory">
+          <button className='btn btn-secondary w-100' onClick={() => { setDisplayAddNewDialog(true) }}>Add New</button>
+        </div>
+
+        </div>
+
       </div>
   )
 
@@ -121,7 +166,7 @@ export default function Coupons() {
         <Column header="isActive" field='isActive' style={{ width: "10%", bCouponBottom: '1px solid #dee2e6' }} />
         <Column header="Delete" body={actionTemplate}  style={{ width: "10%", bCouponBottom: '1px solid #dee2e6' }} />
         </DataTable>
-        <Dialog header={'Delete Banner'} className='container editDialog' visible={displayDeleteDialog} onHide={hideDialog} modal>
+        <Dialog header={'Delete Coupon'} className='container editDialog' visible={displayDeleteDialog} onHide={hideDialog} modal>
         <h5>you want delete this Coupon ?</h5>
         <hr />
         <div className="d-flex align-items-center justify-content-around">
@@ -130,6 +175,35 @@ export default function Coupons() {
         <button className='btn btn-primary w-50 mx-2  px-4' onClick={()=>{setDisplayDeleteDialog(false)}}>No</button>
         </div>
       </Dialog>  
+
+      
+      <Dialog header={'Add Coupon'} className='container editDialog' visible={displayAddNewDialog} onHide={hideDialog} modal>
+  <form className='bg-light p-3 border shadow-sm rounded' onSubmit={AddNewFormik.handleSubmit}>
+    <div className="form-floating mb-2">
+      <select id="type" className="form-select"  name="type" value={AddNewFormik.values.type} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur}>
+        <option value="" disabled>Select Type</option>
+        <option value="fixed">Fixed</option>
+        <option value="percentage">Percentage</option>
+      </select>
+      <label htmlFor="type">Discount Type</label>
+      {AddNewFormik.touched.type && AddNewFormik.errors.type && <small className="p-error">{AddNewFormik.errors.type}</small>}
+    </div>
+    <div className="form-floating mb-2">
+      <input id="value" type="text" className="form-control"  name="value" value={AddNewFormik.values.value} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur}/>
+      <label htmlFor="value">Discount Value</label>
+      {AddNewFormik.touched.value && AddNewFormik.errors.value && <small className="p-error">{AddNewFormik.errors.value}</small>}
+    </div>
+    <div className="form-floating mb-2">
+      <input id="expireDate" type="date" className="form-control" name="value" value={AddNewFormik.values.expireDate} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur} />
+      <label htmlFor="expireDate">Expiration Date</label>
+      {AddNewFormik.touched.expireDate && AddNewFormik.errors.expireDate && <small className="p-error">{AddNewFormik.errors.expireDate}</small>}
+    </div>
+    <div className="btns">
+      <Button label="SUBMIT" type="submit" icon="pi pi-check" disabled={!AddNewFormik.isValid} className="btn btn-primary text-light w-50" />
+    </div>
+  </form>
+</Dialog>
+
 
       </div>
     }
