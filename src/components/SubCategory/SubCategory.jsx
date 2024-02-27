@@ -33,12 +33,13 @@ export default function SubCategory() {
   const getAllSubCategories = ()=> axios.get(ApiBaseUrl + `subcategories`)
   let {data:AllSubcategoriesResponse , isLoading :AllSubLoading , refetch:AllSubRefetch } = useQuery("all sbCategories" , getAllSubCategories , {cacheTime : 10000 , enabled : !!all})
 
+  const getAllCatgories = ()=> axios.get(ApiBaseUrl+`categories`)
+  let {data:AllCategoriesPesponse} = useQuery('getCategories' , getAllCatgories , {cacheTime:10000 , enabled:!!all})
   useEffect(() => {
     if (subForCategoryResponse) {
       setSubCategory(subForCategoryResponse?.data.data.data);
       setFilteredSubCategory(subForCategoryResponse?.data.data.data);
     }else if (AllSubcategoriesResponse) {
-      console.log(AllSubcategoriesResponse?.data.data.data);
       setSubCategory(AllSubcategoriesResponse?.data.data.data);
       setFilteredSubCategory(AllSubcategoriesResponse?.data.data.data);
     }
@@ -47,7 +48,8 @@ export default function SubCategory() {
   // Add new sub category
   let AddNewInitial = {
     name: '',
-    image: ''
+    image: '',
+    category : ''
   };
   let AddNewFormik = useFormik({
     initialValues: AddNewInitial,
@@ -57,13 +59,12 @@ export default function SubCategory() {
     }),
     onSubmit: (values) => AddNewSubCategory(values)
   });
-
   const AddNewSubCategory = async (values) => {
     setLoaderBtn(true);
     const AddformData = new FormData();
     AddformData.append('name', values.name);
     AddformData.append('image', values.image);
-    AddformData.append('category', id);
+     all ? AddformData.append('category', values.category) : AddformData.append('category', id)
     try {
       await axios.post(ApiBaseUrl + `subCategories`, AddformData, {headers});
       subForCategoryRefetch();
@@ -260,6 +261,19 @@ export default function SubCategory() {
                 <div className="alert text-danger  py-1">{AddNewFormik.errors.image}</div>
               ) : null}
             </div>
+            {all ? <>
+              <div className="form-floating mb-2">
+                  <select className="form-select" id="category" name="category" value={AddNewFormik.values.category} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur}>
+                  <option value="" disabled>Select Category</option>
+                  {AllCategoriesPesponse?.data.data.data.map(subcategory => (
+                    <option key={subcategory._id} value={subcategory._id}>{subcategory.name}</option>
+                  ))}
+                </select>            
+              <label className='ms-2' htmlFor="subCategory">subCategory</label>
+              {AddNewFormik.errors.subCategory && AddNewFormik.touched.subCategory ? (<div className="alert text-danger ">{AddNewFormik.errors.subCategory}</div>) : null}
+              </div>
+          </>
+            :null}
             <div className="btns ms-auto w-100 d-flex justify-content-center mt-3">
               {LoaderBtn ? <button className='btn btn-primary text-light w-50' disabled><i className="fa fa-spin fa-spinner"></i></button> :
                 <Button label="SUBMIT" type="submit" icon="pi pi-check" disabled={!(AddNewFormik.isValid && AddNewFormik.dirty)} className="btn btn-primary text-light w-50" />

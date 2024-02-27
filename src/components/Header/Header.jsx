@@ -9,6 +9,7 @@ import { AiOutlineLogin } from 'react-icons/ai';
 import { useQuery } from 'react-query';
 import { Sidebar } from 'primereact/sidebar';
 import { RiAuctionLine } from "react-icons/ri";
+import logo from '../../assets/Logo daysooq V09.png'
 export default function HeaderSearch({ UserToken, Logout }) {
   let navigate = useNavigate();
 
@@ -55,11 +56,11 @@ export default function HeaderSearch({ UserToken, Logout }) {
           <NavItem  to={'Coupons'} activeLink={activeLink} onClick={setActiveLink} name={'Coupon'} icon={'pi-money-bill'} />
           <NavItem  to={'Users'} activeLink={activeLink} onClick={setActiveLink} name={'Users & notifications'} icon={'pi-users'}/>
           <Link className={`nav-link px-1 my-4 dark-grey-text fw-bolder`} onClick={()=>{Logout(); setVisibleSidebar(!visibleSidebar)}}>
-             <FiLogOut className="fs-4 pb-1 cursor-pointer"/> Logout
+              <FiLogOut className="fs-4 pb-1 cursor-pointer"/> Logout
           </Link>
         </ul>
       </Sidebar>
-      <div className="search-header container-fluid py-3 px-1 bg-light">
+      <div className="search-header container-fluid py-3 px-1 ">
         <div className="row align-items-center gy-2">
           <div className="col-6 col-md-5 col-lg-3 d-flex">
             {user ?           <button className="sidebar-toggle" onClick={() => setVisibleSidebar(!visibleSidebar)}>
@@ -70,7 +71,7 @@ export default function HeaderSearch({ UserToken, Logout }) {
               <span>
                 <h3 className="p-0 m-0">
                   <Link className="logo text-decoration-none font-quest dark-blue-text m-0 p-0" to={''}>
-                    DAY <span className="font-Rowdies main-orange-text">SOOQ</span>
+                    <img src={logo} className='w-50' alt="logo" />
                   </Link>
                 </h3>
               </span>
