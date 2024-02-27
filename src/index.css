@@ -458,20 +458,6 @@ list-style: none;
   position: relative;
 }
 
-.selectAuth::after{
-  content: '';
-  position: absolute;
-  top: 2px;
-  right: 50%;
-  width: 4px;
-  height: 30px;
-  background-color: #1D232C;
-  transform: translateX(-50%);
-  -webkit-transform: translateX(-50%);
-  -moz-transform: translateX(-50%);
-  -ms-transform: translateX(-50%);
-  -o-transform: translateX(-50%);
-}
 .activeAuth{
   position: relative;
 }

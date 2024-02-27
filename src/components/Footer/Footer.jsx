@@ -70,7 +70,7 @@ export default function Footer() {
         </div>
       </div> */}
           <div className="copyright w-100 text-center pb-2">
-        <span className='main-grey-text my-0'>© Daa SooQ 2024 - ALL Rights Reserved </span>
+        <span className='main-grey-text my-0'>© Daa Sooq 2024 - ALL Rights Reserved </span>
       </div>
 
     </div>

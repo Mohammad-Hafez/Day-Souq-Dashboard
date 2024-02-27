@@ -54,18 +54,19 @@ export default function HeaderSearch({ UserToken, Logout }) {
           <NavItem  to={'Shipping'} activeLink={activeLink} onClick={setActiveLink} name={'Shipping'} icon={'pi-truck'} />
           <NavItem  to={'Coupons'} activeLink={activeLink} onClick={setActiveLink} name={'Coupon'} icon={'pi-money-bill'} />
           <NavItem  to={'Users'} activeLink={activeLink} onClick={setActiveLink} name={'Users & notifications'} icon={'pi-users'}/>
-          <Link className={`nav-link px-1 my-4 dark-grey-text fw-bolder`} onClick={Logout}>
+          <Link className={`nav-link px-1 my-4 dark-grey-text fw-bolder`} onClick={()=>{Logout(); setVisibleSidebar(!visibleSidebar)}}>
              <FiLogOut className="fs-4 pb-1 cursor-pointer"/> Logout
           </Link>
         </ul>
       </Sidebar>
-      <div className="search-header container-fluid mb-2 py-3 px-1 bg-light">
+      <div className="search-header container-fluid py-3 px-1 bg-light">
         <div className="row align-items-center gy-2">
           <div className="col-6 col-md-5 col-lg-3 d-flex">
-          <button className="sidebar-toggle" onClick={() => setVisibleSidebar(!visibleSidebar)}>
+            {user ?           <button className="sidebar-toggle" onClick={() => setVisibleSidebar(!visibleSidebar)}>
             <i className='pi pi-align-justify mx-2 fs-4 p-1'></i>
           </button>
-            <div className="logo d-flex align-items-center justify-content-around">
+          : null}
+            <div className="logo d-flex align-items-center justify-content-around ms-2">
               <span>
                 <h3 className="p-0 m-0">
                   <Link className="logo text-decoration-none font-quest dark-blue-text m-0 p-0" to={''}>
@@ -92,11 +93,7 @@ export default function HeaderSearch({ UserToken, Logout }) {
                   <span className="fs-6 dark-blue-text font-Rowdies me-3">Hi, {data?.data.data.data.firstName}</span>
 
                 </>
-              ) : (
-                <span className="dark-blue-text cursor-pointer text-uppercase" onClick={() => navigate('/Authorization')}>
-                  Login <AiOutlineLogin size={22} className="ms-1" />
-                </span>
-              )}
+              ) : null}
             </div>
           </div>
         </div>

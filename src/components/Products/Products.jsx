@@ -50,11 +50,11 @@ export default function Products() {
   const getSubCatProducts = () => axios.get(ApiBaseUrl + `products?subCategory=${subCategoryId}&dashboard=true`)
   const getBrandProducts = () => axios.get(ApiBaseUrl + `products?brand=${BrandId}&dashboard=true`)
   const getAllGeneralProducts = () => axios.get(ApiBaseUrl + `products?dashboard=true`)
-
+  const getOnlyBiddingProducts =()=> axios.get(ApiBaseUrl +``)
   let { isLoading: brandsLoading, data: brandsNameResponse } = useQuery('get brands', getAllBrands, { cacheTime: 10000, enabled: !!CategoryName || !!all})
   let { isLoading: categoriesLoading, data: categoriesNameResponse } = useQuery('get categories', getAllCategories, { cacheTime: 10000, enabled: !!CategoryName || !!all})
   let { isLoading: SubcategoriesLoading, data: SubcategoriesNameResponse } = useQuery('get Subcategories', getAllSubcategories, { cacheTime: 10000, enabled: !!SubCategoryName || !!all})
-
+  
   let { isLoading: AllLoading, data: AllResponse , refetch : AllRefetch } = useQuery('get all products for general', getAllGeneralProducts, { cacheTime: 10000, enabled: !!all })
   let { data: SubcatProductsResponse, refetch: SubcatProductsRefetch, isLoading: ProductsLoading } = useQuery('subCategory Products', getSubCatProducts, { cacheTime: 50000, enabled: !!CategoryName })
   let { data: BrandProductsResponse, refetch: BrandProductsRefetch, isLoading: BrandProductsLoading } = useQuery('Brand Products', getBrandProducts, { cacheTime: 50000, enabled: !!BrandName })

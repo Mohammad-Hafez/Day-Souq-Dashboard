@@ -14,16 +14,19 @@ export default function Authorization({saveUserData}) {
     <Helmet>
       <title>Authorization </title>
     </Helmet>
-    <div className="container d-flex justify-content-center align-items-center flex-column bg-light">
-      <div className="selectAuth mb-0">
-        <button className={`dark-blue-text mx-2 bg-transparent border-0 fs-4 ${ActiveAuth ==='login' ? 'activeAuth' : ''}`} onClick={()=>handleAuthChange('login')}>
+    <div className="container d-flex justify-content-center align-items-center flex-column mt-0">
+    <h1 className="text-muted fs-2 text-uppercase mb-4 font-quest fw-bold">
+            Day Sooq Dashboard
+          </h1>
+  <div className="loginFormContainer bg-light p-3 rounded shadow text-center">
+      <div className="selectAuth mb-0 ">
+
+        <button className={`dark-blue-text mx-2 bg-transparent border-0 fs-3 ${ActiveAuth ==='login' ? 'activeAuth' : ''}`} onClick={()=>handleAuthChange('login')}>
           LOGIN
         </button>
-        <button className={`dark-blue-text  ms-3 bg-transparent border-0 fs-4 ${ActiveAuth ==='signup' ? 'activeAuth' : ''}`}  onClick={()=>handleAuthChange('signup')}>
-          SIGN UP
-        </button>
       </div>
-      {SelectAuth === 'login' ? <Login saveUserData={saveUserData}/> : <Signup saveUserData={saveUserData} handleAuthChange={handleAuthChange}/>}
+      {SelectAuth === 'login' && <Login saveUserData={saveUserData}/> }
+      </div>
     </div>
     </>
 }
