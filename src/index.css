@@ -240,6 +240,16 @@ list-style: none;
 .p-sidebar .p-sidebar-content{
   padding-left: .5rem;
 }
+.nav-link{
+  color: var(--dark-blue);
+}
+.nav-link.active{
+  color: var(--light-blue);
+  margin-left: 1rem;
+}
+.nav-link:not(.active):hover{
+  color: var(--main-orange);
+}
 /* *ANCHOR -  tables */
 .Tabel {
   margin-bottom: 50px;

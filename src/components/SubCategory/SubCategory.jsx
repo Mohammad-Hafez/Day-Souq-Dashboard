@@ -228,9 +228,12 @@ export default function SubCategory() {
         </Dialog>
         <Dialog header={'Delete SubCategory'} className='container editDialog' visible={displayDeleteDialog} onHide={hideDialog} modal>
           <h5>Are you sure you want to delete this subcategory?</h5>
+          <p>NOTE : By deleteing this subcategory you will delete all products in it</p>
           <hr />
           <div className="d-flex align-items-center justify-content-around">
+          {LoaderBtn ? <button className='btn w-50 mx-2 btn-danger px-4' disabled><i className="fa fa-spin fa-spinner"></i></button> :
             <button className='btn w-50 mx-2 btn-danger px-4' onClick={() => { deleteCategory(SelectedSubCategory) }}>Yes</button>
+            } 
             <button className='btn w-50 mx-2 btn-primary  px-4' onClick={() => { setDisplayDeleteDialog(false) }}>No</button>
           </div>
         </Dialog>

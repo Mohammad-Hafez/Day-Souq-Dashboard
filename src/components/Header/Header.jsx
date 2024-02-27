@@ -28,7 +28,7 @@ export default function HeaderSearch({ UserToken, Logout }) {
     <li className="nav-item border-0 border-bottom w-100">
       <Link
         to={to}
-        className={`nav-link fw-bolder px-1 my-4 dark-grey-text ${activeLink === name ? 'active' : ''}`}
+        className={`nav-link fw-bolder fs-6 px-1 my-4 dark-grey-text ${activeLink === name ? 'active' : ''}`}
         onClick={() => {
           onClick(name);
         }}

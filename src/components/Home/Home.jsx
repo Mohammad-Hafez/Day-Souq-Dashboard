@@ -36,7 +36,7 @@ export default function Home() {
         <Loader/>
       ) : (
         <div className="container d-flex flex-column align-items-center text-center justify-content-center my-3">
-          <h1 className="text-muted fs-3 text-uppercase mb-4 font-quest">
+          <h1 className="text-muted fs-3 text-uppercase mb-4 font-quest fw-bold">
             Day Sooq Dashboard
           </h1>
           <div className="homeContent font-roboto w-100">
@@ -48,11 +48,11 @@ export default function Home() {
                   <div className="usersIcon rounded p-2">
                     <PiUsersThree size={60} />
                   </div> 
-                  <div className="usersNum w-75 ms-auto text-center">
-                    <p className="fs-4 fw-bolder text-center rounded-circle mx-auto">
+                  <div className="usersNum w-75 ms-auto text-start">
+                    <p className="fs-4 dark-grey-text font-quest fw-bolder rounded-circle mx-auto">
                       + {StatisticsData?.data.totalUsers}
                     </p> 
-                    <h4 className="my-2">Website Users</h4>
+                    <h4 className="my-1 light-grey-text">Website Users</h4>
                   </div>
                 </div>
                 }
@@ -63,11 +63,11 @@ export default function Home() {
                  <div className="OrderIcon rounded p-2">
                    <FaPeopleCarryBox size={60} />
                  </div> 
-                 <div className="usersNum w-75 ms-auto text-center">
-                   <p className="fs-4 fw-bolder text-center rounded-circle mx-auto">
+                 <div className="usersNum w-75 ms-auto text-start">
+                   <p className="fs-4 dark-grey-text font-quest fw-bolder rounded-circle mx-auto">
                      + {StatisticsData?.data.totalOrders}
                    </p> 
-                   <h4 className="my-2">order</h4>
+                   <h4 className="my-1 light-grey-text">order</h4>
                  </div>
                </div>
                 }
@@ -80,11 +80,11 @@ export default function Home() {
                  <div className="BrandsIcon rounded p-2">
                    <BsTags size={60} />
                  </div> 
-                 <div className="usersNum w-75 ms-auto text-center">
-                   <p className="fs-4 fw-bolder text-center rounded-circle mx-auto">
+                 <div className="usersNum w-75 ms-auto text-start">
+                   <p className="fs-4 dark-grey-text font-quest fw-bolder rounded-circle mx-auto">
                      + {StatisticsData?.data.totalBrands}
                    </p> 
-                   <h4 className="my-2">brand</h4>
+                   <h4 className="my-1 light-grey-text">brand</h4>
                  </div>
                </div>
                 )}
@@ -97,11 +97,11 @@ export default function Home() {
                   <div className="usersIcon rounded p-2">
                     <BiCategoryAlt size={60} />
                   </div> 
-                  <div className="usersNum w-75 ms-auto text-center">
-                    <p className="fs-4 fw-bolder text-center rounded-circle mx-auto">
+                  <div className="usersNum w-75 ms-auto text-start">
+                    <p className="fs-4 dark-grey-text font-quest fw-bolder rounded-circle mx-auto">
                       + {StatisticsData?.data.totalCategories}
                     </p> 
-                    <h4 className="my-2">Category</h4>
+                    <h4 className="my-1 light-grey-text">Category</h4>
                   </div>
                 </div>
  
@@ -115,11 +115,11 @@ export default function Home() {
                   <div className="usersIcon rounded p-2">
                     <TbSitemap size={60} />
                   </div> 
-                  <div className="usersNum w-75 ms-auto text-center">
-                    <p className="fs-4 fw-bolder text-center rounded-circle mx-auto">
+                  <div className="usersNum w-75 ms-auto text-start">
+                    <p className="fs-4 dark-grey-text font-quest fw-bolder rounded-circle mx-auto">
                       + {StatisticsData?.data.totalSubCategories}
                     </p> 
-                    <h4 className="my-2">SubCategory</h4>
+                    <h4 className="my-1 light-grey-text">SubCategory</h4>
                   </div>
                 </div>
                 )}
@@ -132,11 +132,11 @@ export default function Home() {
                   <div className="usersIcon rounded p-2">
                     <FaBoxOpen size={60} />
                   </div> 
-                  <div className="usersNum w-75 ms-auto text-center">
-                    <p className="fs-4 fw-bolder text-center rounded-circle mx-auto">
+                  <div className="usersNum w-75 ms-auto text-start">
+                    <p className="fs-4 dark-grey-text font-quest fw-bolder rounded-circle mx-auto">
                       + {StatisticsData?.data.totalProducts}
                     </p> 
-                    <h4 className="my-2">Total Products</h4>
+                    <h4 className="my-1 light-grey-text">Total Products</h4>
                   </div>
                 </div>
                 )}
@@ -149,11 +149,11 @@ export default function Home() {
                   <div className="usersIcon rounded p-2">
                     <RiAuctionLine size={60} />
                   </div> 
-                  <div className="usersNum w-75 ms-auto text-center">
-                    <p className="fs-4 fw-bolder text-center rounded-circle mx-auto">
+                  <div className="usersNum w-75 ms-auto text-start">
+                    <p className="fs-4 dark-grey-text font-quest fw-bolder rounded-circle mx-auto">
                       + {StatisticsData?.data.totalProductsAuction}
                     </p> 
-                    <h4 className="my-2">All Time Auction</h4>
+                    <h4 className="my-1 light-grey-text">All Time Auction</h4>
                   </div>
                 </div>
                 )}
@@ -166,12 +166,12 @@ export default function Home() {
                   <div className="usersIcon rounded p-2">
                     <RiAuctionFill size={60} />
                   </div> 
-                  <div className="usersNum w-75 ms-auto text-center">
-                    <p className="fs-4 fw-bolder text-center rounded-circle mx-auto">
+                  <div className="usersNum w-75 ms-auto text-start">
+                    <p className="fs-4 dark-grey-text font-quest fw-bolder rounded-circle mx-auto">
                       +  {StatisticsData && StatisticsData.data.auctionProducts.find(item => item._id === 'ended') ? StatisticsData.data.auctionProducts.find(item => item._id === 'ended').total : 0}
 
                     </p> 
-                    <h4 className="my-2">Ended Auction</h4>
+                    <h4 className="my-1 light-grey-text">Ended Auction</h4>
                   </div>
                 </div>
                 )}
@@ -184,12 +184,12 @@ export default function Home() {
                   <div className="usersIcon rounded p-2">
                     <RxLapTimer size={60} />
                   </div> 
-                  <div className="usersNum w-75 ms-auto text-center">
-                    <p className="fs-4 fw-bolder text-center rounded-circle mx-auto">
+                  <div className="usersNum w-75 ms-auto text-start">
+                    <p className="fs-4 dark-grey-text font-quest fw-bolder rounded-circle mx-auto">
                      + {StatisticsData && StatisticsData.data.auctionProducts.find(item => item._id === 'start') ? StatisticsData.data.auctionProducts.find(item => item._id === 'start').total : 0}
 
                     </p> 
-                    <h4 className="my-2">Current Auction</h4>
+                    <h4 className="my-1 light-grey-text">Current Auction</h4>
                   </div>
                 </div>
 
@@ -203,12 +203,12 @@ export default function Home() {
                   <div className="usersIcon rounded p-2">
                     <TbCalendarTime size={60} />
                   </div> 
-                  <div className="usersNum w-75 ms-auto text-center">
-                    <p className="fs-4 fw-bolder text-center rounded-circle mx-auto">
+                  <div className="usersNum w-75 ms-auto text-start">
+                    <p className="fs-4 dark-grey-text font-quest fw-bolder rounded-circle mx-auto">
                       + {StatisticsData && StatisticsData.data.auctionProducts.find(item => item._id === 'pending') ? StatisticsData.data.auctionProducts.find(item => item._id === 'pending').total : 0}
 
                     </p> 
-                    <h4 className="my-2">Upcoming Auction</h4>
+                    <h4 className="my-1 light-grey-text">Upcoming Auction</h4>
                   </div>
                 </div>
                 )}
