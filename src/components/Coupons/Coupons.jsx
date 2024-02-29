@@ -56,8 +56,15 @@ export default function Coupons() {
 
     const AddNewCoupon = async (values) => {
       console.log(values);
-    setLoaderBtn(true)
-      await axios.post(ApiBaseUrl + `coupons`, values, { headers }).then(response =>
+      setLoaderBtn(true)
+      await axios.post(ApiBaseUrl + `coupons`, 
+      {discount :{
+        type : values.type , 
+        value : values.value , 
+      },
+      expireDate :values.expireDate
+    }
+      , { headers }).then(response =>
       {
       hideDialog()
       AllCouponsRefetch()
@@ -188,18 +195,32 @@ export default function Coupons() {
       <label htmlFor="type">Discount Type</label>
       {AddNewFormik.touched.type && AddNewFormik.errors.type && <small className="p-error">{AddNewFormik.errors.type}</small>}
     </div>
+
     <div className="form-floating mb-2">
       <input id="value" type="number" className="form-control"  name="value" value={AddNewFormik.values.value} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur}/>
       <label htmlFor="value">Discount Value</label>
       {AddNewFormik.touched.value && AddNewFormik.errors.value && <small className="p-error">{AddNewFormik.errors.value}</small>}
     </div>
+
     <div className="form-floating mb-2">
       <input id="expireDate" type="date" className="form-control" name="expireDate" value={AddNewFormik.values.expireDate} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur} />
       <label htmlFor="expireDate">Expiration Date</label>
       {AddNewFormik.touched.expireDate && AddNewFormik.errors.expireDate && <small className="p-error">{AddNewFormik.errors.expireDate}</small>}
     </div>
-    <div className="btns">
-      <Button label="SUBMIT" type="submit" icon="pi pi-check" disabled={AddNewFormik.isValid} className="btn btn-primary text-light w-50" />
+
+    {ErrMsg ? <div className='alert text-danger'>{ErrMsg}</div> :null}
+
+    <div className="btns w-100 d-flex justify-content-center">
+    {LoaderBtn ? <button className='btn btn-primary  w-50 mx-auto px-4' disabled><i className='fa fa-spin fa-spinner'></i></button>: 
+
+      <Button
+        label="SUBMIT"
+        type="submit"
+        icon="pi pi-check"
+        disabled={!(AddNewFormik.isValid && AddNewFormik.dirty)}
+        className="btn btn-primary text-light w-50 mx-auto "
+      />
+}
     </div>
   </form>
 </Dialog>
