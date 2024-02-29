@@ -39,23 +39,23 @@ export default function Coupons() {
   },[AllCouponsResponse])
 
   let AddNewInitial = {
-    type :'',
-    value :''
+    type: '',
+    value: '',
+    expireDate: ''    
     }
 
-  let AddNewFormik = useFormik({
-    initialValues : AddNewInitial, 
-    validationSchema : Yup.object().shape({
-      name :Yup.string().required('Blog name Is Required') ,
-      amount :Yup.string().required('Blog amount Is Required') ,
-      minimum :Yup.string().required('Blog minimum Is Required') ,
-      maximum :Yup.string().required('Blog maximum Is Required') ,
-      max_price : Yup.mixed().required('Blog max_price is Required')
-    }),
-    onSubmit:(values)=>AddNewShipping(values)
-  })
+    let AddNewFormik = useFormik({
+      initialValues: AddNewInitial,
+      validationSchema: Yup.object().shape({
+        type: Yup.string().required('Discount Type is required'),
+        value: Yup.number().required('Discount Value is required'),
+        expireDate: Yup.date().required('Expiration Date is required')
+      }),
+      onSubmit: (values) => AddNewCoupon(values)
+    });
 
-  const AddNewShipping = async (values) => {
+    const AddNewCoupon = async (values) => {
+      console.log(values);
     setLoaderBtn(true)
       await axios.post(ApiBaseUrl + `coupons`, values, { headers }).then(response =>
       {
@@ -189,17 +189,17 @@ export default function Coupons() {
       {AddNewFormik.touched.type && AddNewFormik.errors.type && <small className="p-error">{AddNewFormik.errors.type}</small>}
     </div>
     <div className="form-floating mb-2">
-      <input id="value" type="text" className="form-control"  name="value" value={AddNewFormik.values.value} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur}/>
+      <input id="value" type="number" className="form-control"  name="value" value={AddNewFormik.values.value} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur}/>
       <label htmlFor="value">Discount Value</label>
       {AddNewFormik.touched.value && AddNewFormik.errors.value && <small className="p-error">{AddNewFormik.errors.value}</small>}
     </div>
     <div className="form-floating mb-2">
-      <input id="expireDate" type="date" className="form-control" name="value" value={AddNewFormik.values.expireDate} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur} />
+      <input id="expireDate" type="date" className="form-control" name="expireDate" value={AddNewFormik.values.expireDate} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur} />
       <label htmlFor="expireDate">Expiration Date</label>
       {AddNewFormik.touched.expireDate && AddNewFormik.errors.expireDate && <small className="p-error">{AddNewFormik.errors.expireDate}</small>}
     </div>
     <div className="btns">
-      <Button label="SUBMIT" type="submit" icon="pi pi-check" disabled={!AddNewFormik.isValid} className="btn btn-primary text-light w-50" />
+      <Button label="SUBMIT" type="submit" icon="pi pi-check" disabled={AddNewFormik.isValid} className="btn btn-primary text-light w-50" />
     </div>
   </form>
 </Dialog>

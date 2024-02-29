@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 
 export default function AddProduct({ LoaderBtn, subCategoryId, categoryId , CategoryName, BrandName, BrandId, all, axios, headers, ApiBaseUrl, useFormik, Yup, Button, Dialog, displayAddNewDialog, brandsNameResponse, categoriesNameResponse, SubcategoriesNameResponse, hideDialog, setLoaderBtn, SubcatProductsRefetch , BrandProductsRefetch, AllRefetch }) {
-  const [AddNewError, setAddNewError] = useState(null)
+  const [AddNewError, setAddNewError] = useState(null);
+  console.log(all , CategoryName);
   const AddNewInitial = {
     name: '',
     price: '',
@@ -22,7 +23,8 @@ export default function AddProduct({ LoaderBtn, subCategoryId, categoryId , Cate
     price: Yup.number().required('Price is required'),
     description: Yup.string().required('Description is required'),
     brand: Yup.string().required('Brand is required'),
-    subCategory: Yup.string().required('Subcategory is required'),
+    category: Yup.string().required('category is required'),
+    subCategory: Yup.string().required('subCategory is required'),
     ...(CategoryName?.toLowerCase() === 'auction'&& {
       startDate: Yup.date().required('Start date is required'),
       biddingPrice: Yup.number().required('Bidding price is required'),
@@ -80,7 +82,7 @@ export default function AddProduct({ LoaderBtn, subCategoryId, categoryId , Cate
           </div>
           {!CategoryName ? <>
             <div className="form-floating mb-2">
-              <select className="form-select" id="brand" name="brand" value={AddNewFormik.values.brand} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur}>
+              <select className="form-select" id="category" name="category" value={AddNewFormik.values.category} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur}>
                 <option value="" disabled>Select Category</option>
                 {categoriesNameResponse?.map(category => (
                   <option key={category._id} value={category._id}>{category.name}</option>
@@ -91,7 +93,7 @@ export default function AddProduct({ LoaderBtn, subCategoryId, categoryId , Cate
           </div> 
 
           <div className="form-floating mb-2">
-              <select className="form-select" id="brand" name="brand" value={AddNewFormik.values.brand} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur}>
+              <select className="form-select" id="subCategory" name="subCategory" value={AddNewFormik.values.subCategory} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur}>
                 <option value="" disabled>Select Category</option>
                 {SubcategoriesNameResponse?.map(subcategory => (
                   <option key={subcategory._id} value={subcategory._id}>{subcategory.name}</option>
@@ -144,7 +146,7 @@ export default function AddProduct({ LoaderBtn, subCategoryId, categoryId , Cate
           {AddNewError ? <div className='alert text-danger'>{AddNewError}</div> :null}
           <div className="btns ms-auto w-100 d-flex justify-content-center mt-3">
             {LoaderBtn ? <button className='btn btn-primary text-light w-50' disabled><i className="fa fa-spin fa-spinner"></i></button> :
-              <Button label="SUBMIT" type="submit" icon="pi pi-check" className="btn btn-primary text-light w-50" />
+              <Button label="SUBMIT" type="submit" icon="pi pi-check" disabled={!(AddNewFormik.isValid && AddNewFormik.dirty)} className="btn btn-primary text-light w-50" />
             }
           </div>
         </form>
