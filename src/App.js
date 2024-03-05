@@ -25,6 +25,7 @@ import Orders from './components/Orders/Orders';
 import Blogs from './components/Blogs/Blogs';
 import Coupons from './components/Coupons/Coupons';
 import Shipping from './components/Shipping/Shipping';
+import SubSubCategory from './components/SubSubCategory/SubSubCategory';
 
 function App() {
 
@@ -72,6 +73,7 @@ function App() {
           <Route path="Banners" element={<ProtectedRoutes> <Banners UserToken={UserToken}/> </ProtectedRoutes> } /> 
           <Route path="Categories" element={<ProtectedRoutes> <Categories UserToken={UserToken}/> </ProtectedRoutes> } /> 
           <Route path="Users" element={<ProtectedRoutes> <AllUsers UserToken={UserToken}/> </ProtectedRoutes> } /> 
+          <Route path="SubSubCategory/:SubId" element={<ProtectedRoutes> <SubSubCategory UserToken={UserToken}/> </ProtectedRoutes> } /> 
           <Route path="SubCategory/:all" element={<ProtectedRoutes> <SubCategory UserToken={UserToken}/> </ProtectedRoutes> } /> 
           <Route path="SubCategory/:CategoryName/:id" element={<ProtectedRoutes> <SubCategory UserToken={UserToken}/> </ProtectedRoutes> } /> 
           <Route path="Products/:all" element={<ProtectedRoutes> <Products UserToken={UserToken}/> </ProtectedRoutes> } /> 

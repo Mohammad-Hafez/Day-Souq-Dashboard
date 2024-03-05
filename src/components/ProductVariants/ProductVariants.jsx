@@ -52,7 +52,9 @@ export default function ProductVariants() {
     size :Yup.string().required('size Is Required') ,
     color :Yup.string().required('color Is Required') ,
     extraPrice :Yup.number().required('extraPrice Is Required') ,
-    sku :Yup.number().required('sku Is Required') ,
+    sku: Yup.string()
+    .matches(/^\d{8}$/, 'SKU must be exactly 8 digits')
+    .required('SKU is Required'),
     imageCover: Yup.mixed().required('imageCover Is Required'),
     images: Yup.mixed().required('images Is Required')
   })
@@ -72,6 +74,8 @@ export default function ProductVariants() {
   // *ANCHOR - Add new variant
   const addVariant =  (values) => {
     setLoaderBtn(true)
+    console.log("add=>" , values.images[0]);
+    console.log("add1=>" , values.imageCover);
     const formData = new FormData();
     formData.append('quantity', values.quantity);
     formData.append('size', values.size);
@@ -79,7 +83,7 @@ export default function ProductVariants() {
     formData.append('sku', values.sku);
     formData.append('extraPrice', values.extraPrice);
     formData.append('imageCover', values.imageCover);
-    formData.append('images', Array.from(values.images));
+    formData.append('images', values.images);
     axios.post(ApiBaseUrl + `products/${productId}/variants`, formData, { headers })
       .then( response =>{
       ProductVariantsRefetch()
@@ -116,7 +120,7 @@ export default function ProductVariants() {
     formData.append('imageCover', values.imageCover);
     formData.append('size', values.size);
     formData.append('color', values.color);
-    formData.append('images', Array.from(values.images));
+    formData.append('images', values.images);
     formData.append('extraPrice', values.extraPrice);
     axios.patch(ApiBaseUrl + `variants/${id}`, formData, { headers })
     .then( response =>{
@@ -145,6 +149,7 @@ export default function ProductVariants() {
     setDisplayEditDialog(false);
     setDisplayDeleteDialog(false);
     setDisplayAddNewDialog(false);
+    setLoaderBtn(false)
   };
 
   // *ANCHOR - actions at table for each row
@@ -201,11 +206,11 @@ export default function ProductVariants() {
           </Dialog>   
           <Dialog header={'Edit Variant'} className='container editDialog' visible={displayEditDialog} onHide={hideDialog} modal>
             <form onSubmit={editFormik.handleSubmit} className='bg-light p-3 border shadow-sm rounded'>
-              {/* <div className="form-floating mb-2">
+              <div className="form-floating mb-2">
                 <input type="number" placeholder='Quantity' className="form-control" id="quantity" name="quantity" value={editFormik.values.quantity} onChange={editFormik.handleChange} onBlur={editFormik.handleBlur} />
                 <label className='ms-2' htmlFor="quantity">Quantity</label>
                 {editFormik.errors.quantity && editFormik.touched.quantity ? (<div className="alert text-danger">{editFormik.errors.quantity}</div>) : null}
-              </div> */}
+              </div>
               <div className="form-floating mb-2">
                 <input type="text" placeholder='Size' className="form-control" id="size" name="size" value={editFormik.values.size} onChange={editFormik.handleChange} onBlur={editFormik.handleBlur} />
                 <label className='ms-2' htmlFor="size">Size</label>
@@ -269,12 +274,12 @@ export default function ProductVariants() {
                 {addFormik.errors.extraPrice && addFormik.touched.extraPrice ? (<div className="alert text-danger">{addFormik.errors.extraPrice}</div>) : null}
               </div>
               <div className="form-floating mb-2">
-                <input type="file" className="form-control" id="imageCover" name="imageCover" onChange={(event) => {addFormik.setFieldValue("imageCover", event.currentTarget.files[0]) ; console.log(event.currentTarget.files[0]);}} onBlur={addFormik.handleBlur} />
+                <input type="file" className="form-control" id="imageCover" name="imageCover" onChange={(event) => {addFormik.setFieldValue("imageCover", event.currentTarget.files[0])}} onBlur={addFormik.handleBlur} />
                 <label className='ms-2 mb-3 pt-2 h-auto p-0' htmlFor="imageCover">Image Cover</label>
                 {addFormik.errors.imageCover && addFormik.touched.imageCover ? (<div className="alert text-danger">{addFormik.errors.imageCover}</div>) : null}
               </div>
               <div className="form-floating mb-2">
-                <input type="file" className="form-control" id="images" name="images" multiple onChange={(event) => {addFormik.setFieldValue("images", event.currentTarget.files) ; console.log(Array.from(event.currentTarget.files));}} onBlur={addFormik.handleBlur} />
+                <input type="file" className="form-control" id="images" name="images" multiple onChange={(event) => {addFormik.setFieldValue("images", event.currentTarget.files)}} onBlur={addFormik.handleBlur} />
                 <label className='ms-2 mb-3 pt-2 h-auto p-0' htmlFor="images">Images</label>
                 {addFormik.errors.images && addFormik.touched.images ? (<div className="alert text-danger">{addFormik.errors.images}</div>) : null}
               </div>

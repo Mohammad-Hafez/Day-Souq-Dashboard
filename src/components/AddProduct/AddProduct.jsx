@@ -9,6 +9,7 @@ export default function AddProduct({ LoaderBtn, subCategoryId, categoryId , Cate
     description: '',
     brand: BrandName ? BrandId : '',
     subCategory: CategoryName? subCategoryId : "",
+    subSubCategory: CategoryName? subCategoryId : "",
     category: CategoryName ? categoryId : "",
   ...(CategoryName?.toLowerCase() === 'auction' && {
       startDate: '',
@@ -24,7 +25,7 @@ export default function AddProduct({ LoaderBtn, subCategoryId, categoryId , Cate
     description: Yup.string().required('Description is required'),
     brand: Yup.string().required('Brand is required'),
     category: Yup.string().required('category is required'),
-    subCategory: Yup.string().required('subCategory is required'),
+    subCategory: Yup.string(),
     ...(CategoryName?.toLowerCase() === 'auction'&& {
       startDate: Yup.date().required('Start date is required'),
       biddingPrice: Yup.number().required('Bidding price is required'),

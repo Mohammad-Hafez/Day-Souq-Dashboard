@@ -12,12 +12,12 @@ import { useQuery } from 'react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 import Loader from '../Loader/Loader';
 
-export default function SubCategory() {
+export default function SubSubCategory() {
   const user = localStorage.getItem("DaySooqDashUser") ;
   let headers = {'Authorization': `Bearer ${user}`};
 
   let navigate = useNavigate();
-  let { CategoryName, id , all} = useParams();
+  let { CategoryName, SubId , all} = useParams();
 
   const [displayEditDialog, setDisplayEditDialog] = useState(false);
   const [displayDeleteDialog, setDisplayDeleteDialog] = useState(false);
@@ -27,11 +27,8 @@ export default function SubCategory() {
   const [SubCategory, setSubCategory] = useState([]);
   const [filteredSubCategory, setFilteredSubCategory] = useState([]);
 
-  const getSubCategory = () => axios.get(ApiBaseUrl + `categories/${id}/subCategories`);
-  let { data:subForCategoryResponse, refetch: subForCategoryRefetch , isLoading: subForCategoryLoading} = useQuery('sub category', getSubCategory, { cacheTime: 50000 , enabled : !!CategoryName });
-
-  const getAllSubCategories = ()=> axios.get(ApiBaseUrl + `subcategories`)
-  let {data:AllSubcategoriesResponse , isLoading :AllSubLoading , refetch:AllSubRefetch } = useQuery("all sbCategories" , getAllSubCategories , {cacheTime : 10000 , enabled : !!all})
+  const getSubSubCategories = () => axios.get(ApiBaseUrl + `subSubCategories/${SubId}`);
+  let { data:subForCategoryResponse, refetch: subForCategoryRefetch , isLoading: subForCategoryLoading} = useQuery('sub category', getSubSubCategories, { cacheTime: 50000});
 
   const getAllCatgories = ()=> axios.get(ApiBaseUrl+`categories`)
   let {data:AllCategoriesPesponse} = useQuery('getCategories' , getAllCatgories , {cacheTime:10000 , enabled:!!all})
@@ -39,11 +36,8 @@ export default function SubCategory() {
     if (subForCategoryResponse) {
       setSubCategory(subForCategoryResponse?.data.data.data);
       setFilteredSubCategory(subForCategoryResponse?.data.data.data);
-    }else if (AllSubcategoriesResponse) {
-      setSubCategory(AllSubcategoriesResponse?.data.data.data);
-      setFilteredSubCategory(AllSubcategoriesResponse?.data.data.data);
     }
-  }, [subForCategoryResponse , AllSubcategoriesResponse]);
+  }, [subForCategoryResponse]);
 
   // Add new sub category
   let AddNewInitial = {
@@ -64,7 +58,7 @@ export default function SubCategory() {
     const AddformData = new FormData();
     AddformData.append('name', values.name);
     AddformData.append('image', values.image);
-     all ? AddformData.append('category', values.category) : AddformData.append('category', id)
+     all ? AddformData.append('category', values.category) : AddformData.append('category', SubId)
     try {
       await axios.post(ApiBaseUrl + `subCategories`, AddformData, {headers});
       subForCategoryRefetch();
@@ -159,7 +153,7 @@ export default function SubCategory() {
     return (
       <div className='d-flex align-items-center justify-content-between'>
         <div className="headerLabel">
-          <h3>SubCategory  <span onClick={() => navigate(`/Categories`)} className='cursor-pointer'>{CategoryName && `For ${CategoryName}` }</span></h3>
+          <h3>Sub-SubCategory  <span onClick={() => navigate(`/Categories`)} className='cursor-pointer'>{CategoryName && `For ${CategoryName}` }</span></h3>
         </div>
         <div className="d-flex flex-column">
         <div className="searchCategory mb-2">
@@ -181,7 +175,7 @@ export default function SubCategory() {
     );
     setFilteredSubCategory(filteredData);
   };
-  const getSubForSubCategory = (rowData)=> <Button onClick={()=>navigate(`/SubSubCategory/${rowData._id}`)} icon="pi pi-eye" className='TabelButton dark-blue-text blue-brdr bg-transparent rounded-circle mx-auto'/>
+  const getProductsForSub = (rowData)=> <Button onClick={()=>navigate(`/Products/${CategoryName}/${SubId}/${rowData.name}/${rowData._id}`)} icon="pi pi-eye" className='TabelButton dark-blue-text blue-brdr bg-transparent rounded-circle mx-auto'/>
 
   return (
     <>
@@ -194,7 +188,7 @@ export default function SubCategory() {
           <Column field="image" header="Image" body={catImage} style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
           <Column field="name" header="Name" sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
           <Column field="createdAt" header="Created At" body={createdAtBody} sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
-          <Column header="Sub-SubCategory" body={getSubForSubCategory}  style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
+          <Column header="Products" body={getProductsForSub}  style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
           <Column header="edit" body={actionTemplate} style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
         </DataTable>
         <Dialog header={'Edit SubCategory'} className='container editDialog' visible={displayEditDialog} onHide={hideDialog} modal>
