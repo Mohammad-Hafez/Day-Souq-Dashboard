@@ -74,8 +74,8 @@ export default function ProductVariants() {
   // *ANCHOR - Add new variant
   const addVariant =  (values) => {
     setLoaderBtn(true)
-    console.log("add=>" , values.images[0]);
-    console.log("add1=>" , values.imageCover);
+    console.log("add=>" , values.images);
+    console.log("cover=>" , values.imageCover);
     const formData = new FormData();
     formData.append('quantity', values.quantity);
     formData.append('size', values.size);
@@ -83,7 +83,9 @@ export default function ProductVariants() {
     formData.append('sku', values.sku);
     formData.append('extraPrice', values.extraPrice);
     formData.append('imageCover', values.imageCover);
-    formData.append('images', values.images);
+    for (let i = 0; i < values.images.length; i++) {
+      formData.append('images', values.images[i]);
+    }
     axios.post(ApiBaseUrl + `products/${productId}/variants`, formData, { headers })
       .then( response =>{
       ProductVariantsRefetch()
@@ -116,12 +118,15 @@ export default function ProductVariants() {
     setLoaderBtn(true)
     const formData = new FormData();
     formData.append('product', productId);
-    // formData.append('quantity', values.quantity);
+    formData.append('quantity', values.quantity);
     formData.append('imageCover', values.imageCover);
     formData.append('size', values.size);
     formData.append('color', values.color);
-    formData.append('images', values.images);
     formData.append('extraPrice', values.extraPrice);
+    for (let i = 0; i < values.images.length; i++) {
+      formData.append('images', values.images[i]);
+    }
+
     axios.patch(ApiBaseUrl + `variants/${id}`, formData, { headers })
     .then( response =>{
       ProductVariantsRefetch()
@@ -257,16 +262,49 @@ export default function ProductVariants() {
                 <label className='ms-2' htmlFor="sku">sku</label>
                 {addFormik.errors.sku && addFormik.touched.sku ? (<div className="alert text-danger">{addFormik.errors.sku}</div>) : null}
               </div>
-
               <div className="form-floating mb-2">
-                <input type="text" placeholder='Size' className="form-control" id="size" name="size" value={addFormik.values.size} onChange={addFormik.handleChange} onBlur={addFormik.handleBlur} />
+                <select
+                  className="form-control"
+                  id="size"
+                  name="size"
+                  value={addFormik.values.size}
+                  onChange={addFormik.handleChange}
+                  onBlur={addFormik.handleBlur}
+                >
+                  <option value="" disabled>Select Size</option>
+                  <option value="64GB">64GB</option>
+                  <option value="128GB">128GB</option>
+                  <option value="256GB">256GB</option>
+                  <option value="512GB">512GB</option>
+                  <option value="1TB">1TB</option>
+                </select>
                 <label className='ms-2' htmlFor="size">Size</label>
-                {addFormik.errors.size && addFormik.touched.size ? (<div className="alert text-danger">{addFormik.errors.size}</div>) : null}
+                {addFormik.errors.size && addFormik.touched.size ? (
+                  <div className="alert text-danger">{addFormik.errors.size}</div>
+                ) : null}
               </div>
               <div className="form-floating mb-2">
-                <input type="text" placeholder='Color' className="form-control" id="color" name="color" value={addFormik.values.color} onChange={addFormik.handleChange} onBlur={addFormik.handleBlur} />
+                <select
+                  className="form-control"
+                  id="color"
+                  name="color"
+                  value={addFormik.values.color}
+                  onChange={addFormik.handleChange}
+                  onBlur={addFormik.handleBlur}
+                >
+                  <option value="" disabled>Select Color</option>
+                  <option value="Red">Red</option>
+                  <option value="Blue">Blue</option>
+                  <option value="Green">Green</option>
+                  <option value="White">White</option>
+                  <option value="Black">Black</option>
+                  <option value="Yellow">Yellow</option>
+                  {/* Add more colors as needed */}
+                </select>
                 <label className='ms-2' htmlFor="color">Color</label>
-                {addFormik.errors.color && addFormik.touched.color ? (<div className="alert text-danger">{addFormik.errors.color}</div>) : null}
+                {addFormik.errors.color && addFormik.touched.color ? (
+                  <div className="alert text-danger">{addFormik.errors.color}</div>
+                ) : null}
               </div>
               <div className="form-floating mb-2">
                 <input type="number" placeholder='Extra Price' className="form-control" id="extraPrice" name="extraPrice" value={addFormik.values.extraPrice} onChange={addFormik.handleChange} onBlur={addFormik.handleBlur} />
