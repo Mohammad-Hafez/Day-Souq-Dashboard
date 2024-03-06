@@ -34,7 +34,8 @@ export default function SubCategory() {
   let {data:AllSubcategoriesResponse , isLoading :AllSubLoading , refetch:AllSubRefetch } = useQuery("all sbCategories" , getAllSubCategories , {cacheTime : 10000 , enabled : !!all})
 
   const getAllCatgories = ()=> axios.get(ApiBaseUrl+`categories`)
-  let {data:AllCategoriesPesponse} = useQuery('getCategories' , getAllCatgories , {cacheTime:10000 , enabled:!!all})
+  let {data:AllCategoriesPesponse} = useQuery('getCategories' , getAllCatgories , {cacheTime:10000 , enabled:!!all});
+
   useEffect(() => {
     if (subForCategoryResponse) {
       setSubCategory(subForCategoryResponse?.data.data.data);
@@ -159,14 +160,16 @@ export default function SubCategory() {
     return (
       <div className='d-flex align-items-center justify-content-between'>
         <div className="headerLabel">
-          <h3>SubCategory  <span onClick={() => navigate(`/Categories`)} className='cursor-pointer'>{CategoryName && `For ${CategoryName}` }</span></h3>
+          <h3>{all && 'All'} SubCategories  <span onClick={() => navigate(`/Categories`)} className='cursor-pointer'>{CategoryName && `For ${CategoryName}` }</span></h3>
         </div>
         <div className="d-flex flex-column">
         <div className="searchCategory mb-2">
           <input type="text" placeholder="Search by subcategory name" className='form-control' onChange={handleSearch} />
         </div>
         <div className="addCategory">
+          {/* {all ? <span className='fs-6 fw-lighter'>For Adding New SubCategory Select Category First From All Categories Table</span> : */}
           <button className='btn btn-secondary w-100' onClick={() => { setDisplayAddNewDialog(true) }}>Add New</button>
+          {/* } */}
         </div>
         </div>
       </div>
@@ -181,7 +184,9 @@ export default function SubCategory() {
     );
     setFilteredSubCategory(filteredData);
   };
-  const getSubForSubCategory = (rowData)=> <Button onClick={()=>navigate(`/SubSubCategory/${rowData.category._id}/${rowData._id}`)} icon="pi pi-eye" className='TabelButton dark-blue-text blue-brdr bg-transparent rounded-circle mx-auto'/>
+  const getSubForSubCategory = (rowData)=> <Button onClick={()=>navigate(`/SubSubCategory/${rowData.category.name}/${rowData.category._id}/${rowData._id}`)} icon="pi pi-eye" className='TabelButton dark-blue-text blue-brdr bg-transparent rounded-circle mx-auto'/>
+
+  const ParentCategoryName = (rowData) => rowData?.category?.name 
 
   return (
     <>
@@ -193,6 +198,7 @@ export default function SubCategory() {
         <DataTable value={filteredSubCategory} header={SubCategoryHeaderBody} paginator selectionMode="single" className={`dataTabel mb-4 text-capitalize AllList`} dataKey="_id" scrollable scrollHeight="100vh" tableStyle={{ minWidth: "50rem" }} rows={10} responsive="scroll">
           <Column field="image" header="Image" body={catImage} style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
           <Column field="name" header="Name" sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
+          {all && <Column header="Category" body={ParentCategoryName} sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} /> }
           <Column field="createdAt" header="Created At" body={createdAtBody} sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
           <Column header="Sub-SubCategory" body={getSubForSubCategory}  style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
           <Column header="edit" body={actionTemplate} style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />

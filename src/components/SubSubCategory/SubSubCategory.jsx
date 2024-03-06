@@ -36,6 +36,7 @@ export default function SubSubCategory() {
       setFilteredSubCategory(subForSubCategoryResponse?.data.data.data);
     }
   }, [subForSubCategoryResponse]);
+
   // *ANCHOR - Formik Initial
   let subSubInitial = {
     name: '',
@@ -148,11 +149,11 @@ export default function SubSubCategory() {
     return (
       <div className='d-flex align-items-center justify-content-between'>
         <div className="headerLabel">
-          <h3>Sub-SubCategory  <span onClick={() => navigate(`/Categories`)} className='cursor-pointer'>{CategoryName && `For ${CategoryName}` }</span></h3>
+          <h3>Sub-SubCategories  <span onClick={() => navigate(`/Categories`)} className='cursor-pointer'>{CategoryName && `For ${CategoryName}` }</span></h3>
         </div>
         <div className="d-flex flex-column">
         <div className="searchCategory mb-2">
-          <input type="text" placeholder="Search by subcategory name" className='form-control' onChange={handleSearch} />
+          <input type="text" placeholder="Search by name" className='form-control' onChange={handleSearch} />
         </div>
         <div className="addCategory">
           <button className='btn btn-secondary w-100' onClick={() => { setDisplayAddNewDialog(true) }}>Add New</button>
@@ -170,12 +171,13 @@ export default function SubSubCategory() {
     );
     setFilteredSubCategory(filteredData);
   };
-  const getProductsForSub = (rowData)=> <Button onClick={()=>navigate(`/Products/${CategoryName}/${SubId}/${rowData.name}/${rowData._id}`)} icon="pi pi-eye" className='TabelButton dark-blue-text blue-brdr bg-transparent rounded-circle mx-auto'/>
+  
+  const getProductsForSubSub = (rowData)=> <Button onClick={()=>navigate(`/Products/${CategoryName}/${SubId}/${rowData.name}/${rowData._id}`)} icon="pi pi-eye" className='TabelButton dark-blue-text blue-brdr bg-transparent rounded-circle mx-auto'/>
 
   return (
     <>
       <Helmet>
-        <title>Sub Category</title>
+        <title>Sub SubCategories</title>
       </Helmet>
       {subForCategoryLoading ? <Loader/> : 
       <div className="container">
@@ -183,7 +185,7 @@ export default function SubSubCategory() {
           <Column field="image" header="Image" body={catImage} style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
           <Column field="name" header="Name" sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
           <Column field="createdAt" header="Created At" body={createdAtBody} sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
-          <Column header="Products" body={getProductsForSub}  style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
+          <Column header="Products" body={getProductsForSubSub}  style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
           <Column header="edit" body={actionTemplate} style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
         </DataTable>
         <Dialog header={'Edit SubSubCategory'} className='container editDialog' visible={displayEditDialog} onHide={hideDialog} modal>
