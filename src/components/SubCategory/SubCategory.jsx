@@ -181,7 +181,7 @@ export default function SubCategory() {
     );
     setFilteredSubCategory(filteredData);
   };
-  const getSubForSubCategory = (rowData)=> <Button onClick={()=>navigate(`/SubSubCategory/${rowData._id}`)} icon="pi pi-eye" className='TabelButton dark-blue-text blue-brdr bg-transparent rounded-circle mx-auto'/>
+  const getSubForSubCategory = (rowData)=> <Button onClick={()=>navigate(`/SubSubCategory/${rowData.category._id}/${rowData._id}`)} icon="pi pi-eye" className='TabelButton dark-blue-text blue-brdr bg-transparent rounded-circle mx-auto'/>
 
   return (
     <>

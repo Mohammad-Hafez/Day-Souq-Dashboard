@@ -49,7 +49,7 @@ export default function ProductVariants() {
   }
   let validationSchema = Yup.object().shape({
     quantity :Yup.number().required('quantity Is Required') ,
-    size :Yup.string().required('size Is Required') ,
+    size :Yup.string(),
     color :Yup.string().required('color Is Required') ,
     extraPrice :Yup.number().required('extraPrice Is Required') ,
     sku: Yup.string()
@@ -258,7 +258,7 @@ export default function ProductVariants() {
                 {addFormik.errors.quantity && addFormik.touched.quantity ? (<div className="alert text-danger">{addFormik.errors.quantity}</div>) : null}
               </div>
               <div className="form-floating mb-2">
-                <input type="number" placeholder='sku' className="form-control" id="sku" name="sku" value={addFormik.values.sku} onChange={addFormik.handleChange} onBlur={addFormik.handleBlur} />
+                <input type="text" placeholder='sku' className="form-control" id="sku" name="sku" maxLength={8} value={addFormik.values.sku} onChange={addFormik.handleChange} onBlur={addFormik.handleBlur} />
                 <label className='ms-2' htmlFor="sku">sku</label>
                 {addFormik.errors.sku && addFormik.touched.sku ? (<div className="alert text-danger">{addFormik.errors.sku}</div>) : null}
               </div>
