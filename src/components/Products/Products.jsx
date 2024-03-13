@@ -55,7 +55,7 @@ export default function Products() {
     'get Subcategories', getAllSubcategories, { cacheTime: 10000, enabled: sec !=='subcategory'});
   let {data: subSubcategoriesNameResponse} = useQuery(
     'get sub-Subcategories', getAllSubSubCategories, { cacheTime: 10000, enabled: sec !=='subSubCategory'});
-
+    
   // *ANCHOR - get products depends on user select 
   const getSecProducts = () => axios.get(ApiBaseUrl + `products?${sec}=${secId}&dashboard=true`);
   const getAllGeneralProducts = () => axios.get(ApiBaseUrl + `products?dashboard=true`);

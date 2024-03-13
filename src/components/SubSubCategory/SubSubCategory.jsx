@@ -172,7 +172,7 @@ export default function SubSubCategory() {
     setFilteredSubCategory(filteredData);
   };
   
-  const getProductsForSubSub = (rowData)=> <Button onClick={()=>navigate(`/Products/${CategoryName}/${SubId}/${rowData.name}/${rowData._id}`)} icon="pi pi-eye" className='TabelButton dark-blue-text blue-brdr bg-transparent rounded-circle mx-auto'/>
+  const getProductsForSubSub = (rowData)=> <Button onClick={()=>navigate(`/Products/subSubCategory/${rowData.name}/${rowData._id}`)} icon="pi pi-eye" className='TabelButton dark-blue-text blue-brdr bg-transparent rounded-circle mx-auto'/>
 
   return (
     <>

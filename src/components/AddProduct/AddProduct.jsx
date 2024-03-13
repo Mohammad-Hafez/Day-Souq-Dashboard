@@ -26,9 +26,9 @@ export default function AddProduct({ LoaderBtn,headers, displayAddNewDialog,sec 
   const handleSubcategoryChange = (subcategoryId) => {
     setSelectedSubcategoryId(subcategoryId);
   };
-
-  const filteredSubcategories = SubcategoriesNameResponse.filter(subcategory => subcategory.category._id === selectedCategoryId);
-  const filteredSubSubcategories = subSubcategoriesNameResponse.filter(subsubcategory => subsubcategory.subCategory === selectedSubcategoryId);
+  console.log(subSubcategoriesNameResponse);
+  const filteredSubcategories = SubcategoriesNameResponse?.filter(subcategory => subcategory?.category._id === selectedCategoryId);
+  const filteredSubSubcategories = subSubcategoriesNameResponse?.filter(subsubcategory => subsubcategory?.subCategory === selectedSubcategoryId);
 
   const AddNewInitial = {
     name: '',
@@ -59,7 +59,7 @@ export default function AddProduct({ LoaderBtn,headers, displayAddNewDialog,sec 
     description: Yup.string().required('Description is required'),
     brand: Yup.string().required('Brand is required'),
     category: Yup.string().required('category is required'),
-    quantity :Yup.number().required('quantity Is Required') ,
+    quantity :Yup.number().required('quantity Is Required'),
     sku: Yup.string()
     .matches(/^\d{8}$/, 'SKU must be exactly 8 digits')
     .required('SKU is Required'),
@@ -83,6 +83,7 @@ export default function AddProduct({ LoaderBtn,headers, displayAddNewDialog,sec 
   const AddNewProducts =  (values) => {
     setLoaderBtn(true);
     const formData = new FormData();
+    // *FIXME - append all data to formdata
     formData.append();
     for (let i = 0; i < values.images.length; i++) {
       formData.append('images', values.images[i]);
@@ -103,7 +104,7 @@ export default function AddProduct({ LoaderBtn,headers, displayAddNewDialog,sec 
       setLoaderBtn(false);
     })
   };
-console.log(sec);
+
   return (
     <>
       <Dialog header={'Add New Product'} className='container editDialog' visible={displayAddNewDialog} onHide={hideDialog} modal>
