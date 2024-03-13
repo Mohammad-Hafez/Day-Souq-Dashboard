@@ -25,8 +25,7 @@ export default function Products() {
   let headers = { 'Authorization': `Bearer ${user}` };
 
   let navigate = useNavigate();
-
-  let { CategoryName, SubCategoryName, categoryId, subCategoryId, BrandId, BrandName , all } = useParams();
+  let {sec,secName,secId} = useParams();
 
   const [displayEditDialog, setDisplayEditDialog] = useState(false)
   const [displayDeleteDialog, setDisplayDeleteDialog] = useState(false)
@@ -40,37 +39,47 @@ export default function Products() {
   const [LoaderBtn, setLoaderBtn] = useState(false)
   const [Products, setProducts] = useState()
   const [filteredProducts, setFilteredProducts] = useState()
+  const [AllDiscount, setAllDiscount] = useState(null)
   const [ErrMsg, setErrMsg] = useState(null)
 
-
+  // *ANCHOR - get brands / cat. / sub-cat. / sub-subCat. for drop downs at edit & add forms
   const getAllBrands = () => axios.get(ApiBaseUrl + `brands`)
   const getAllCategories = () => axios.get(ApiBaseUrl + `categories`)
   const getAllSubcategories = ()=> axios.get(ApiBaseUrl +`subcategories`)
+  const getAllSubSubCategories = ()=> axios.get(ApiBaseUrl +`subSubCategories`)
+  let {data: brandsNameResponse} = useQuery(
+    'get brands', getAllBrands, { cacheTime: 10000, enabled: sec !=='brand'});
+  let {data: categoriesNameResponse} = useQuery(
+    'get categories', getAllCategories, { cacheTime: 10000, enabled: sec !=='category'});
+  let {data: SubcategoriesNameResponse} = useQuery(
+    'get Subcategories', getAllSubcategories, { cacheTime: 10000, enabled: sec !=='subcategory'});
+  let {data: subSubcategoriesNameResponse} = useQuery(
+    'get sub-Subcategories', getAllSubSubCategories, { cacheTime: 10000, enabled: sec !=='subSubCategory'});
 
-  const getSubCatProducts = () => axios.get(ApiBaseUrl + `products?subCategory=${subCategoryId}&dashboard=true`)
-  const getBrandProducts = () => axios.get(ApiBaseUrl + `products?brand=${BrandId}&dashboard=true`)
-  const getAllGeneralProducts = () => axios.get(ApiBaseUrl + `products?dashboard=true`)
+  // *ANCHOR - get products depends on user select 
+  const getSecProducts = () => axios.get(ApiBaseUrl + `products?${sec}=${secId}&dashboard=true`);
+  const getAllGeneralProducts = () => axios.get(ApiBaseUrl + `products?dashboard=true`);
+  let { isLoading: AllLoading, data: AllResponse , refetch : AllRefetch } = useQuery(
+    'get all products for general',
+    getAllGeneralProducts,
+    {cacheTime:50000, enabled: sec==='all'? true : false}
+  );
+  let { isLoading: ProductsLoading, data: SecProductsResponse, refetch: SecProductsRefetch } = useQuery(
+    'sec-Products',
+    getSecProducts,
+    {cacheTime:50000, enabled: secName!=='all'? true : false}
+  );
 
-  let { isLoading: brandsLoading, data: brandsNameResponse } = useQuery('get brands', getAllBrands, { cacheTime: 10000, enabled: !!CategoryName || !!all})
-  let { isLoading: categoriesLoading, data: categoriesNameResponse } = useQuery('get categories', getAllCategories, { cacheTime: 10000, enabled: !!CategoryName || !!all})
-  let { isLoading: SubcategoriesLoading, data: SubcategoriesNameResponse } = useQuery('get Subcategories', getAllSubcategories, { cacheTime: 10000, enabled: !!SubCategoryName || !!all})
-  
-  let { isLoading: AllLoading, data: AllResponse , refetch : AllRefetch } = useQuery('get all products for general', getAllGeneralProducts, { cacheTime: 10000, enabled: !!all })
-  let { isLoading: ProductsLoading , data: SubcatProductsResponse, refetch: SubcatProductsRefetch} = useQuery('subCategory Products', getSubCatProducts, { cacheTime: 50000, enabled: !!CategoryName })
-  let { isLoading: BrandProductsLoading , data: BrandProductsResponse, refetch: BrandProductsRefetch } = useQuery('Brand Products', getBrandProducts, { cacheTime: 50000, enabled: !!BrandName })
-
+  // *ANCHOR - Show products depends on selected section from sidebar
   useEffect(() => {
-    if (SubcatProductsResponse) {
-      setProducts(SubcatProductsResponse?.data.data.data);
-      setFilteredProducts(SubcatProductsResponse?.data.data.data);
-    } else if (BrandProductsResponse) {
-      setProducts(BrandProductsResponse?.data.data.data);
-      setFilteredProducts(BrandProductsResponse?.data.data.data);
-    }else if (AllResponse) {
+    if (sec!=='all') {
+      setProducts(SecProductsResponse?.data.data.data);
+      setFilteredProducts(SecProductsResponse?.data.data.data);
+    }else if (sec==='all') {
       setProducts(AllResponse?.data.data.data);
       setFilteredProducts(AllResponse?.data.data.data);
     }
-  }, [SubcatProductsResponse, BrandProductsResponse , AllResponse]);
+  }, [sec, SecProductsResponse ,AllResponse]); 
 
   // *ANCHOR - delete product
   const deleteProduct = async (id) => {
@@ -78,11 +87,9 @@ export default function Products() {
     setLoaderBtn(true)
       await axios.delete(ApiBaseUrl + `products/${id}`, { headers })
       .then(response =>{
-      if (CategoryName) {
-        SubcatProductsRefetch()
-      } else if (BrandName) {
-        BrandProductsRefetch()
-      }else if (all) {
+      if (sec!=='all') {
+        SecProductsRefetch()
+      }else if (sec==='all') {
         AllRefetch()
       }
       hideDialog()
@@ -101,19 +108,17 @@ export default function Products() {
     const data = {
       priceDiscount: {
         type,
-        value: parseFloat(value) 
+        value: parseFloat(value)
       }
     };
     axios.patch(ApiBaseUrl + `products/${id}`, data, { headers })
       .then(response => {
-        if (CategoryName) {
-          SubcatProductsRefetch();
-        } else if (BrandName) {
-          BrandProductsRefetch();
-        } else if (all) {
-          AllRefetch();
+        if (sec!=='all') {
+          SecProductsRefetch()
+        }else if (sec==='all') {
+          AllRefetch()
         }
-        hideDialog()
+          hideDialog()
         setLoaderBtn(false)
       })
       .catch(error => {
@@ -123,29 +128,57 @@ export default function Products() {
       });
   };
   
+  const editAllDiscount = (values ) => {
+    setLoaderBtn(true)
+    const { type, value ,enable } = values;
+    const data = {
+      discount: {
+        type,
+        value: parseFloat(value),
+        enable 
+      }
+    };
+    axios.patch(ApiBaseUrl + `products/discount`, data, { headers })
+      .then(response => {
+        if (sec!=='all') {
+          SecProductsRefetch()
+        }else if (sec==='all') {
+          AllRefetch()
+        }
+          hideDialog()
+        setLoaderBtn(false)
+      })
+      .catch(error => {
+        setErrMsg(error.response.data.message);
+        console.error(error);
+        setLoaderBtn(false)
+      });
+  };
+
   let editDiscountFormik = useFormik({
     initialValues:{
-      type :'',
-      value :''
+      type: '',
+      value: '',
+      enable: AllDiscount ? '' : null 
     },
-    validationSchema : Yup.object().shape({
-      type : Yup.string().required('Discount Type is required'),
-      value : Yup.string().required('Discount value is required')
+    validationSchema: Yup.object().shape({
+      type: Yup.string().required('Discount Type is required'),
+      value: Yup.string().required('Discount value is required')
     }),
-    onSubmit :(values) => editDiscount( SelectedDiscount ,values)
-  })
-
-  // *ANCHOR - Hide Product
+    onSubmit: (values) => { 
+      AllDiscount ?  editAllDiscount(values) : editDiscount(SelectedDiscount._id, values)
+    }
+  });
+  
+  // *ANCHOR - Hide Product from website
   const hideProduct=(status, id)=>{
     setErrMsg(null);
     setLoaderBtn(true)
     axios.patch(ApiBaseUrl +`products/${id}`,{isShown:!status},{headers : headers})
     .then(response=>{
-      if (CategoryName) {
-        SubcatProductsRefetch()
-      } else if (BrandName) {
-        BrandProductsRefetch()
-      }else if (all) {
+      if (sec!=='all') {
+        SecProductsRefetch()
+      }else if (sec==='all') {
         AllRefetch()
       }
       hideDialog()
@@ -157,7 +190,7 @@ export default function Products() {
     })
   }
 
-  // *ANCHOR - hide all modals
+  // *ANCHOR - close all modals
   const hideDialog = () => {
     setDisplayEditDialog(false);
     setDisplayDeleteDialog(false);
@@ -186,16 +219,16 @@ export default function Products() {
     return (
       <div className='d-flex align-items-center justify-content-between'>
         <div className="headerLabel">
-          {CategoryName && <h3>Products For <span className='cursor-pointer' onClick={() => { navigate(`/SubCategory/${CategoryName}/${categoryId}`) }}>{CategoryName}</span> <i className='pi pi-arrow-right'></i> {SubCategoryName}</h3>}
-          {BrandName && <h3>Products For {BrandName} </h3>}
-          {all && <h3>All Products</h3>}
+          {sec!=='all' && <h3>Products For <span className='cursor-pointer'>{secName}</span></h3>}
+          {sec==='all' && <h3>All Products</h3>} 
         </div>
         <div className="d-flex flex-column">
         <div className="searchCategory mb-2">
           <input type="text" placeholder="Search by product name" className='form-control' onChange={handleSearch} />
         </div>
-        <div className="addCategory">
-          <button className='btn btn-secondary w-100' onClick={() => { setDisplayAddNewDialog(true) }}>Add New</button>
+        <div className="addCategory w-100 d-flex">
+          <button className='btn btn-secondary w-50 me-2' onClick={() => { setDisplayAddNewDialog(true) }}>Add New</button>
+          <button className='btn btn-dark-blue approve w-50' onClick={() => { setDiscountDialogVisible(true) ; setAllDiscount('All') }}>All Discount</button>
         </div>
         </div>
       </div>
@@ -206,7 +239,7 @@ export default function Products() {
       <div className='d-flex justify-content-center align-items-center '>
         
         <Button icon="pi pi-pencil" className='TabelButton approve rounded-circle mx-1' onClick={() => { setDisplayEditDialog(true); setSelectedProducts(rowData) }} />
-        <BiSolidDiscount  className='TabelButton discount rounded-circle mx-1 p-1' onClick={()=>{setDiscountDialogVisible(true); setSelectedDiscount(rowData._id)}}/>
+        <BiSolidDiscount  className='TabelButton discount rounded-circle mx-1 p-1' onClick={()=>{setDiscountDialogVisible(true); setSelectedDiscount(rowData)}}/>
         {rowData.isShown === true ? 
           <Button onClick={() => {setSelectedProducts(rowData); setHideDialogVisible(true)}} icon="pi pi-lock-open" className='TabelButton rounded-circle mx-auto' outlined severity="secondary" />
         :
@@ -228,9 +261,7 @@ return <>
       <title>Products</title>
     </Helmet>
     <div className="container-fluid">
-      {brandsLoading || ProductsLoading || BrandProductsLoading || AllLoading || categoriesLoading  || SubcategoriesLoading ? <div>
-        <Loader />
-      </div> : <>
+      {ProductsLoading || AllLoading? <Loader /> : <>
           <DataTable value={filteredProducts} header={ProductsHeaderBody} paginator selectionMode="single" className={`dataTabel mb-4 text-capitalize AllList`} dataKey="_id" scrollable scrollHeight="100vh" tableStyle={{ minWidth: "50rem" }} rows={10} responsive="scroll">
             <Column header="Images" body={productImage} style={{ width: "8%", borderBottom: '1px solid #dee2e6' }} />
             <Column field="name" header="Name" sortable style={{ width: "20%", borderBottom: '1px solid #dee2e6' }} />
@@ -246,7 +277,7 @@ return <>
 
           <DeleteDialog Dialog={Dialog} LoaderBtn={LoaderBtn} ErrMsg={ErrMsg} displayDeleteDialog={displayDeleteDialog} hideDialog={hideDialog} deleteProduct={deleteProduct} SelectedProducts={SelectedProducts} setDisplayDeleteDialog={setDisplayDeleteDialog} />
           
-          <DiscountDialog Dialog={Dialog} ErrMsg={ErrMsg} LoaderBtn={LoaderBtn} Button={Button} hideDialog={hideDialog}  editDiscountFormik={editDiscountFormik} DiscountDialogVisible={DiscountDialogVisible}/>
+          <DiscountDialog Dialog={Dialog} AllDiscount={AllDiscount} on={SelectedDiscount?.name} ErrMsg={ErrMsg} LoaderBtn={LoaderBtn} Button={Button} hideDialog={hideDialog}  editDiscountFormik={editDiscountFormik} DiscountDialogVisible={DiscountDialogVisible}/>
       
           <DescriptionDialog Dialog={Dialog} ProductDescriptionVisible={ProductDescriptionVisible} hideDialog={hideDialog} ProductDescription={ProductDescription}/>
 
@@ -257,55 +288,37 @@ return <>
               SelectedProducts={SelectedProducts}
               displayEditDialog={displayEditDialog}
               headers={headers}
-              all={all}
-              useFormik={useFormik}
-              Yup={Yup}
-              subCategoryId={subCategoryId}
-              categoryId={categoryId}
-              axios={axios}
-              ApiBaseUrl={ApiBaseUrl}
-              Dialog={Dialog}
+              sec={sec}
+              secName={secName}
+              secId={secId}
               hideDialog={hideDialog}
-              Button={Button}
               LoaderBtn={LoaderBtn}
               setLoaderBtn={setLoaderBtn}
-              SubcatProductsRefetch={SubcatProductsRefetch}
+              SecProductsRefetch={SecProductsRefetch}
               AllRefetch={AllRefetch}
-              BrandProductsRefetch={BrandProductsRefetch}
               brandsNameResponse={brandsNameResponse?.data.data.data}
               categoriesNameResponse={categoriesNameResponse?.data.data.data}
               SubcategoriesNameResponse={SubcategoriesNameResponse?.data.data.data}
-              CategoryName={CategoryName}
-              BrandName={BrandName}
-              BrandId={BrandId}
+              subSubcategoriesNameResponse={subSubcategoriesNameResponse?.data.data.data}
             />
           }
 
           {displayAddNewDialog &&
             <AddProduct
               headers={headers}
-              useFormik={useFormik}
-              Yup={Yup}
-              all={all}
-              subCategoryId={subCategoryId}
-              categoryId={categoryId}
-              axios={axios}
-              ApiBaseUrl={ApiBaseUrl}
-              Dialog={Dialog}
+              sec={sec}
+              secName={secName}
+              secId={secId}
               displayAddNewDialog={displayAddNewDialog}
               hideDialog={hideDialog}
-              Button={Button}
               LoaderBtn={LoaderBtn}
               setLoaderBtn={setLoaderBtn}
-              SubcatProductsRefetch={SubcatProductsRefetch}
+              SecProductsRefetch={SecProductsRefetch}
               AllRefetch={AllRefetch}
-              BrandProductsRefetch={BrandProductsRefetch}
-              BrandName={BrandName}
-              BrandId={BrandId}
               brandsNameResponse={brandsNameResponse?.data.data.data}
               categoriesNameResponse={categoriesNameResponse?.data.data.data}
               SubcategoriesNameResponse={SubcategoriesNameResponse?.data.data.data}
-              CategoryName={CategoryName}
+              subSubcategoriesNameResponse={subSubcategoriesNameResponse?.data.data.data}
             />
           }
         </>

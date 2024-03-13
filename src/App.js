@@ -76,9 +76,7 @@ function App() {
           <Route path="SubSubCategory/:CategoryName/:CatId/:SubId" element={<ProtectedRoutes> <SubSubCategory UserToken={UserToken}/> </ProtectedRoutes> } /> 
           <Route path="SubCategory/:all" element={<ProtectedRoutes> <SubCategory UserToken={UserToken}/> </ProtectedRoutes> } /> 
           <Route path="SubCategory/:CategoryName/:id" element={<ProtectedRoutes> <SubCategory UserToken={UserToken}/> </ProtectedRoutes> } /> 
-          <Route path="Products/:all" element={<ProtectedRoutes> <Products UserToken={UserToken}/> </ProtectedRoutes> } /> 
-          <Route path="Products/:BrandName/:BrandId" element={<ProtectedRoutes> <Products UserToken={UserToken}/> </ProtectedRoutes> } /> 
-          <Route path="Products/:CategoryName/:categoryId/:SubCategoryName/:subCategoryId" element={<ProtectedRoutes> <Products UserToken={UserToken}/> </ProtectedRoutes> } /> 
+          <Route path="Products/:sec/:secName/:secId" element={<ProtectedRoutes> <Products UserToken={UserToken}/> </ProtectedRoutes> } /> 
           <Route path="ProductVariants/:productName/:productId" element={<ProtectedRoutes> <ProductVariants UserToken={UserToken}/> </ProtectedRoutes> } /> 
           <Route path="*" element={<NotFound/>} /> 
           </Route>

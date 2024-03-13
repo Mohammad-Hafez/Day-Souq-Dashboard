@@ -11,6 +11,8 @@ import { ApiBaseUrl, ImgBaseURL } from '../ApiBaseUrl';
 import { useQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import Loader from '../Loader/Loader';
+import { BiSolidDiscount } from "react-icons/bi";
+import DiscountDialog from '../DiscountDialog/DiscountDialog';
 
 export default function Categories() {
   const user = localStorage.getItem("DaySooqDashUser") ;
@@ -24,6 +26,9 @@ export default function Categories() {
   const [LoaderBtn, setLoaderBtn] = useState(false);
   const [Categories, setCategories] = useState([]);
   const [filteredCategories, setFilteredCategories] = useState([]);
+  const [DiscountDialogVisible, setDiscountDialogVisible] = useState(false)
+  const [ErrMsg, setErrMsg] = useState(null)
+
   const getCategories = () => axios.get(ApiBaseUrl + `categories`);
   let { data, refetch , isLoading} = useQuery('All-Categories', getCategories, { cacheTime: 50000 });
   useEffect(() => {
@@ -96,6 +101,41 @@ export default function Categories() {
       setLoaderBtn(false);
     }
   };
+
+  let editDiscountFormik = useFormik({
+    initialValues:{
+      type :'',
+      value :''
+    },
+    validationSchema : Yup.object().shape({
+      type : Yup.string().required('Discount Type is required'),
+      value : Yup.string().required('Discount value is required')
+    }),
+    onSubmit :(values) => editDiscount( SelectedCategory._id ,values)
+  })
+
+  const editDiscount = (id, values) => {
+    setLoaderBtn(true)
+    const { type, value } = values;
+    const data = {
+      discount: {
+        type,
+        value: parseFloat(value) 
+      }
+    };
+    axios.patch(ApiBaseUrl + `products/discount/${id}/category`, data, { headers })
+      .then(response => {
+        refetch();
+        hideDialog()
+        setLoaderBtn(false)
+      })
+      .catch(error => {
+        setErrMsg(error.response.data.message);
+        console.error(error);
+        setLoaderBtn(false)
+      });
+  };
+
   const deleteCategory = async (id) => {
     try {
       await axios.delete(ApiBaseUrl + `categories/${id}`, { headers });
@@ -105,9 +145,23 @@ export default function Categories() {
       console.error(error);
     }
   };
+
+  const hideDialog = () => {
+    setDisplayEditDialog(false);
+    setDisplayDeleteDialog(false);
+    setDisplayAddNewDialog(false);
+    setDiscountDialogVisible(false);
+    setSelectedCategory(null);
+    editFormik.resetForm();
+    AddNewFormik.resetForm();
+    editDiscountFormik.resetForm();
+    setSelectedCategory(null);
+  };
+
   const actionTemplate = (rowData) => {
     return (
       <div className='d-flex justify-content-center align-items-center '>
+        <BiSolidDiscount  className='TabelButton discount rounded-circle mx-1 p-1' onClick={()=>{setDiscountDialogVisible(true); setSelectedCategory(rowData)}}/>
         <Button icon="pi pi-pencil" className='TabelButton approve rounded-circle mx-1' onClick={() => { setDisplayEditDialog(true); setSelectedCategory(rowData) }} />
         <Button icon="pi pi-trash" className='TabelButton Cancel rounded-circle mx-1' onClick={() => { setSelectedCategory(rowData._id); setDisplayDeleteDialog(true) }} />
       </div>
@@ -118,13 +172,6 @@ export default function Categories() {
   };
   const createdAtBody = (rowData) => {
     return rowData.createdAt ? rowData.createdAt.slice(0, 10) : null;
-  };
-  const hideDialog = () => {
-    setDisplayEditDialog(false);
-    setDisplayDeleteDialog(false);
-    setDisplayAddNewDialog(false);
-    editFormik.resetForm();
-    AddNewFormik.resetForm();
   };
   const categoriesHeaderBody = () => {
     return (
@@ -143,6 +190,7 @@ export default function Categories() {
       </div>
     );
   };
+
   const handleSearch = (e) => {
     const searchValue = e.target.value.toLowerCase();
     const filteredData = Categories.filter(category =>
@@ -151,6 +199,10 @@ export default function Categories() {
     setFilteredCategories(filteredData);
   };
   const getSubCategory = (rowData) => <Button onClick={() => navigate(`/SubCategory/${rowData.name}/${rowData._id}`)} icon="pi pi-eye" className='TabelButton dark-blue-text blue-brdr bg-transparent rounded-circle mx-auto' />
+  
+  const discountBody = (rowData)=> rowData?.priceDiscount? rowData?.priceDiscount?.type === 'fixed' ? rowData?.priceDiscount?.value + ' JOD' : rowData?.priceDiscount?.value + ' %' : '0'
+  const getProductsForCategory = (rowData)=> <Button onClick={()=>navigate(`/Products/category/${rowData.name}/${rowData._id}`)} icon="pi pi-eye" className='TabelButton dark-blue-text blue-brdr bg-transparent rounded-circle mx-auto'/>
+
   return <>
     <Helmet>
       <title>Categories</title>
@@ -158,13 +210,17 @@ export default function Categories() {
     {isLoading ? <Loader/>
     :
     <div className="container">
+
       <DataTable value={filteredCategories} header={categoriesHeaderBody} paginator selectionMode="single" className={`dataTabel mb-4 text-capitalize AllList`} dataKey="_id" scrollable scrollHeight="100vh" tableStyle={{ minWidth: "50rem" }} rows={10} responsive="scroll">
         <Column field="image" header="Image" body={catImage} style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
         <Column field="name" header="Name" sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
+        <Column header="Discount" body={discountBody} sortable style={{ width: "5%", borderBottom: '1px solid #dee2e6' }} />
+        <Column header="Products" body={getProductsForCategory}  style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
         <Column field="createdAt" header="Created At" body={createdAtBody} sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
         <Column header="Sub Categories" body={getSubCategory} style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
         <Column header="edit" body={actionTemplate} style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
       </DataTable>
+
       <Dialog header={'Edit Category'} className='container editDialog' visible={displayEditDialog} onHide={hideDialog} modal>
         <form onSubmit={editFormik.handleSubmit} className='bg-light p-3 border shadow-sm rounded'>
           <div className="form-floating mb-2">
@@ -195,6 +251,9 @@ export default function Categories() {
           </div>
         </form>
       </Dialog>
+
+      <DiscountDialog on={'category'} Dialog={Dialog} ErrMsg={ErrMsg} LoaderBtn={LoaderBtn} Button={Button} hideDialog={hideDialog}  editDiscountFormik={editDiscountFormik} DiscountDialogVisible={DiscountDialogVisible}/>
+      
       <Dialog header={'Delete Category'} className='container editDialog' visible={displayDeleteDialog} onHide={hideDialog} modal>
         <h5>you want delete this category ?</h5>
         <hr />
@@ -203,6 +262,7 @@ export default function Categories() {
           <button className='btn w-50 mx-2 btn-primary  px-4' onClick={() => { setDisplayDeleteDialog(false) }}>No</button>
         </div>
       </Dialog>
+
       <Dialog header={'Add New Category'} className='container editDialog' visible={displayAddNewDialog} onHide={hideDialog} modal>
         <form onSubmit={AddNewFormik.handleSubmit} className='bg-light p-3 border shadow-sm rounded'>
           <div className="form-floating mb-2">
@@ -233,6 +293,7 @@ export default function Categories() {
           </div>
         </form>
       </Dialog>
+
     </div>
     }
   </>;

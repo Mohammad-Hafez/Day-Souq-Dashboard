@@ -187,6 +187,7 @@ export default function SubCategory() {
   const getSubForSubCategory = (rowData)=> <Button onClick={()=>navigate(`/SubSubCategory/${rowData.category.name}/${rowData.category._id}/${rowData._id}`)} icon="pi pi-eye" className='TabelButton dark-blue-text blue-brdr bg-transparent rounded-circle mx-auto'/>
 
   const ParentCategoryName = (rowData) => rowData?.category?.name 
+  const getProductsForCategory = (rowData)=> <Button onClick={()=>navigate(`/Products/subCategory/${rowData.name}/${rowData._id}`)} icon="pi pi-eye" className='TabelButton dark-blue-text blue-brdr bg-transparent rounded-circle mx-auto'/>
 
   return (
     <>
@@ -199,8 +200,9 @@ export default function SubCategory() {
           <Column field="image" header="Image" body={catImage} style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
           <Column field="name" header="Name" sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
           {all && <Column header="Category" body={ParentCategoryName} sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} /> }
-          <Column field="createdAt" header="Created At" body={createdAtBody} sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
+          <Column header="Products" body={getProductsForCategory}  style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
           <Column header="Sub-SubCategory" body={getSubForSubCategory}  style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
+          <Column field="createdAt" header="Created At" body={createdAtBody} sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
           <Column header="edit" body={actionTemplate} style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
         </DataTable>
         <Dialog header={'Edit SubCategory'} className='container editDialog' visible={displayEditDialog} onHide={hideDialog} modal>

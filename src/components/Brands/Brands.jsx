@@ -172,7 +172,7 @@ export default function Brands() {
     );
   };
 
-  const getBrandProducts = (rowData)=> <Button onClick={()=>navigate(`/Products/${rowData.name}/${rowData._id}`)} icon="pi pi-eye" className='TabelButton dark-blue-text blue-brdr bg-transparent rounded-circle mx-auto'/>
+  const getBrandProducts = (rowData)=> <Button onClick={()=>navigate(`/Products/brand/${rowData.name}/${rowData._id}`)} icon="pi pi-eye" className='TabelButton dark-blue-text blue-brdr bg-transparent rounded-circle mx-auto'/>
   
   return <>
     <Helmet>
