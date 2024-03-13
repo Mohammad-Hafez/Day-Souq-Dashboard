@@ -103,7 +103,7 @@ export default function AddProduct({ LoaderBtn,headers, displayAddNewDialog,sec 
       setLoaderBtn(false);
     })
   };
-
+console.log(sec);
   return (
     <>
       <Dialog header={'Add New Product'} className='container editDialog' visible={displayAddNewDialog} onHide={hideDialog} modal>
@@ -127,7 +127,7 @@ export default function AddProduct({ LoaderBtn,headers, displayAddNewDialog,sec 
             {AddNewFormik.errors.description && AddNewFormik.touched.description ? (<div className="alert text-danger ">{AddNewFormik.errors.description}</div>) : null}
           </div>
 
-          {sec === 'all' &&
+          {(sec === 'all' || sec === 'brand') &&
             <div className="form-floating mb-2">
               <select className="form-select" id="category" name="category" value={AddNewFormik.values.category} onChange={(e) => { AddNewFormik.handleChange(e); handleCategoryChange(e.target.value); }} onBlur={AddNewFormik.handleBlur}>
                 <option value="" disabled>Select Category</option>
@@ -137,7 +137,7 @@ export default function AddProduct({ LoaderBtn,headers, displayAddNewDialog,sec 
               {AddNewFormik.errors.category && AddNewFormik.touched.category ? (<div className="alert text-danger ">{AddNewFormik.errors.category}</div>) : null}
             </div>}
 
-          {(sec === 'all' || sec === 'category') &&
+          {(sec !== 'subCategory' && sec !== 'subSubCategory') &&
             <div className="form-floating mb-2">
               <select className="form-select" id="subCategory" name="subCategory" value={AddNewFormik.values.subCategory} onChange={(e) => { AddNewFormik.handleChange(e); handleSubcategoryChange(e.target.value); }} onBlur={AddNewFormik.handleBlur}>
                 <option value="" disabled>Select Subcategory</option>
