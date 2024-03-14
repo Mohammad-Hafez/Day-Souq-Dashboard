@@ -16,6 +16,9 @@ export default function AddProduct({ LoaderBtn,headers, displayAddNewDialog,sec 
     }
   },[sec , secId]);
 
+
+  console.log(categoriesNameResponse);
+
   const [AddNewError, setAddNewError] = useState(null);
   const [selectedCategoryId, setSelectedCategoryId] = useState("");
   const [selectedSubcategoryId, setSelectedSubcategoryId] = useState("");
@@ -26,7 +29,7 @@ export default function AddProduct({ LoaderBtn,headers, displayAddNewDialog,sec 
   const handleSubcategoryChange = (subcategoryId) => {
     setSelectedSubcategoryId(subcategoryId);
   };
-  console.log(subSubcategoriesNameResponse);
+
   const filteredSubcategories = SubcategoriesNameResponse?.filter(subcategory => subcategory?.category._id === selectedCategoryId);
   const filteredSubSubcategories = subSubcategoriesNameResponse?.filter(subsubcategory => subsubcategory?.subCategory === selectedSubcategoryId);
 
@@ -34,7 +37,7 @@ export default function AddProduct({ LoaderBtn,headers, displayAddNewDialog,sec 
     name: '',
     price: '',
     description: '',
-    quantity :'', 
+    number_quantity :'', 
     imageCover : '',
     images:'',
     sku : "",
@@ -59,7 +62,11 @@ export default function AddProduct({ LoaderBtn,headers, displayAddNewDialog,sec 
     description: Yup.string().required('Description is required'),
     brand: Yup.string().required('Brand is required'),
     category: Yup.string().required('category is required'),
-    quantity :Yup.number().required('quantity Is Required'),
+    number_quantity :Yup.number().required('quantity Is Required'),
+    size:Yup.string(),
+    color:Yup.string(),
+    subCategory:Yup.string(),
+    subSubCategory:Yup.string(),
     sku: Yup.string()
     .matches(/^\d{8}$/, 'SKU must be exactly 8 digits')
     .required('SKU is Required'),
@@ -82,13 +89,25 @@ export default function AddProduct({ LoaderBtn,headers, displayAddNewDialog,sec 
 
   const AddNewProducts =  (values) => {
     setLoaderBtn(true);
+    setAddNewError(null)
     const formData = new FormData();
-    // *FIXME - append all data to formdata
-    formData.append();
+    formData.append('name', values.name);
+    formData.append('price', values.price);
+    formData.append('description', values.description);
+    formData.append('brand', values.brand);
+    formData.append('category', values.category);
+    formData.append('subCategory', values.subCategory);
+    formData.append('subSubcategory', values.subSubcategory);
+    formData.append('number_quantity', values.number_quantity);
+    formData.append('size', values.size);
+    formData.append('color', values.color);
+    formData.append('sku', values.sku);
+    formData.append('imageCover', values.imageCover);
     for (let i = 0; i < values.images.length; i++) {
       formData.append('images', values.images[i]);
     }
-    axios.post(ApiBaseUrl + `products`, values, { headers })
+    console.log(formData);
+    axios.post(ApiBaseUrl + `products`, formData, { headers })
     .then( response =>{
       if (sec!=='all') {
         SecProductsRefetch();
@@ -99,7 +118,7 @@ export default function AddProduct({ LoaderBtn,headers, displayAddNewDialog,sec 
       hideDialog();
       AddNewFormik.resetForm();
     }).catch (error => {
-      setAddNewError(error.response.data.message);
+      setAddNewError(error?.response?.data?.message);
       console.error(error);
       setLoaderBtn(false);
     })
@@ -201,9 +220,9 @@ export default function AddProduct({ LoaderBtn,headers, displayAddNewDialog,sec 
           </div>}
 
           <div className="form-floating mb-2">
-            <input type="number" placeholder='Quantity' className="form-control" id="quantity" name="quantity" value={AddNewFormik.values.quantity} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur} />
-            <label className='ms-2' htmlFor="quantity">Quantity</label>
-            {AddNewFormik.errors.quantity && AddNewFormik.touched.quantity ? (<div className="alert text-danger">{AddNewFormik.errors.quantity}</div>) : null}
+            <input type="number" placeholder='Quantity' className="form-control" id="number_quantity" name="number_quantity" value={AddNewFormik.values.number_quantity} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur} />
+            <label className='ms-2' htmlFor="number_quantity">Quantity</label>
+            {AddNewFormik.errors.number_quantity && AddNewFormik.touched.number_quantity ? (<div className="alert text-danger">{AddNewFormik.errors.number_quantity}</div>) : null}
           </div>
 
           <div className="form-floating mb-2">
@@ -243,16 +262,15 @@ export default function AddProduct({ LoaderBtn,headers, displayAddNewDialog,sec 
               onChange={AddNewFormik.handleChange}
               onBlur={AddNewFormik.handleBlur}
             >
-              <option value="" disabled>Select Color</option>
+              <option value="" disabled>Select color</option>
               <option value="Red">Red</option>
               <option value="Blue">Blue</option>
               <option value="Green">Green</option>
               <option value="White">White</option>
               <option value="Black">Black</option>
               <option value="Yellow">Yellow</option>
-              {/* Add more colors as needed */}
             </select>
-            <label className='ms-2' htmlFor="color">Color</label>
+            <label className='ms-2' htmlFor="color">color</label>
             {AddNewFormik.errors.color && AddNewFormik.touched.color ? (
               <div className="alert text-danger">{AddNewFormik.errors.color}</div>
             ) : null}
