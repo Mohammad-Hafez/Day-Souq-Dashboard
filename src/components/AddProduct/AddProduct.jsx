@@ -32,13 +32,13 @@ const [selectedSubcategoryId, setSelectedSubcategoryId] = useState("");
     }
     setSelectedSubcategoryId(subcategoryId);
   };
-  console.log(secId)
+
   const filteredSubcategories = SubcategoriesNameResponse?.filter(subcategory => subcategory?.category._id === selectedCategoryId);
   const filteredSubSubcategories = subSubcategoriesNameResponse?.filter(subsubcategory => subsubcategory?.subCategory === selectedSubcategoryId);
   const getCatForSub = SubcategoriesNameResponse
   ?.filter(subcategory => subcategory?._id === secId )
-  .map(subcategory => subcategory?.category?._id);
-
+  .map(subcategory => subcategory?.category);
+  
   const AddNewInitial = {
     name: '',
     price: '',
@@ -52,8 +52,8 @@ const [selectedSubcategoryId, setSelectedSubcategoryId] = useState("");
     brand:  '',
     subCategory:  sec==='subCategory' ? secId : "",
     subSubCategory: sec==='subSubCategory' ? secId : "",
-    category: sec==='category' ? secId : sec==='subSubCategory' ? getCatForSub : "" ,
-  ...(secName?.toLowerCase() === 'auction' && {
+    category: sec==='category' ? secId : sec==='subCategory' ? getCatForSub[0]._id : "",
+  ...((secName?.toLowerCase() === 'auction' || getCatForSub[0]?.name?.toLowerCase()=== 'auction' ) && {
       startDate: '',
       biddingPrice: '',
       startBidding: '',
@@ -78,7 +78,7 @@ const [selectedSubcategoryId, setSelectedSubcategoryId] = useState("");
     .required('SKU is Required'),
     imageCover: Yup.mixed().required('imageCover Is Required'),
     images: Yup.mixed().required('images Is Required'),
-    ...(secName?.toLowerCase() === 'auction'&& {
+    ...((secName?.toLowerCase() === 'auction' || getCatForSub[0]?.name?.toLowerCase()=== 'auction')&& {
       startDate: Yup.date().required('Start date is required'),
       biddingPrice: Yup.number().required('Bidding price is required'),
       startBidding: Yup.number().required('Start bidding is required'),
@@ -183,7 +183,7 @@ const [selectedSubcategoryId, setSelectedSubcategoryId] = useState("");
               {AddNewFormik.errors.subSubCategory && AddNewFormik.touched.subSubCategory ? (<div className="alert text-danger ">{AddNewFormik.errors.subSubCategory}</div>) : null}
             </div>}
 
-          {secName?.toLowerCase() === 'auction' && (
+          {(secName?.toLowerCase() === 'auction' || getCatForSub[0]?.name?.toLowerCase()=== 'auction') && (
             <>
               <div className="form-floating mb-2">
                 <input type="date" placeholder='Start Date' className="form-control" id="startDate" name="startDate" value={AddNewFormik.values.startDate} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur} />
