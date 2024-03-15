@@ -5,11 +5,13 @@ import { ApiBaseUrl } from '../ApiBaseUrl';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { Dialog } from 'primereact/dialog';
+import { Calendar } from 'primereact/calendar';
 
 export default function AddProduct({ LoaderBtn,headers, displayAddNewDialog,sec , secName , secId ,SecProductsRefetch, brandsNameResponse, categoriesNameResponse, SubcategoriesNameResponse,subSubcategoriesNameResponse, hideDialog, setLoaderBtn , AllRefetch }) {
 const [AddNewError, setAddNewError] = useState(null);
 const [selectedCategoryId, setSelectedCategoryId] = useState("");
 const [selectedSubcategoryId, setSelectedSubcategoryId] = useState("");
+const minDate = new Date();
 
   useEffect(()=>{
     if (sec === 'category') {
@@ -32,13 +34,16 @@ const [selectedSubcategoryId, setSelectedSubcategoryId] = useState("");
     }
     setSelectedSubcategoryId(subcategoryId);
   };
-
+  // *ANCHOR - get sub and sub-Sub depends on category => subCategory selection
   const filteredSubcategories = SubcategoriesNameResponse?.filter(subcategory => subcategory?.category._id === selectedCategoryId);
   const filteredSubSubcategories = subSubcategoriesNameResponse?.filter(subsubcategory => subsubcategory?.subCategory === selectedSubcategoryId);
+  // *ANCHOR - get category for current subcategory depends on id from url
   const getCatForSub = SubcategoriesNameResponse
   ?.filter(subcategory => subcategory?._id === secId )
   .map(subcategory => subcategory?.category);
-  
+  // *ANCHOR - get category & subcategory for current subSubCategory depends on id from url
+  const getParentsForSubSub = subSubcategoriesNameResponse?.filter(subSub=>subSub?._id === secId);
+
   const AddNewInitial = {
     name: '',
     price: '',
@@ -50,9 +55,11 @@ const [selectedSubcategoryId, setSelectedSubcategoryId] = useState("");
     size:'',
     color:"",
     brand:  '',
-    subCategory:  sec==='subCategory' ? secId : "",
-    subSubCategory: sec==='subSubCategory' ? secId : "",
-    category: sec==='category' ? secId : sec==='subCategory' ? getCatForSub[0]._id : "",
+    subCategory: sec==='subCategory' ? secId : sec==='subSubCategory' ? getParentsForSubSub[0]?.subCategory :"",
+    subSubCategory: sec==='subSubCategory'?secId : "",
+    category: sec==='category' ? secId : 
+      sec==='subCategory' ? getCatForSub[0]._id : 
+      sec==='subSubCategory' ? getParentsForSubSub[0]?.category : "",
   ...((secName?.toLowerCase() === 'auction' || getCatForSub[0]?.name?.toLowerCase()=== 'auction' ) && {
       startDate: '',
       biddingPrice: '',
@@ -112,7 +119,6 @@ const [selectedSubcategoryId, setSelectedSubcategoryId] = useState("");
     for (let i = 0; i < values.images.length; i++) {
       formData.append('images', values.images[i]);
     }
-    console.log(formData);
     axios.post(ApiBaseUrl + `products`, formData, { headers })
     .then( response =>{
       if (sec!=='all') {
@@ -185,16 +191,29 @@ const [selectedSubcategoryId, setSelectedSubcategoryId] = useState("");
 
           {(secName?.toLowerCase() === 'auction' || getCatForSub[0]?.name?.toLowerCase()=== 'auction') && (
             <>
-              <div className="form-floating mb-2">
-                <input type="date" placeholder='Start Date' className="form-control" id="startDate" name="startDate" value={AddNewFormik.values.startDate} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur} />
-                <label className='ms-2' htmlFor="startDate">START DATE</label>
-                {AddNewFormik.errors.startDate && AddNewFormik.touched.startDate ? (<div className="alert text-danger ">{AddNewFormik.errors.startDate}</div>) : null}
-              </div>
-              <div className="form-floating mb-2">
+              {/* <div className="form-floating mb-2">
                 <input type="number" placeholder='Bidding Price' className="form-control" id="biddingPrice" name="biddingPrice" value={AddNewFormik.values.biddingPrice} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur} />
                 <label className='ms-2' htmlFor="biddingPrice">BIDDING PRICE</label>
                 {AddNewFormik.errors.biddingPrice && AddNewFormik.touched.biddingPrice ? (<div className="alert text-danger ">{AddNewFormik.errors.biddingPrice}</div>) : null}
+              </div> */}
+              <div className="form-group my-2">
+                <Calendar
+                  className='w-100'
+                  hideOnDateTimeSelect
+                  inputId="startDate"
+                  value={AddNewFormik.values.startDate}
+                  onChange={(e) => AddNewFormik.setFieldValue("startDate", e.value)}
+                  dateFormat="yy-mm-dd"
+                  minDate={minDate}
+                  showIcon
+                  showTime hourFormat="12"
+                  placeholder='Start Date'
+                />
+                {AddNewFormik.errors.startDate && AddNewFormik.touched.startDate ? (
+                  <div className="alert text-danger">{AddNewFormik.errors.startDate}</div>
+                ) : null}
               </div>
+
               <div className="form-floating mb-2">
                 <input type="number" placeholder='Start Bidding' className="form-control" id="startBidding" name="startBidding" value={AddNewFormik.values.startBidding} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur} />
                 <label className='ms-2' htmlFor="startBidding">START BIDDING</label>

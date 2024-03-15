@@ -20,6 +20,7 @@
     "pusher-js": "^8.4.0-rc2",
     "react": "^18.2.0",
     "react-bootstrap": "^2.9.2",
+    "react-datetime-picker": "^5.6.0",
     "react-detect-offline": "^2.4.5",
     "react-dom": "^18.2.0",
     "react-helmet": "^6.1.0",
