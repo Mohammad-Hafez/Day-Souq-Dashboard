@@ -47,7 +47,7 @@ export default function Products() {
   const getAllCategories = () => axios.get(ApiBaseUrl + `categories`)
   const getAllSubcategories = ()=> axios.get(ApiBaseUrl +`subcategories`)
   const getAllSubSubCategories = ()=> axios.get(ApiBaseUrl +`subSubCategories`)
-  // *FIXME - enabled names response reverse current
+  
   let {data: brandsNameResponse} = useQuery(
     'get brands', getAllBrands, { cacheTime: 10000, enabled: sec !=='brand'});
   let {data: categoriesNameResponse} = useQuery(

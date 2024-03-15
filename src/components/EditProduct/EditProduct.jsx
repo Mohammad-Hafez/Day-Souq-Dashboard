@@ -1,38 +1,121 @@
-import React, { useEffect ,useState} from 'react'
-export default function EditProduct({SelectedProducts, displayEditDialog ,LoaderBtn, subCategoryId, categoryId , CategoryName, all, axios, headers, ApiBaseUrl, useFormik, Yup, Button, Dialog, brandsNameResponse, categoriesNameResponse, SubcategoriesNameResponse, hideDialog, setLoaderBtn, SubcatProductsRefetch ,BrandName,BrandId, AllRefetch, BrandProductsRefetch}) {
+import axios from 'axios';
+import { Button } from 'primereact/button';
+import React, { useEffect, useState } from 'react';
+import { ApiBaseUrl } from '../ApiBaseUrl';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import { Dialog } from 'primereact/dialog';
+import { Calendar } from 'primereact/calendar';
+
+export default function EditProduct({
+    sec,
+    secName,
+    secId,
+    AllRefetch,
+    SecProductsRefetch,
+    SelectedProducts,
+    displayEditDialog ,
+    setLoaderBtn,
+    LoaderBtn,
+    headers,
+    brandsNameResponse,
+    categoriesNameResponse,
+    SubcategoriesNameResponse,
+    subSubcategoriesNameResponse,
+    hideDialog,
+  }) {
+
+    const [selectedCategoryId, setSelectedCategoryId] = useState("");
+    const [selectedSubcategoryId, setSelectedSubcategoryId] = useState("");
+    const minDate = new Date();
+
+    useEffect(()=>{
+      if (sec === 'category') {
+        setSelectedCategoryId(secId)
+      }else if (sec==='subCategory') {
+        setSelectedSubcategoryId(secId)
+      }
+    },[sec , secId]);
+  
+    const handleCategoryChange = (categoryId) => {
+      if (sec === 'category') {
+        setSelectedCategoryId(secId);
+      }else{
+        setSelectedCategoryId(categoryId);
+      }
+    };
+    const handleSubcategoryChange = (subcategoryId) => {
+      if (sec==='subCategory') {
+        setSelectedSubcategoryId(secId);
+      }
+      setSelectedSubcategoryId(subcategoryId);
+    };
+    // *ANCHOR - get sub and sub-Sub depends on category => subCategory selection
+    const filteredSubcategories = SubcategoriesNameResponse?.filter(subcategory => subcategory?.category._id === selectedCategoryId);
+    const filteredSubSubcategories = subSubcategoriesNameResponse?.filter(subsubcategory => subsubcategory?.subCategory === selectedSubcategoryId);
+    // *ANCHOR - get category for current subcategory depends on id from url
+    const getCatForSub = SubcategoriesNameResponse
+    ?.filter(subcategory => subcategory?._id === secId )
+    .map(subcategory => subcategory?.category);
+    // *ANCHOR - get category & subcategory for current subSubCategory depends on id from url
+    const getParentsForSubSub = subSubcategoriesNameResponse?.filter(subSub=>subSub?._id === secId);
+  
     const [EditError, setEditError] = useState(null)
   // *NOTE - edit product formik
     let editInitial = {
       name: '',
       price: '',
       description: '',
-      brand: BrandName ? BrandId : '',
-      subCategory: CategoryName? subCategoryId : "",
-      category: CategoryName ? categoryId : "",
-      ...(CategoryName?.toLowerCase() === 'auction' && {
-        startDate: '',
-        biddingPrice: '',
-        startBidding: '',
-        duration: '',
-        biddingGap: '',
-    }),
-  }
-    let editFormik = useFormik({
-      initialValues : editInitial, 
-      validationSchema : Yup.object().shape({
+      number_quantity :'', 
+      imageCover : '',
+      images:'',
+      sku : "",
+      size:'',
+      color:"",
+        brand: sec==='brand'? secId : '',
+      subCategory: sec==='subCategory' ? secId : sec==='subSubCategory' ? getParentsForSubSub[0]?.subCategory :"",
+      subSubCategory: sec==='subSubCategory'?secId : "",
+      category: sec==='category' ? secId : 
+        sec==='subCategory' ? getCatForSub[0]._id : 
+        // *FIXME - make it category._id when backend add category name with it's id
+        sec==='subSubCategory' ? getParentsForSubSub[0]?.category : "",
+        ...((secName?.toLowerCase() === 'auction' || getCatForSub[0]?.name?.toLowerCase()=== 'auction' ) && {
+          startDate: '',
+          biddingPrice: '',
+          startBidding: '',
+          duration: '',
+          biddingGap: '',
+        }),
+      }
+
+      const validationSchema = Yup.object().shape({
         name: Yup.string().required('Name is required'),
         price: Yup.number().required('Price is required'),
         description: Yup.string().required('Description is required'),
         brand: Yup.string().required('Brand is required'),
-        subCategory: Yup.string().required('Subcategory is required'),
-        ...(CategoryName?.toLowerCase() === 'auction'&& {
+        category: Yup.string().required('category is required'),
+        number_quantity :Yup.number().required('quantity Is Required'),
+        size:Yup.string(),
+        color:Yup.string(),
+        subCategory:Yup.string(),
+        subSubCategory:Yup.string(),
+        sku: Yup.string()
+        .matches(/^\d{8}$/, 'SKU must be exactly 8 digits')
+        .required('SKU is Required'),
+        imageCover: Yup.mixed().required('imageCover Is Required'),
+        images: Yup.mixed().required('images Is Required'),
+        ...((secName?.toLowerCase() === 'auction' || getCatForSub[0]?.name?.toLowerCase()=== 'auction')&& {
           startDate: Yup.date().required('Start date is required'),
           biddingPrice: Yup.number().required('Bidding price is required'),
           startBidding: Yup.number().required('Start bidding is required'),
           duration: Yup.number().required('Duration is required'),
           biddingGap: Yup.number().required('Bidding gap is required'),
         }),
-        }),
+      });
+    
+    let editFormik = useFormik({
+      initialValues : editInitial, 
+      validationSchema ,
       onSubmit:(values)=>editCategory(SelectedProducts._id , values)
     })
   

@@ -53,12 +53,14 @@ const minDate = new Date();
     images:'',
     sku : "",
     size:'',
+    isUsed:'',
     color:"",
-    brand:  '',
+    brand: sec==='brand'? secId : '',
     subCategory: sec==='subCategory' ? secId : sec==='subSubCategory' ? getParentsForSubSub[0]?.subCategory :"",
     subSubCategory: sec==='subSubCategory'?secId : "",
     category: sec==='category' ? secId : 
       sec==='subCategory' ? getCatForSub[0]._id : 
+      // *FIXME - make it category._id when backend add category name with it's id
       sec==='subSubCategory' ? getParentsForSubSub[0]?.category : "",
   ...((secName?.toLowerCase() === 'auction' || getCatForSub[0]?.name?.toLowerCase()=== 'auction' ) && {
       startDate: '',
@@ -73,6 +75,7 @@ const minDate = new Date();
     name: Yup.string().required('Name is required'),
     price: Yup.number().required('Price is required'),
     description: Yup.string().required('Description is required'),
+    isUsed : Yup.string().required('Status is required'),
     brand: Yup.string().required('Brand is required'),
     category: Yup.string().required('category is required'),
     number_quantity :Yup.number().required('quantity Is Required'),
@@ -108,6 +111,7 @@ const minDate = new Date();
     formData.append('price', values.price);
     formData.append('description', values.description);
     formData.append('brand', values.brand);
+    formData.append('isUsed', values.isUsed);
     formData.append('category', values.category);
     values.subCategory !== '' &&  formData.append('subCategory', values.subCategory) 
     values.subSubCategory !== '' && formData.append('subSubCategory', values.subSubCategory) 
@@ -284,6 +288,25 @@ const minDate = new Date();
             <label className='ms-2' htmlFor="size">Size</label>
             {AddNewFormik.errors.size && AddNewFormik.touched.size ? (
               <div className="alert text-danger">{AddNewFormik.errors.size}</div>
+            ) : null}
+          </div>
+
+          <div className="form-floating mb-2">
+            <select
+              className="form-select"
+              id="Status"
+              name="isUsed"
+              value={AddNewFormik.values.isUsed}
+              onChange={AddNewFormik.handleChange}
+              onBlur={AddNewFormik.handleBlur}
+            >
+              <option value="" disabled>Select Status</option>
+              <option value="false">New</option>
+              <option value="true">Used</option>
+            </select>
+            <label className='ms-2' htmlFor="Status">Status</label>
+            {AddNewFormik.errors.isUsed && AddNewFormik.touched.isUsed ? (
+              <div className="alert text-danger">{AddNewFormik.errors.isUsed}</div>
             ) : null}
           </div>
 
