@@ -63,12 +63,12 @@ export default function Products() {
   let { isLoading: AllLoading, data: AllResponse , refetch : AllRefetch } = useQuery(
     'get all products for general',
     getAllGeneralProducts,
-    {cacheTime:50000, enabled: sec==='all'? true : false}
+    {enabled: sec==='all'? true : false}
   );
   let { isLoading: ProductsLoading, data: SecProductsResponse, refetch: SecProductsRefetch } = useQuery(
     'sec-Products',
     getSecProducts,
-    {cacheTime:50000, enabled: secName!=='all'? true : false}
+    {enabled: secName!=='all'? true : false}
   );
 
   // *ANCHOR - Show products depends on selected section from sidebar

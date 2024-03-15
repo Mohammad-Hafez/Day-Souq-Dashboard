@@ -7,6 +7,9 @@ import * as Yup from 'yup';
 import { Dialog } from 'primereact/dialog';
 
 export default function AddProduct({ LoaderBtn,headers, displayAddNewDialog,sec , secName , secId ,SecProductsRefetch, brandsNameResponse, categoriesNameResponse, SubcategoriesNameResponse,subSubcategoriesNameResponse, hideDialog, setLoaderBtn , AllRefetch }) {
+const [AddNewError, setAddNewError] = useState(null);
+const [selectedCategoryId, setSelectedCategoryId] = useState("");
+const [selectedSubcategoryId, setSelectedSubcategoryId] = useState("");
 
   useEffect(()=>{
     if (sec === 'category') {
@@ -16,22 +19,25 @@ export default function AddProduct({ LoaderBtn,headers, displayAddNewDialog,sec 
     }
   },[sec , secId]);
 
-
-  console.log(categoriesNameResponse);
-
-  const [AddNewError, setAddNewError] = useState(null);
-  const [selectedCategoryId, setSelectedCategoryId] = useState("");
-  const [selectedSubcategoryId, setSelectedSubcategoryId] = useState("");
-
   const handleCategoryChange = (categoryId) => {
-    setSelectedCategoryId(categoryId);
+    if (sec === 'category') {
+      setSelectedCategoryId(secId);
+    }else{
+      setSelectedCategoryId(categoryId);
+    }
   };
   const handleSubcategoryChange = (subcategoryId) => {
+    if (sec==='subCategory') {
+      setSelectedSubcategoryId(secId);
+    }
     setSelectedSubcategoryId(subcategoryId);
   };
-
+  console.log(secId)
   const filteredSubcategories = SubcategoriesNameResponse?.filter(subcategory => subcategory?.category._id === selectedCategoryId);
   const filteredSubSubcategories = subSubcategoriesNameResponse?.filter(subsubcategory => subsubcategory?.subCategory === selectedSubcategoryId);
+  const getCatForSub = SubcategoriesNameResponse
+  ?.filter(subcategory => subcategory?._id === secId )
+  .map(subcategory => subcategory?.category?._id);
 
   const AddNewInitial = {
     name: '',
@@ -44,9 +50,9 @@ export default function AddProduct({ LoaderBtn,headers, displayAddNewDialog,sec 
     size:'',
     color:"",
     brand:  '',
-    subCategory:  "",
-    subSubcategory:  "",
-    category:  "",
+    subCategory:  sec==='subCategory' ? secId : "",
+    subSubCategory: sec==='subSubCategory' ? secId : "",
+    category: sec==='category' ? secId : sec==='subSubCategory' ? getCatForSub : "" ,
   ...(secName?.toLowerCase() === 'auction' && {
       startDate: '',
       biddingPrice: '',
@@ -96,8 +102,8 @@ export default function AddProduct({ LoaderBtn,headers, displayAddNewDialog,sec 
     formData.append('description', values.description);
     formData.append('brand', values.brand);
     formData.append('category', values.category);
-    formData.append('subCategory', values.subCategory);
-    formData.append('subSubcategory', values.subSubcategory);
+    values.subCategory !== '' &&  formData.append('subCategory', values.subCategory) 
+    values.subSubCategory !== '' && formData.append('subSubCategory', values.subSubCategory) 
     formData.append('number_quantity', values.number_quantity);
     formData.append('size', values.size);
     formData.append('color', values.color);
@@ -169,12 +175,12 @@ export default function AddProduct({ LoaderBtn,headers, displayAddNewDialog,sec 
 
           {(sec !== 'subSubCategory') &&
             <div className="form-floating mb-2">
-              <select className="form-select" id="subSubcategory" name="subSubcategory" value={AddNewFormik.values.subSubcategory} onChange={(e)=>{ AddNewFormik.handleChange(e)}} onBlur={AddNewFormik.handleBlur}>
+              <select className="form-select" id="subSubCategory" name="subSubCategory" value={AddNewFormik.values.subSubCategory} onChange={(e)=>{ AddNewFormik.handleChange(e)}} onBlur={AddNewFormik.handleBlur}>
                 <option value="" disabled>Select Sub-Subcategory</option>
                 {filteredSubSubcategories.map(subsubcategory => <option key={subsubcategory._id} value={subsubcategory._id}>{subsubcategory.name}</option>)}
               </select>
               <label className='ms-2' htmlFor="subSubCategory">Sub-Subcategory</label>
-              {AddNewFormik.errors.subSubcategory && AddNewFormik.touched.subSubcategory ? (<div className="alert text-danger ">{AddNewFormik.errors.subSubcategory}</div>) : null}
+              {AddNewFormik.errors.subSubCategory && AddNewFormik.touched.subSubCategory ? (<div className="alert text-danger ">{AddNewFormik.errors.subSubCategory}</div>) : null}
             </div>}
 
           {secName?.toLowerCase() === 'auction' && (
@@ -241,6 +247,7 @@ export default function AddProduct({ LoaderBtn,headers, displayAddNewDialog,sec 
               onBlur={AddNewFormik.handleBlur}
             >
               <option value="" disabled>Select Size</option>
+              <option value="no size">no size</option>
               <option value="64GB">64GB</option>
               <option value="128GB">128GB</option>
               <option value="256GB">256GB</option>
