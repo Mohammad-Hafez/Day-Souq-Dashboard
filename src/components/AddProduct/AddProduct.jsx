@@ -68,7 +68,7 @@ const minDate = new Date();
       biddingGap: '',
     }),
   };
-
+  
   const validationSchema = Yup.object().shape({
     name: Yup.string().required('Name is required'),
     price: Yup.number().required('Price is required'),
@@ -116,6 +116,11 @@ const minDate = new Date();
     formData.append('color', values.color);
     formData.append('sku', values.sku);
     formData.append('imageCover', values.imageCover);
+    values.startDate !== '' &&  formData.append('startDate', values.startDate) ;
+    values.biddingPrice !== '' &&  formData.append('biddingPrice', values.biddingPrice) ;
+    values.startBidding !== '' &&  formData.append('startBidding', values.startBidding) ;
+    values.duration !== '' &&  formData.append('duration', values.duration) ;
+    values.biddingGap !== '' &&  formData.append('biddingGap', values.biddingGap) ;
     for (let i = 0; i < values.images.length; i++) {
       formData.append('images', values.images[i]);
     }
@@ -148,10 +153,68 @@ const minDate = new Date();
           </div>
 
           <div className="form-floating mb-2">
+            <input type="number" placeholder='Quantity' className="form-control" id="number_quantity" name="number_quantity" value={AddNewFormik.values.number_quantity} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur} />
+            <label className='ms-2' htmlFor="number_quantity">Quantity</label>
+            {AddNewFormik.errors.number_quantity && AddNewFormik.touched.number_quantity ? (<div className="alert text-danger">{AddNewFormik.errors.number_quantity}</div>) : null}
+          </div>
+
+          <div className="form-floating mb-2">
+            <input type="text" placeholder='sku' className="form-control" id="sku" name="sku" maxLength={8} value={AddNewFormik.values.sku} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur} />
+            <label className='ms-2' htmlFor="sku">sku</label>
+            {AddNewFormik.errors.sku && AddNewFormik.touched.sku ? (<div className="alert text-danger">{AddNewFormik.errors.sku}</div>) : null}
+          </div>
+
+          <div className="form-floating mb-2">
             <input type="number" placeholder='Price' className="form-control" id="price" name="price" value={AddNewFormik.values.price} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur} />
             <label className='ms-2' htmlFor="price">PRICE</label>
             {AddNewFormik.errors.price && AddNewFormik.touched.price ? (<div className="alert text-danger">{AddNewFormik.errors.price}</div>) : null}
           </div>
+
+          {(secName?.toLowerCase() === 'auction' || getCatForSub[0]?.name?.toLowerCase()=== 'auction') && (
+            <>
+              <div className="form-group my-2">
+                <Calendar
+                  className='w-100'
+                  hideOnDateTimeSelect
+                  inputId="startDate"
+                  value={AddNewFormik.values.startDate}
+                  onChange={(e) => AddNewFormik.setFieldValue("startDate", e.value)}
+                  dateFormat="yy-mm-dd"
+                  minDate={minDate}
+                  showIcon
+                  showTime hourFormat="12"
+                  placeholder='Start Date'
+                />
+                {AddNewFormik.errors.startDate && AddNewFormik.touched.startDate ? (
+                  <div className="alert text-danger">{AddNewFormik.errors.startDate}</div>
+                ) : null}
+              </div>
+
+              <div className="form-floating mb-2">
+                <input type="number" placeholder='Start Bidding' className="form-control" id="startBidding" name="startBidding" value={AddNewFormik.values.startBidding} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur} />
+                <label className='ms-2' htmlFor="startBidding">START BIDDING</label>
+                {AddNewFormik.errors.startBidding && AddNewFormik.touched.startBidding ? (<div className="alert text-danger ">{AddNewFormik.errors.startBidding}</div>) : null}
+              </div>
+
+              <div className="form-floating mb-2">
+                <input type="number" placeholder='biddingPrice' className="form-control" id="biddingPrice" name="biddingPrice" value={AddNewFormik.values.biddingPrice} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur} />
+                <label className='ms-2' htmlFor="biddingPrice">bidding Price</label>
+                {AddNewFormik.errors.biddingPrice && AddNewFormik.touched.biddingPrice ? (<div className="alert text-danger ">{AddNewFormik.errors.biddingPrice}</div>) : null}
+              </div>
+
+              <div className="form-floating mb-2">
+                <input type="number" placeholder='Bidding Gap' className="form-control" id="biddingGap" name="biddingGap" value={AddNewFormik.values.biddingGap} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur} />
+                <label className='ms-2' htmlFor="biddingGap">BIDDING GAP</label>
+                {AddNewFormik.errors.biddingGap && AddNewFormik.touched.biddingGap ? (<div className="alert text-danger ">{AddNewFormik.errors.biddingGap}</div>) : null}
+              </div>
+
+              <div className="form-floating mb-2">
+                <input type="number" placeholder='Duration' className="form-control" id="duration" name="duration" value={AddNewFormik.values.duration} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur} />
+                <label className='ms-2' htmlFor="duration">DURATION</label>
+                {AddNewFormik.errors.duration && AddNewFormik.touched.duration ? (<div className="alert text-danger ">{AddNewFormik.errors.duration}</div>) : null}
+              </div>
+            </>
+          )}
 
           <div className="form-floating mb-2">
             <textarea placeholder='Description' className="form-control" id="description" name="description" value={AddNewFormik.values.description} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur} />
@@ -189,49 +252,6 @@ const minDate = new Date();
               {AddNewFormik.errors.subSubCategory && AddNewFormik.touched.subSubCategory ? (<div className="alert text-danger ">{AddNewFormik.errors.subSubCategory}</div>) : null}
             </div>}
 
-          {(secName?.toLowerCase() === 'auction' || getCatForSub[0]?.name?.toLowerCase()=== 'auction') && (
-            <>
-              {/* <div className="form-floating mb-2">
-                <input type="number" placeholder='Bidding Price' className="form-control" id="biddingPrice" name="biddingPrice" value={AddNewFormik.values.biddingPrice} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur} />
-                <label className='ms-2' htmlFor="biddingPrice">BIDDING PRICE</label>
-                {AddNewFormik.errors.biddingPrice && AddNewFormik.touched.biddingPrice ? (<div className="alert text-danger ">{AddNewFormik.errors.biddingPrice}</div>) : null}
-              </div> */}
-              <div className="form-group my-2">
-                <Calendar
-                  className='w-100'
-                  hideOnDateTimeSelect
-                  inputId="startDate"
-                  value={AddNewFormik.values.startDate}
-                  onChange={(e) => AddNewFormik.setFieldValue("startDate", e.value)}
-                  dateFormat="yy-mm-dd"
-                  minDate={minDate}
-                  showIcon
-                  showTime hourFormat="12"
-                  placeholder='Start Date'
-                />
-                {AddNewFormik.errors.startDate && AddNewFormik.touched.startDate ? (
-                  <div className="alert text-danger">{AddNewFormik.errors.startDate}</div>
-                ) : null}
-              </div>
-
-              <div className="form-floating mb-2">
-                <input type="number" placeholder='Start Bidding' className="form-control" id="startBidding" name="startBidding" value={AddNewFormik.values.startBidding} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur} />
-                <label className='ms-2' htmlFor="startBidding">START BIDDING</label>
-                {AddNewFormik.errors.startBidding && AddNewFormik.touched.startBidding ? (<div className="alert text-danger ">{AddNewFormik.errors.startBidding}</div>) : null}
-              </div>
-              <div className="form-floating mb-2">
-                <input type="number" placeholder='Duration' className="form-control" id="duration" name="duration" value={AddNewFormik.values.duration} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur} />
-                <label className='ms-2' htmlFor="duration">DURATION</label>
-                {AddNewFormik.errors.duration && AddNewFormik.touched.duration ? (<div className="alert text-danger ">{AddNewFormik.errors.duration}</div>) : null}
-              </div>
-              <div className="form-floating mb-2">
-                <input type="number" placeholder='Bidding Gap' className="form-control" id="biddingGap" name="biddingGap" value={AddNewFormik.values.biddingGap} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur} />
-                <label className='ms-2' htmlFor="biddingGap">BIDDING GAP</label>
-                {AddNewFormik.errors.biddingGap && AddNewFormik.touched.biddingGap ? (<div className="alert text-danger ">{AddNewFormik.errors.biddingGap}</div>) : null}
-              </div>
-            </>
-          )}
-
           {sec!=='brand' &&
           <div className="form-floating mb-2">
             <select className="form-select" id="brand" name="brand" value={AddNewFormik.values.brand} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur}>
@@ -245,20 +265,8 @@ const minDate = new Date();
           </div>}
 
           <div className="form-floating mb-2">
-            <input type="number" placeholder='Quantity' className="form-control" id="number_quantity" name="number_quantity" value={AddNewFormik.values.number_quantity} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur} />
-            <label className='ms-2' htmlFor="number_quantity">Quantity</label>
-            {AddNewFormik.errors.number_quantity && AddNewFormik.touched.number_quantity ? (<div className="alert text-danger">{AddNewFormik.errors.number_quantity}</div>) : null}
-          </div>
-
-          <div className="form-floating mb-2">
-            <input type="text" placeholder='sku' className="form-control" id="sku" name="sku" maxLength={8} value={AddNewFormik.values.sku} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur} />
-            <label className='ms-2' htmlFor="sku">sku</label>
-            {AddNewFormik.errors.sku && AddNewFormik.touched.sku ? (<div className="alert text-danger">{AddNewFormik.errors.sku}</div>) : null}
-          </div>
-
-          <div className="form-floating mb-2">
             <select
-              className="form-control"
+              className="form-select"
               id="size"
               name="size"
               value={AddNewFormik.values.size}
@@ -281,7 +289,7 @@ const minDate = new Date();
 
           <div className="form-floating mb-2">
             <select
-              className="form-control"
+              className="form-select"
               id="color"
               name="color"
               value={AddNewFormik.values.color}
