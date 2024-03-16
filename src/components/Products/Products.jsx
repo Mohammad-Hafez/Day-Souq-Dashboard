@@ -59,6 +59,7 @@ export default function Products() {
     
   // *ANCHOR - get products depends on user select 
   const getSecProducts = () => axios.get(ApiBaseUrl + `products?${sec}=${secId}&dashboard=true`);
+  const getBiddingProducts = () => axios.get(ApiBaseUrl + `products?isAction=true&dashboard=true`);
   const getAllGeneralProducts = () => axios.get(ApiBaseUrl + `products?dashboard=true`);
   let { isLoading: AllLoading, data: AllResponse , refetch : AllRefetch } = useQuery(
     'get all products for general',
@@ -70,17 +71,21 @@ export default function Products() {
     getSecProducts,
     {enabled: secName!=='all'? true : false}
   );
-
+  let {data:BiddingProductsResponse} = useQuery('get Bidding Products' , getBiddingProducts , {enabled:sec==='auction'})
   // *ANCHOR - Show products depends on selected section from sidebar
   useEffect(() => {
-    if (sec!=='all') {
+    if (sec!=='all' && sec !=='auction') {
       setProducts(SecProductsResponse?.data.data.data);
       setFilteredProducts(SecProductsResponse?.data.data.data);
     }else if (sec==='all') {
       setProducts(AllResponse?.data.data.data);
       setFilteredProducts(AllResponse?.data.data.data);
+    }else if (sec ==='auction') {
+      console.log("hi bidding");
+      setProducts(BiddingProductsResponse?.data.data.data);
+      setFilteredProducts(BiddingProductsResponse?.data.data.data);
     }
-  }, [sec, SecProductsResponse ,AllResponse]); 
+  }, [sec, SecProductsResponse ,AllResponse , BiddingProductsResponse]); 
 
   // *ANCHOR - delete product
   const deleteProduct = async (id) => {
@@ -236,6 +241,7 @@ export default function Products() {
     )
   }
   const actionTemplate = (rowData) => {
+    console.log(rowData);
     return (
       <div className='d-flex justify-content-center align-items-center '>
         
@@ -256,7 +262,7 @@ export default function Products() {
   const sizesBody = (rowData) => rowData?.sizes?.map((size, index) => <span key={index} className='d-block'>{size}</span>)
   const descriptionBody = (rowData) => <Button onClick={() => { setProductDescription(rowData.description); setProductDescriptionVisible(true) }} icon="pi pi-eye" className='TabelButton dark-blue-text blue-brdr bg-transparent rounded-circle mx-auto' />
   const discountBody = (rowData)=> rowData?.priceDiscount?.type === 'fixed' ? rowData?.priceDiscount?.value + ' JOD' : rowData?.priceDiscount.value + ' %'
-  
+  const ShowBidding = (rowData)=> rowData?.isAction ? 'bidding' : 'not bidding' ;
 return <>
     <Helmet>
       <title>Products</title>
@@ -265,13 +271,14 @@ return <>
       {ProductsLoading || AllLoading? <Loader /> : <>
           <DataTable value={filteredProducts} header={ProductsHeaderBody} paginator selectionMode="single" className={`dataTabel mb-4 text-capitalize AllList`} dataKey="_id" scrollable scrollHeight="100vh" tableStyle={{ minWidth: "50rem" }} rows={10} responsive="scroll">
             <Column header="Images" body={productImage} style={{ width: "8%", borderBottom: '1px solid #dee2e6' }} />
-            <Column field="name" header="Name" sortable style={{ width: "20%", borderBottom: '1px solid #dee2e6' }} />
+            <Column field="name" header="Name" sortable style={{ width: "15%", borderBottom: '1px solid #dee2e6' }} />
             <Column header="description" body={descriptionBody} sortable style={{ width: "5%", borderBottom: '1px solid #dee2e6' }} />
             <Column field="price" header="Price (JOD)" sortable style={{ width: "8%", borderBottom: '1px solid #dee2e6' }} />
             <Column header="sizes" body={sizesBody} sortable style={{ width: "8%", borderBottom: '1px solid #dee2e6' }} />
             <Column header="Discount" body={discountBody} sortable style={{ width: "5%", borderBottom: '1px solid #dee2e6' }} />
             <Column field="quantity" header="quantity" sortable style={{ width: "5%", borderBottom: '1px solid #dee2e6' }} />
             <Column header="status" body={productStatus} sortable style={{ width: "5%", borderBottom: '1px solid #dee2e6' }} />
+            {(sec === 'all' || secName === 'auction') && <Column header="Bidding" body={ShowBidding} sortable style={{ width: "8%", borderBottom: '1px solid #dee2e6' }} />}
             <Column header="Variants" body={getProductVariants} style={{ width: "5%", borderBottom: '1px solid #dee2e6' }} />
             <Column header="Actions" body={actionTemplate} style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
           </DataTable>
