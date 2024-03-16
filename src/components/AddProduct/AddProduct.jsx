@@ -70,12 +70,12 @@ const minDate = new Date();
       biddingGap: '',
     }),
   };
-  
+
   const validationSchema = Yup.object().shape({
     name: Yup.string().required('Name is required'),
     price: Yup.number().required('Price is required'),
     description: Yup.string().required('Description is required'),
-    isUsed : Yup.string().required('Status is required'),
+    isUsed : Yup.boolean(),
     brand: Yup.string().required('Brand is required'),
     category: Yup.string().required('category is required'),
     number_quantity :Yup.number().required('quantity Is Required'),

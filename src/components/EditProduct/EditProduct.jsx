@@ -66,13 +66,13 @@ export default function EditProduct({
       name: '',
       price: '',
       description: '',
-      number_quantity :'', 
+      quantity :'', 
       imageCover : '',
       images:'',
-      sku : "",
       size:'',
+      isUsed:'',
       color:"",
-        brand: sec==='brand'? secId : '',
+      brand: sec==='brand'? secId : '',
       subCategory: sec==='subCategory' ? secId : sec==='subSubCategory' ? getParentsForSubSub[0]?.subCategory :"",
       subSubCategory: sec==='subSubCategory'?secId : "",
       category: sec==='category' ? secId : 
@@ -94,14 +94,11 @@ export default function EditProduct({
         description: Yup.string().required('Description is required'),
         brand: Yup.string().required('Brand is required'),
         category: Yup.string().required('category is required'),
-        number_quantity :Yup.number().required('quantity Is Required'),
+        quantity :Yup.number().required('quantity Is Required'),
         size:Yup.string(),
         color:Yup.string(),
         subCategory:Yup.string(),
         subSubCategory:Yup.string(),
-        sku: Yup.string()
-        .matches(/^\d{8}$/, 'SKU must be exactly 8 digits')
-        .required('SKU is Required'),
         imageCover: Yup.mixed().required('imageCover Is Required'),
         images: Yup.mixed().required('images Is Required'),
         ...((secName?.toLowerCase() === 'auction' || getCatForSub[0]?.name?.toLowerCase()=== 'auction')&& {
@@ -122,9 +119,12 @@ export default function EditProduct({
     // *NOTE - set selected product values in edit form 
     useEffect(() => {
       if (SelectedProducts) {
-        console.log(SelectedProducts);
         editFormik.setValues({
           name: SelectedProducts.name,
+          size: SelectedProducts.size,
+          color: SelectedProducts.color,
+          quantity: SelectedProducts.quantity,
+          subSubCategory: SelectedProducts?.subSubCategory?._id,
           price: SelectedProducts.price,
           description: SelectedProducts.description,
           brand: sec === 'brand' ? secId : SelectedProducts?.brand?._id,
@@ -177,15 +177,9 @@ export default function EditProduct({
           </div>
 
           <div className="form-floating mb-2">
-            <input type="number" placeholder='Quantity' className="form-control" id="number_quantity" name="number_quantity" value={editFormik.values.number_quantity} onChange={editFormik.handleChange} onBlur={editFormik.handleBlur} />
-            <label className='ms-2' htmlFor="number_quantity">Quantity</label>
-            {editFormik.errors.number_quantity && editFormik.touched.number_quantity ? (<div className="alert text-danger">{editFormik.errors.number_quantity}</div>) : null}
-          </div>
-
-          <div className="form-floating mb-2">
-            <input type="text" placeholder='sku' className="form-control" id="sku" name="sku" maxLength={8} value={editFormik.values.sku} onChange={editFormik.handleChange} onBlur={editFormik.handleBlur} />
-            <label className='ms-2' htmlFor="sku">sku</label>
-            {editFormik.errors.sku && editFormik.touched.sku ? (<div className="alert text-danger">{editFormik.errors.sku}</div>) : null}
+            <input type="number" placeholder='Quantity' className="form-control" id="quantity" name="quantity" value={editFormik.values.quantity} onChange={editFormik.handleChange} onBlur={editFormik.handleBlur} />
+            <label className='ms-2' htmlFor="quantity">Quantity</label>
+            {editFormik.errors.quantity && editFormik.touched.quantity ? (<div className="alert text-danger">{editFormik.errors.quantity}</div>) : null}
           </div>
 
           <div className="form-floating mb-2">
