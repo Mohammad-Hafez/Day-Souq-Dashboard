@@ -45,7 +45,7 @@ export default function HeaderSearch({ UserToken, Logout }) {
         <ul className="menu-items font-Poppins">
           <NavItem  to={'/'} activeLink={activeLink} onClick={setActiveLink} name={'Home'}  icon={'pi-home'}/>
           <NavItem  to={'Products/all/all/all'} activeLink={activeLink} onClick={setActiveLink} name={'All Products'} icon={'pi-box'} />
-          <NavItem  to={'Products/auction/auction/auction'} activeLink={activeLink} onClick={setActiveLink} name={'Bidding Products'} icon={'auction'} />
+          <NavItem  to={'Products/category/auction/6517dbc538001813b052bd73'} activeLink={activeLink} onClick={setActiveLink} name={'Bidding Products'} icon={'auction'} />
           <NavItem  to={'Categories'} activeLink={activeLink} onClick={setActiveLink} name={'Categories'} icon={'pi-th-large'} />
           <NavItem  to={'SubCategory/all'} activeLink={activeLink} onClick={setActiveLink} name={'SubCategories'} icon={'pi-sitemap'} />
           <NavItem  to={'Brands'} activeLink={activeLink} onClick={setActiveLink} name={'Brands'} icon={"pi-tags"}/>

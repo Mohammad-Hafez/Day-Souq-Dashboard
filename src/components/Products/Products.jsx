@@ -81,7 +81,6 @@ export default function Products() {
       setProducts(AllResponse?.data.data.data);
       setFilteredProducts(AllResponse?.data.data.data);
     }else if (sec ==='auction') {
-      console.log("hi bidding");
       setProducts(BiddingProductsResponse?.data.data.data);
       setFilteredProducts(BiddingProductsResponse?.data.data.data);
     }
@@ -241,7 +240,6 @@ export default function Products() {
     )
   }
   const actionTemplate = (rowData) => {
-    console.log(rowData);
     return (
       <div className='d-flex justify-content-center align-items-center '>
         
