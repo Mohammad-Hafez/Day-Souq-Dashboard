@@ -18,6 +18,7 @@ import DeleteDialog from '../DelDialog/DelDialog';
 import DiscountDialog from '../DiscountDialog/DiscountDialog';
 import DescriptionDialog from '../DescriptionDialog/DescriptionDialog';
 import HideProductDialog from '../HideProductDialog/HideProductDialog';
+import BiddingDetailsDialog from '../BiddingDetailsDialog/BiddingDetailsDialog';
 
 export default function Products() {
 
@@ -36,6 +37,7 @@ export default function Products() {
   const [DiscountDialogVisible, setDiscountDialogVisible] = useState(false)
   const [SelectedDiscount, setSelectedDiscount] = useState(null)
   const [HideDialogVisible, setHideDialogVisible] = useState(false)
+  const [DisplayBiddingDialog, setDisplayBiddingDialog] = useState(false)
   const [LoaderBtn, setLoaderBtn] = useState(false)
   const [Products, setProducts] = useState()
   const [filteredProducts, setFilteredProducts] = useState()
@@ -205,7 +207,8 @@ export default function Products() {
     setSelectedProducts(null);
     setDiscountDialogVisible(false);
     setSelectedDiscount(null);
-    setHideDialogVisible(false)
+    setHideDialogVisible(false);
+    setDisplayBiddingDialog(false);
     setLoaderBtn(false)
     editDiscountFormik.resetForm()
   };
@@ -240,6 +243,7 @@ export default function Products() {
     )
   }
   const actionTemplate = (rowData) => {
+    console.log(rowData);
     return (
       <div className='d-flex justify-content-center align-items-center '>
         
@@ -260,7 +264,12 @@ export default function Products() {
   const sizesBody = (rowData) => rowData?.sizes?.map((size, index) => <span key={index} className='d-block'>{size}</span>)
   const descriptionBody = (rowData) => <Button onClick={() => { setProductDescription(rowData.description); setProductDescriptionVisible(true) }} icon="pi pi-eye" className='TabelButton dark-blue-text blue-brdr bg-transparent rounded-circle mx-auto' />
   const discountBody = (rowData)=> rowData?.priceDiscount?.type === 'fixed' ? rowData?.priceDiscount?.value + ' JOD' : rowData?.priceDiscount.value + ' %'
-  const ShowBidding = (rowData)=> rowData?.isAction ? 'bidding' : 'not bidding' ;
+  const ShowBidding = (rowData)=> rowData?.isAction ?
+    rowData?.isBiddingClosed ?
+    'closed': 
+    <Button onClick={() => {setDisplayBiddingDialog(true) ; setSelectedProducts(rowData?._id) }} icon="pi pi-eye" className='TabelButton dark-blue-text blue-brdr bg-transparent rounded-circle mx-auto' /> :
+    'not bidding' ;
+  
 return <>
     <Helmet>
       <title>Products</title>
@@ -270,13 +279,13 @@ return <>
           <DataTable value={filteredProducts} header={ProductsHeaderBody} paginator selectionMode="single" className={`dataTabel mb-4 text-capitalize AllList`} dataKey="_id" scrollable scrollHeight="100vh" tableStyle={{ minWidth: "50rem" }} rows={10} responsive="scroll">
             <Column header="Images" body={productImage} style={{ width: "8%", borderBottom: '1px solid #dee2e6' }} />
             <Column field="name" header="Name" sortable style={{ width: "15%", borderBottom: '1px solid #dee2e6' }} />
-            <Column header="description" body={descriptionBody} sortable style={{ width: "5%", borderBottom: '1px solid #dee2e6' }} />
+            <Column header="description" body={descriptionBody} style={{ width: "5%", borderBottom: '1px solid #dee2e6' }} />
             <Column field="price" header="Price (JOD)" sortable style={{ width: "8%", borderBottom: '1px solid #dee2e6' }} />
             <Column header="sizes" body={sizesBody} sortable style={{ width: "8%", borderBottom: '1px solid #dee2e6' }} />
-            <Column header="Discount" body={discountBody} sortable style={{ width: "5%", borderBottom: '1px solid #dee2e6' }} />
+            <Column header="Discount" body={discountBody} style={{ width: "5%", borderBottom: '1px solid #dee2e6' }} />
             <Column field="quantity" header="quantity" sortable style={{ width: "5%", borderBottom: '1px solid #dee2e6' }} />
             <Column header="status" body={productStatus} sortable style={{ width: "5%", borderBottom: '1px solid #dee2e6' }} />
-            {(sec === 'all' || secName === 'auction') && <Column header="Bidding" body={ShowBidding} sortable style={{ width: "8%", borderBottom: '1px solid #dee2e6' }} />}
+            {(sec === 'all' || secName === 'auction') && <Column header="Bidding" body={ShowBidding} style={{ width: "8%", borderBottom: '1px solid #dee2e6' }} />}
             <Column header="Variants" body={getProductVariants} style={{ width: "5%", borderBottom: '1px solid #dee2e6' }} />
             <Column header="Actions" body={actionTemplate} style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
           </DataTable>
@@ -287,8 +296,12 @@ return <>
       
           <DescriptionDialog Dialog={Dialog} ProductDescriptionVisible={ProductDescriptionVisible} hideDialog={hideDialog} ProductDescription={ProductDescription}/>
 
-          <HideProductDialog Dialog={Dialog} LoaderBtn={LoaderBtn} ErrMsg={ErrMsg} HideDialogVisible={HideDialogVisible} hideDialog={hideDialog} hideProduct={hideProduct} SelectedProducts={SelectedProducts} setHideDialogVisible={setHideDialogVisible}/>
           
+          <HideProductDialog Dialog={Dialog} LoaderBtn={LoaderBtn} ErrMsg={ErrMsg} HideDialogVisible={HideDialogVisible} hideDialog={hideDialog} hideProduct={hideProduct} SelectedProducts={SelectedProducts} setHideDialogVisible={setHideDialogVisible}/>
+          {DisplayBiddingDialog &&
+          <BiddingDetailsDialog headers={headers} LoaderBtn={LoaderBtn} ErrMsg={ErrMsg} hideDialog={hideDialog} SelectedProducts={SelectedProducts} DisplayBiddingDialog={DisplayBiddingDialog}/>
+          }
+
           {displayEditDialog &&
             <EditProduct
               SelectedProducts={SelectedProducts}

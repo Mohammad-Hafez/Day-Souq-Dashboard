@@ -47,9 +47,11 @@ export default function EditProduct({
     const handleSubcategoryChange = (subcategoryId) => {
       if (sec==='subCategory') {
         setSelectedSubcategoryId(secId);
-      }
+      }else{
       setSelectedSubcategoryId(subcategoryId);
+      }
     };
+    
     // *ANCHOR - get sub and sub-Sub depends on category => subCategory selection
     const filteredSubcategories = SubcategoriesNameResponse?.filter(subcategory => subcategory?.category._id === selectedCategoryId);
     const filteredSubSubcategories = subSubcategoriesNameResponse?.filter(subsubcategory => subsubcategory?.subCategory === selectedSubcategoryId);
@@ -96,6 +98,7 @@ export default function EditProduct({
         category: Yup.string().required('category is required'),
         quantity :Yup.number().required('quantity Is Required'),
         size:Yup.string(),
+        isUsed:Yup.string(),
         color:Yup.string(),
         subCategory:Yup.string(),
         subSubCategory:Yup.string(),
@@ -126,6 +129,7 @@ export default function EditProduct({
           quantity: SelectedProducts.quantity,
           subSubCategory: SelectedProducts?.subSubCategory?._id,
           price: SelectedProducts.price,
+          isUsed: SelectedProducts.isUsed,
           description: SelectedProducts.description,
           brand: sec === 'brand' ? secId : SelectedProducts?.brand?._id,
           subCategory: sec === 'subCategory' ? secId : sec === 'subSubCategory' ? getParentsForSubSub[0]?.subCategory : SelectedProducts?.subCategory?._id,
@@ -147,8 +151,29 @@ export default function EditProduct({
     // *NOTE - edit new product function
     const editCategory = (id, values) => {
       setLoaderBtn(true);
-      setEditError(null)
-      axios.patch(ApiBaseUrl + `products/${id}`, values, { headers })
+      setEditError(null);
+      const formData = new FormData();
+      formData.append('name', values.name);
+      formData.append('price', values.price);
+      formData.append('description', values.description);
+      formData.append('brand', values.brand);
+      formData.append('isUsed', values.isUsed);
+      formData.append('category', values.category);
+      values.subCategory !== '' &&  formData.append('subCategory', values.subCategory) 
+      values.subSubCategory !== '' && formData.append('subSubCategory', values.subSubCategory) 
+      formData.append('quantity', values.quantity);
+      formData.append('size', values.size);
+      formData.append('color', values.color);
+      formData.append('imageCover', values.imageCover);
+      values.startDate !== '' &&  formData.append('startDate', values.startDate) ;
+      values.biddingPrice !== '' &&  formData.append('biddingPrice', values.biddingPrice) ;
+      values.startBidding !== '' &&  formData.append('startBidding', values.startBidding) ;
+      values.duration !== '' &&  formData.append('duration', values.duration) ;
+      values.biddingGap !== '' &&  formData.append('biddingGap', values.biddingGap) ;
+      for (let i = 0; i < values.images.length; i++) {
+        formData.append('images', values.images[i]);
+      }
+      axios.patch(ApiBaseUrl + `products/${id}`, formData, { headers })
         .then(response => {
           if (sec!=='all') {
             SecProductsRefetch();

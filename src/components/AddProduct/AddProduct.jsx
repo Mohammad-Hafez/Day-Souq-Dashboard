@@ -31,8 +31,9 @@ const minDate = new Date();
   const handleSubcategoryChange = (subcategoryId) => {
     if (sec==='subCategory') {
       setSelectedSubcategoryId(secId);
-    }
+    }else {
     setSelectedSubcategoryId(subcategoryId);
+    }
   };
   // *ANCHOR - get sub and sub-Sub depends on category => subCategory selection
   const filteredSubcategories = SubcategoriesNameResponse?.filter(subcategory => subcategory?.category._id === selectedCategoryId);
