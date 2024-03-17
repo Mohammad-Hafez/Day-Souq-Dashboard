@@ -75,12 +75,12 @@ export default function EditProduct({
       isUsed:'',
       color:"",
       brand: sec==='brand'? secId : '',
-      subCategory: sec==='subCategory' ? secId : sec==='subSubCategory' ? getParentsForSubSub[0]?.subCategory :"",
+      subCategory: sec==='subCategory' ? secId : sec==='subSubCategory' ? getParentsForSubSub[0]?.subCategory?._id :"",
       subSubCategory: sec==='subSubCategory'?secId : "",
       category: sec==='category' ? secId : 
         sec==='subCategory' ? getCatForSub[0]._id : 
         // *FIXME - make it category._id when backend add category name with it's id
-        sec==='subSubCategory' ? getParentsForSubSub[0]?.category : "",
+        sec==='subSubCategory' ? getParentsForSubSub[0]?.category?._id : "",
         ...((secName?.toLowerCase() === 'auction' || getCatForSub[0]?.name?.toLowerCase()=== 'auction' ) && {
           startDate: '',
           biddingPrice: '',

@@ -37,7 +37,7 @@ const minDate = new Date();
   };
   // *ANCHOR - get sub and sub-Sub depends on category => subCategory selection
   const filteredSubcategories = SubcategoriesNameResponse?.filter(subcategory => subcategory?.category._id === selectedCategoryId);
-  const filteredSubSubcategories = subSubcategoriesNameResponse?.filter(subsubcategory => subsubcategory?.subCategory === selectedSubcategoryId);
+  const filteredSubSubcategories = subSubcategoriesNameResponse?.filter(subsubcategory => subsubcategory?.subCategory._id === selectedSubcategoryId);
   // *ANCHOR - get category for current subcategory depends on id from url
   const getCatForSub = SubcategoriesNameResponse
   ?.filter(subcategory => subcategory?._id === secId )
@@ -57,12 +57,12 @@ const minDate = new Date();
     isUsed:'',
     color:"",
     brand: sec==='brand'? secId : '',
-    subCategory: sec==='subCategory' ? secId : sec==='subSubCategory' ? getParentsForSubSub[0]?.subCategory :"",
+    subCategory: sec==='subCategory' ? secId : sec==='subSubCategory' ? getParentsForSubSub[0]?.subCategory._id :"",
     subSubCategory: sec==='subSubCategory'?secId : "",
     category: sec==='category' ? secId : 
       sec==='subCategory' ? getCatForSub[0]._id : 
       // *FIXME - make it category._id when backend add category name with it's id
-      sec==='subSubCategory' ? getParentsForSubSub[0]?.category : "",
+      sec==='subSubCategory' ? getParentsForSubSub[0]?.category._id : "",
   ...((secName?.toLowerCase() === 'auction' || getCatForSub[0]?.name?.toLowerCase()=== 'auction' ) && {
       startDate: '',
       biddingPrice: '',
@@ -93,7 +93,9 @@ const minDate = new Date();
       startDate: Yup.date().required('Start date is required'),
       biddingPrice: Yup.number().required('Bidding price is required'),
       startBidding: Yup.number().required('Start bidding is required'),
-      duration: Yup.number().required('Duration is required'),
+      duration: Yup.number()
+      .min(1, 'Duration must be at least 1')
+      .required('Duration is required'),
       biddingGap: Yup.number().required('Bidding gap is required'),
     }),
   });
@@ -124,7 +126,7 @@ const minDate = new Date();
     values.startDate !== '' &&  formData.append('startDate', values.startDate) ;
     values.biddingPrice !== '' &&  formData.append('biddingPrice', values.biddingPrice) ;
     values.startBidding !== '' &&  formData.append('startBidding', values.startBidding) ;
-    values.duration !== '' &&  formData.append('duration', values.duration) ;
+    values.duration !== '' &&  formData.append('duration', (values.duration * 60)) ;
     values.biddingGap !== '' &&  formData.append('biddingGap', values.biddingGap) ;
     for (let i = 0; i < values.images.length; i++) {
       formData.append('images', values.images[i]);
@@ -175,7 +177,7 @@ const minDate = new Date();
             {AddNewFormik.errors.price && AddNewFormik.touched.price ? (<div className="alert text-danger">{AddNewFormik.errors.price}</div>) : null}
           </div>
 
-          {(secName?.toLowerCase() === 'auction' || getCatForSub[0]?.name?.toLowerCase()=== 'auction') && (
+          {(secName?.toLowerCase() === 'auction' || getCatForSub[0]?.name?.toLowerCase()=== 'auction' || selectedCategoryId==='6517dbc538001813b052bd73') && (
             <>
               <div className="form-group my-2">
                 <Calendar
@@ -214,7 +216,7 @@ const minDate = new Date();
               </div>
 
               <div className="form-floating mb-2">
-                <input type="number" placeholder='Duration' className="form-control" id="duration" name="duration" value={AddNewFormik.values.duration} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur} />
+                <input type="number" placeholder='Duration' className="form-control" min='1' id="duration" name="duration" value={AddNewFormik.values.duration} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur} />
                 <label className='ms-2' htmlFor="duration">DURATION</label>
                 {AddNewFormik.errors.duration && AddNewFormik.touched.duration ? (<div className="alert text-danger ">{AddNewFormik.errors.duration}</div>) : null}
               </div>

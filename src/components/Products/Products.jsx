@@ -243,7 +243,7 @@ export default function Products() {
     )
   }
   const actionTemplate = (rowData) => {
-    console.log(rowData);
+    // console.log(rowData);
     return (
       <div className='d-flex justify-content-center align-items-center '>
         
