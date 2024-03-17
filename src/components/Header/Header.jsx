@@ -2,16 +2,14 @@ import React, { useState } from 'react';
 import { Icon } from 'react-icons-kit';
 import { androidPerson } from 'react-icons-kit/ionicons/androidPerson';
 import { FiLogOut } from 'react-icons/fi';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { ApiBaseUrl } from '../ApiBaseUrl';
-import { AiOutlineLogin } from 'react-icons/ai';
 import { useQuery } from 'react-query';
 import { Sidebar } from 'primereact/sidebar';
 import { RiAuctionLine } from "react-icons/ri";
 import logo from '../../assets/Logo daysooq V09.png'
 export default function HeaderSearch({ UserToken, Logout }) {
-  let navigate = useNavigate();
 
   const [visibleSidebar, setVisibleSidebar] = useState(false);
   const [activeLink, setActiveLink] = useState('');

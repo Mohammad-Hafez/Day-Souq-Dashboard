@@ -19,6 +19,7 @@ import DiscountDialog from '../DiscountDialog/DiscountDialog';
 import DescriptionDialog from '../DescriptionDialog/DescriptionDialog';
 import HideProductDialog from '../HideProductDialog/HideProductDialog';
 import BiddingDetailsDialog from '../BiddingDetailsDialog/BiddingDetailsDialog';
+import { RiAuctionLine } from "react-icons/ri";
 
 export default function Products() {
 
@@ -209,7 +210,7 @@ export default function Products() {
     setSelectedDiscount(null);
     setHideDialogVisible(false);
     setDisplayBiddingDialog(false);
-    setLoaderBtn(false)
+    setLoaderBtn(false);
     editDiscountFormik.resetForm()
   };
 
@@ -235,9 +236,11 @@ export default function Products() {
           <input type="text" placeholder="Search by product name" className='form-control' onChange={handleSearch} />
         </div>
         <div className="addCategory w-100 d-flex">
-          <button className='btn btn-secondary w-50 me-2' onClick={() => { setDisplayAddNewDialog(true) }}>Add New</button>
+          <button className={`btn btn-secondary ${sec==='all' ? `w-50` : `w-100`} me-2`} onClick={() => { setDisplayAddNewDialog(true) }}>Add New</button>
+          {sec ==='all' &&
           <button className='btn btn-dark-blue approve w-50' onClick={() => { setDiscountDialogVisible(true) ; setAllDiscount('All') }}>All Discount</button>
-        </div>
+          }
+          </div>
         </div>
       </div>
     )
@@ -266,8 +269,8 @@ export default function Products() {
   const discountBody = (rowData)=> rowData?.priceDiscount?.type === 'fixed' ? rowData?.priceDiscount?.value + ' JOD' : rowData?.priceDiscount.value + ' %'
   const ShowBidding = (rowData)=> rowData?.isAction ?
     rowData?.isBiddingClosed ?
-    'closed': 
-    <Button onClick={() => {setDisplayBiddingDialog(true) ; setSelectedProducts(rowData?._id) }} icon="pi pi-eye" className='TabelButton dark-blue-text blue-brdr bg-transparent rounded-circle mx-auto' /> :
+    <Button icon={<RiAuctionLine/>} className='TabelButton rounded-circle mx-auto Cancel' onClick={()=>{setSelectedProducts(rowData?.variants[0]?._id); setDisplayBiddingDialog(true)}}/> : 
+    <Button onClick={() => {setDisplayBiddingDialog(true) ; setSelectedProducts(rowData?._id) }} icon={<RiAuctionLine/>} className='TabelButton rounded-circle mx-auto approve'/> :
     'not bidding' ;
   
 return <>
@@ -295,8 +298,6 @@ return <>
           <DiscountDialog Dialog={Dialog} AllDiscount={AllDiscount} on={SelectedDiscount?.name} ErrMsg={ErrMsg} LoaderBtn={LoaderBtn} Button={Button} hideDialog={hideDialog}  editDiscountFormik={editDiscountFormik} DiscountDialogVisible={DiscountDialogVisible}/>
       
           <DescriptionDialog Dialog={Dialog} ProductDescriptionVisible={ProductDescriptionVisible} hideDialog={hideDialog} ProductDescription={ProductDescription}/>
-
-          
           <HideProductDialog Dialog={Dialog} LoaderBtn={LoaderBtn} ErrMsg={ErrMsg} HideDialogVisible={HideDialogVisible} hideDialog={hideDialog} hideProduct={hideProduct} SelectedProducts={SelectedProducts} setHideDialogVisible={setHideDialogVisible}/>
           {DisplayBiddingDialog &&
           <BiddingDetailsDialog headers={headers} LoaderBtn={LoaderBtn} ErrMsg={ErrMsg} hideDialog={hideDialog} SelectedProducts={SelectedProducts} DisplayBiddingDialog={DisplayBiddingDialog}/>
