@@ -246,7 +246,7 @@ export default function Products() {
     )
   }
   const actionTemplate = (rowData) => {
-    // console.log(rowData);
+    console.log(rowData);
     return (
       <div className='d-flex justify-content-center align-items-center '>
         
@@ -267,6 +267,7 @@ export default function Products() {
   const sizesBody = (rowData) => rowData?.sizes?.map((size, index) => <span key={index} className='d-block'>{size}</span>)
   const descriptionBody = (rowData) => <Button onClick={() => { setProductDescription(rowData.description); setProductDescriptionVisible(true) }} icon="pi pi-eye" className='TabelButton dark-blue-text blue-brdr bg-transparent rounded-circle mx-auto' />
   const discountBody = (rowData)=> rowData?.priceDiscount?.type === 'fixed' ? rowData?.priceDiscount?.value + ' JOD' : rowData?.priceDiscount.value + ' %'
+  const allDiscountBody = (rowData)=> rowData?.discountOnAllProduct?.type === 'fixed' ? rowData?.discountOnAllProduct?.value + ' JOD' : rowData?.discountOnAllProduct.value + ' %'
   const ShowBidding = (rowData)=> rowData?.isAction ?
     rowData?.isBiddingClosed ?
     <Button icon={<RiAuctionLine/>} className='TabelButton rounded-circle mx-auto Cancel' onClick={()=>{setSelectedProducts(rowData?.variants[0]?._id); setDisplayBiddingDialog(true)}}/> : 
@@ -283,9 +284,11 @@ return <>
             <Column header="Images" body={productImage} style={{ width: "8%", borderBottom: '1px solid #dee2e6' }} />
             <Column field="name" header="Name" sortable style={{ width: "15%", borderBottom: '1px solid #dee2e6' }} />
             <Column header="description" body={descriptionBody} style={{ width: "5%", borderBottom: '1px solid #dee2e6' }} />
-            <Column field="price" header="Price (JOD)" sortable style={{ width: "8%", borderBottom: '1px solid #dee2e6' }} />
             <Column header="sizes" body={sizesBody} sortable style={{ width: "8%", borderBottom: '1px solid #dee2e6' }} />
-            <Column header="Discount" body={discountBody} style={{ width: "5%", borderBottom: '1px solid #dee2e6' }} />
+            <Column field="price" header="Price (JOD)" sortable style={{ width: "8%", borderBottom: '1px solid #dee2e6' }} />
+            <Column header="Disc" body={discountBody} style={{ width: "5%", borderBottom: '1px solid #dee2e6' }} />
+            {sec ==='all' && <Column header="All Disc" body={allDiscountBody} style={{ width: "5%", borderBottom: '1px solid #dee2e6' }} />}
+            <Column field="priceAfterDiscount" header="Final Price (JOD)" sortable style={{ width: "8%", borderBottom: '1px solid #dee2e6' }} />
             <Column field="quantity" header="quantity" sortable style={{ width: "5%", borderBottom: '1px solid #dee2e6' }} />
             <Column header="status" body={productStatus} sortable style={{ width: "5%", borderBottom: '1px solid #dee2e6' }} />
             {(sec === 'all' || secName === 'auction') && <Column header="Bidding" body={ShowBidding} style={{ width: "8%", borderBottom: '1px solid #dee2e6' }} />}
