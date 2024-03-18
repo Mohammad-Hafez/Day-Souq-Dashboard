@@ -44,7 +44,7 @@ export default function Products() {
   const [filteredProducts, setFilteredProducts] = useState()
   const [AllDiscount, setAllDiscount] = useState(null)
   const [ErrMsg, setErrMsg] = useState(null)
-
+  const [BiddingStatus, setBiddingStatus] = useState('')
   // *ANCHOR - get brands / cat. / sub-cat. / sub-subCat. for drop downs at edit & add forms
   const getAllBrands = () => axios.get(ApiBaseUrl + `brands`)
   const getAllCategories = () => axios.get(ApiBaseUrl + `categories`)
@@ -211,6 +211,7 @@ export default function Products() {
     setHideDialogVisible(false);
     setDisplayBiddingDialog(false);
     setLoaderBtn(false);
+    setBiddingStatus('')
     editDiscountFormik.resetForm()
   };
 
@@ -246,7 +247,7 @@ export default function Products() {
     )
   }
   const actionTemplate = (rowData) => {
-    console.log(rowData);
+    // console.log(rowData);
     return (
       <div className='d-flex justify-content-center align-items-center '>
         
@@ -271,8 +272,8 @@ export default function Products() {
   const catDiscountBody = (rowData)=> rowData?.discountOnAllProductCategory?.type === 'fixed' ? rowData?.discountOnAllProductCategory?.value + ' JOD' : rowData?.discountOnAllProductCategory.value + ' %'
   const ShowBidding = (rowData)=> rowData?.isAction ?
     rowData?.isBiddingClosed ?
-    <Button icon={<RiAuctionLine/>} className='TabelButton rounded-circle mx-auto Cancel' onClick={()=>{setSelectedProducts(rowData?.variants[0]?._id); setDisplayBiddingDialog(true)}}/> : 
-    <Button onClick={() => {setDisplayBiddingDialog(true) ; setSelectedProducts(rowData?._id) }} icon={<RiAuctionLine/>} className='TabelButton rounded-circle mx-auto approve'/> :
+    <Button icon={<RiAuctionLine/>} className='TabelButton rounded-circle mx-auto Cancel' onClick={()=>{setSelectedProducts(rowData?._id); setDisplayBiddingDialog(true);setBiddingStatus('end')}}/> : 
+    <Button onClick={() => {setDisplayBiddingDialog(true) ; setSelectedProducts(rowData?._id);setBiddingStatus('active') }} icon={<RiAuctionLine/>} className='TabelButton rounded-circle mx-auto approve'/> :
     'not bidding' ;
   
 return <>
@@ -305,7 +306,7 @@ return <>
           <DescriptionDialog Dialog={Dialog} ProductDescriptionVisible={ProductDescriptionVisible} hideDialog={hideDialog} ProductDescription={ProductDescription}/>
           <HideProductDialog Dialog={Dialog} LoaderBtn={LoaderBtn} ErrMsg={ErrMsg} HideDialogVisible={HideDialogVisible} hideDialog={hideDialog} hideProduct={hideProduct} SelectedProducts={SelectedProducts} setHideDialogVisible={setHideDialogVisible}/>
           {DisplayBiddingDialog &&
-          <BiddingDetailsDialog headers={headers} LoaderBtn={LoaderBtn} ErrMsg={ErrMsg} hideDialog={hideDialog} SelectedProducts={SelectedProducts} DisplayBiddingDialog={DisplayBiddingDialog}/>
+          <BiddingDetailsDialog headers={headers} BiddingStatus={BiddingStatus} LoaderBtn={LoaderBtn} ErrMsg={ErrMsg} hideDialog={hideDialog} SelectedProducts={SelectedProducts} DisplayBiddingDialog={DisplayBiddingDialog}/>
           }
 
           {displayEditDialog &&
