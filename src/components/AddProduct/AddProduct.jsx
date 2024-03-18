@@ -123,11 +123,11 @@ const minDate = new Date();
     formData.append('color', values.color);
     formData.append('sku', values.sku);
     formData.append('imageCover', values.imageCover);
-    values.startDate !== '' &&  formData.append('startDate', values.startDate) ;
-    values.biddingPrice !== '' &&  formData.append('biddingPrice', values.biddingPrice) ;
-    values.startBidding !== '' &&  formData.append('startBidding', values.startBidding) ;
-    values.duration !== '' &&  formData.append('duration', (values.duration * 60)) ;
-    values.biddingGap !== '' &&  formData.append('biddingGap', values.biddingGap) ;
+    values.startDate  &&  formData.append('startDate', values.startDate) ;
+    values.biddingPrice  &&  formData.append('biddingPrice', values.biddingPrice) ;
+    values.startBidding  &&  formData.append('startBidding', values.startBidding) ;
+    values.duration  &&  formData.append('duration', (values.duration * 60)) ;
+    values.biddingGap  &&  formData.append('biddingGap', values.biddingGap) ;
     for (let i = 0; i < values.images.length; i++) {
       formData.append('images', values.images[i]);
     }
