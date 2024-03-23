@@ -88,7 +88,7 @@ export default function BiddingDetailsDialog({ headers, hideDialog, SelectedProd
             {BiddingStatus === 'active' &&  <>
             {ErrMsg ? <div className='alert text-danger'>{ErrMsg}</div> :null}
             {LoaderBtn ? <button className='btn btn-success w-100' disabled><i className="fa fa-spin fa-spinner"></i></button>
-            :<button className='btn btn-success w-100' onClick={endBidding}>End Bidding</button>}
+            :<button className='btn btn-danger w-100' onClick={endBidding}>End Bidding</button>}
             </>
             }
   </Dialog>
