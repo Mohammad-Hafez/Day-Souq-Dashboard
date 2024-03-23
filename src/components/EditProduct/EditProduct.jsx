@@ -122,23 +122,24 @@ export default function EditProduct({
     // *NOTE - set selected product values in edit form 
     useEffect(() => {
       if (SelectedProducts) {
+        console.log(SelectedProducts);
         editFormik.setValues({
           name: SelectedProducts.name,
-          size: SelectedProducts.size,
-          color: SelectedProducts.color,
+          size: SelectedProducts.sizes[0],
+          color: SelectedProducts.colors[0],
           quantity: SelectedProducts.quantity,
-          subSubCategory: SelectedProducts?.subSubCategory?._id,
+          subSubCategory: SelectedProducts?.subSubCategory? SelectedProducts?.subSubCategory._id : '' ,
           price: SelectedProducts.price,
           isUsed: SelectedProducts.isUsed,
           description: SelectedProducts.description,
           brand: sec === 'brand' ? secId : SelectedProducts?.brand?._id,
-          subCategory: sec === 'subCategory' ? secId : sec === 'subSubCategory' ? getParentsForSubSub[0]?.subCategory : SelectedProducts?.subCategory?._id,
+          subCategory: sec === 'subCategory' ? secId : sec === 'subSubCategory' ? getParentsForSubSub[0]?.subCategory : SelectedProducts?.subCategory? SelectedProducts?.subCategory._id : '',
           category: sec === 'category' ? secId :
-            sec === 'subCategory' ? getCatForSub[0]._id :
+          sec === 'subCategory' ? getCatForSub[0]._id :
             // *FIXME - make it category._id when backend add category name with it's id
             sec === 'subSubCategory' ? getParentsForSubSub[0]?.category : "",
           ...(secName?.toLowerCase() === 'auction' && {
-            startDate: SelectedProducts.startDate.slice(0, 10),
+            startDate: SelectedProducts.startDate,
             biddingPrice: SelectedProducts.biddingPrice,
             startBidding: SelectedProducts.startBidding,
             duration: SelectedProducts.duration,
@@ -146,21 +147,23 @@ export default function EditProduct({
           })
         })
       }
-    }, [SelectedProducts]);
+    }, [SelectedProducts , secName , secId , getParentsForSubSub]);
     
     // *NOTE - edit new product function
     const editCategory = (id, values) => {
+      console.log(values);
       setLoaderBtn(true);
       setEditError(null);
       const formData = new FormData();
+      formData.append('_id', SelectedProducts?._id);
       formData.append('name', values.name);
       formData.append('price', values.price);
       formData.append('description', values.description);
       formData.append('brand', values.brand);
       formData.append('isUsed', values.isUsed);
       formData.append('category', values.category);
-      values.subCategory !== '' &&  formData.append('subCategory', values.subCategory) 
-      values.subSubCategory !== '' && formData.append('subSubCategory', values.subSubCategory) 
+      (values.subCategory ||values.subCategory!== '') &&  formData.append('subCategory', values.subCategory) 
+      (values.subSubCategory || values.subSubCategory  !== '') && formData.append('subSubCategory', values.subSubCategory) 
       formData.append('quantity', values.quantity);
       formData.append('size', values.size);
       formData.append('color', values.color);
@@ -173,7 +176,8 @@ export default function EditProduct({
       for (let i = 0; i < values.images.length; i++) {
         formData.append('images', values.images[i]);
       }
-      axios.patch(ApiBaseUrl + `products/${id}`, formData, { headers })
+      console.log(SelectedProducts?._id);
+      axios.patch(ApiBaseUrl + `products/${SelectedProducts?._id}`, formData, { headers })
         .then(response => {
           if (sec!=='all') {
             SecProductsRefetch();

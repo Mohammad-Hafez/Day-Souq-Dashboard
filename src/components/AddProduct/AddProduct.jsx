@@ -6,11 +6,14 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { Dialog } from 'primereact/dialog';
 import { Calendar } from 'primereact/calendar';
+import { Dropdown } from 'primereact/dropdown';
 
 export default function AddProduct({ LoaderBtn,headers, displayAddNewDialog,sec , secName , secId ,SecProductsRefetch, brandsNameResponse, categoriesNameResponse, SubcategoriesNameResponse,subSubcategoriesNameResponse, hideDialog, setLoaderBtn , AllRefetch }) {
 const [AddNewError, setAddNewError] = useState(null);
 const [selectedCategoryId, setSelectedCategoryId] = useState("");
 const [selectedSubcategoryId, setSelectedSubcategoryId] = useState("");
+const [SubOptions, setSubOptions] = useState(null)
+const [SubSubOptions, setSubSubOptions] = useState(null)
 const minDate = new Date();
 
   useEffect(()=>{
@@ -24,20 +27,24 @@ const minDate = new Date();
   const handleCategoryChange = (categoryId) => {
     if (sec === 'category') {
       setSelectedCategoryId(secId);
+      setSubOptions(SubcategoriesNameResponse?.filter(subcategory => subcategory?.category?._id === secId))
     }else{
       setSelectedCategoryId(categoryId);
+      setSubOptions(SubcategoriesNameResponse?.filter(subcategory => subcategory?.category?._id === categoryId))
     }
+    setSubSubOptions(null)
   };
+
   const handleSubcategoryChange = (subcategoryId) => {
     if (sec==='subCategory') {
       setSelectedSubcategoryId(secId);
+      setSubSubOptions(subSubcategoriesNameResponse?.filter(subsubcategory => subsubcategory?.subCategory?._id === secId))
     }else {
     setSelectedSubcategoryId(subcategoryId);
+    setSubSubOptions(subSubcategoriesNameResponse?.filter(subsubcategory => subsubcategory?.subCategory?._id === subcategoryId))
     }
   };
   // *ANCHOR - get sub and sub-Sub depends on category => subCategory selection
-  const filteredSubcategories = SubcategoriesNameResponse?.filter(subcategory => subcategory?.category._id === selectedCategoryId);
-  const filteredSubSubcategories = subSubcategoriesNameResponse?.filter(subsubcategory => subsubcategory?.subCategory._id === selectedSubcategoryId);
   // *ANCHOR - get category for current subcategory depends on id from url
   const getCatForSub = SubcategoriesNameResponse
   ?.filter(subcategory => subcategory?._id === secId )
@@ -52,16 +59,15 @@ const minDate = new Date();
     number_quantity :'', 
     imageCover : '',
     images:'',
-    sku : "",
+    sku : '',
     size:'',
     isUsed:'',
-    color:"",
+    color:'',
     brand: sec==='brand'? secId : '',
-    subCategory: sec==='subCategory' ? secId : sec==='subSubCategory' ? getParentsForSubSub[0]?.subCategory._id :"",
-    subSubCategory: sec==='subSubCategory'?secId : "",
+    subCategory: sec==='subCategory' ? secId : sec==='subSubCategory' ? getParentsForSubSub[0]?.subCategory._id :'',
+    subSubCategory: sec==='subSubCategory'? secId : '',
     category: sec==='category' ? secId : 
       sec==='subCategory' ? getCatForSub[0]._id : 
-      // *FIXME - make it category._id when backend add category name with it's id
       sec==='subSubCategory' ? getParentsForSubSub[0]?.category._id : "",
   ...((secName?.toLowerCase() === 'auction' || getCatForSub[0]?.name?.toLowerCase()=== 'auction' ) && {
       startDate: '',
@@ -107,6 +113,7 @@ const minDate = new Date();
   });
 
   const AddNewProducts =  (values) => {
+    console.log(values);
     setLoaderBtn(true);
     setAddNewError(null)
     const formData = new FormData();
@@ -125,12 +132,13 @@ const minDate = new Date();
     formData.append('imageCover', values.imageCover);
     values.startDate  &&  formData.append('startDate', values.startDate) ;
     values.biddingPrice  &&  formData.append('biddingPrice', values.biddingPrice) ;
-    values.startBidding  &&  formData.append('startBidding', values.startBidding) ;
+    values.startBidding  &&  formData.append('startBidding', String(values.startBidding)) ;
     values.duration  &&  formData.append('duration', (values.duration * 60)) ;
     values.biddingGap  &&  formData.append('biddingGap', values.biddingGap) ;
     for (let i = 0; i < values.images.length; i++) {
       formData.append('images', values.images[i]);
     }
+    console.log(formData);
     axios.post(ApiBaseUrl + `products`, formData, { headers })
     .then( response =>{
       if (sec!=='all') {
@@ -147,7 +155,6 @@ const minDate = new Date();
       setLoaderBtn(false);
     })
   };
-
   return (
     <>
       <Dialog header={'Add New Product'} className='container editDialog' visible={displayAddNewDialog} onHide={hideDialog} modal>
@@ -172,7 +179,7 @@ const minDate = new Date();
           </div>
 
           <div className="form-floating mb-2">
-            <input type="number" placeholder='Price' className="form-control" id="price" name="price" value={AddNewFormik.values.price} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur} />
+            <input type="number" placeholder='Price' className="form-control" id="price" min={1} name="price" value={AddNewFormik.values.price} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur} />
             <label className='ms-2' htmlFor="price">PRICE</label>
             {AddNewFormik.errors.price && AddNewFormik.touched.price ? (<div className="alert text-danger">{AddNewFormik.errors.price}</div>) : null}
           </div>
@@ -180,18 +187,24 @@ const minDate = new Date();
           {(secName?.toLowerCase() === 'auction' || getCatForSub[0]?.name?.toLowerCase()=== 'auction' || selectedCategoryId==='6517dbc538001813b052bd73') && (
             <>
               <div className="form-group my-2">
-                <Calendar
-                  className='w-100'
-                  hideOnDateTimeSelect
-                  inputId="startDate"
-                  value={AddNewFormik.values.startDate}
-                  onChange={(e) => AddNewFormik.setFieldValue("startDate", e.value)}
-                  dateFormat="yy-mm-dd"
-                  minDate={minDate}
-                  showIcon
-                  showTime hourFormat="12"
-                  placeholder='Start Date'
-                />
+              <Calendar
+                className='w-100'
+                hideOnDateTimeSelect
+                inputId="startDate"
+                value={AddNewFormik.values.startDate}
+                onChange={(e) => {
+                  // Convert the date to ISO string format
+                  const isoStringDate = e.value.toISOString();
+                  // Set the ISO string date as the field value
+                  AddNewFormik.setFieldValue("startDate", isoStringDate);
+                  console.log(isoStringDate);
+                }}
+                dateFormat="yy-mm-dd"
+                minDate={minDate}
+                showIcon
+                showTime hourFormat="12"
+                placeholder='Start Date'
+              />
                 {AddNewFormik.errors.startDate && AddNewFormik.touched.startDate ? (
                   <div className="alert text-danger">{AddNewFormik.errors.startDate}</div>
                 ) : null}
@@ -241,9 +254,27 @@ const minDate = new Date();
 
           {(sec !== 'subCategory' && sec !== 'subSubCategory') &&
             <div className="form-floating mb-2">
-              <select className="form-select" id="subCategory" name="subCategory" value={AddNewFormik.values.subCategory} onChange={(e) => { AddNewFormik.handleChange(e); handleSubcategoryChange(e.target.value); }} onBlur={AddNewFormik.handleBlur}>
+{/* <Dropdown 
+  id="subCategory" 
+  name="subCategory" 
+  value={AddNewFormik.values.subCategory} 
+  onChange={(e) => { 
+    AddNewFormik.setFieldValue("subCategory", e.value);
+    handleSubcategoryChange(e.value);
+  }} 
+  onBlur={AddNewFormik.handleBlur}
+  optionLabel="name"
+  optionValue="_id"
+  // placeholder="Select Subcategory"
+  filter
+  showClear
+  className="form-select"
+  options={SubOptions? SubOptions : "No SubC"} 
+/> */}
+ <select className="form-select" id="subCategory" name="subCategory" value={AddNewFormik.values.subCategory} onChange={(e) => { AddNewFormik.handleChange(e); handleSubcategoryChange(e.target.value); }} onBlur={AddNewFormik.handleBlur}>
                 <option value="" disabled>Select Subcategory</option>
-                {filteredSubcategories?.map(subcategory => <option key={subcategory._id} value={subcategory._id}>{subcategory.name}</option>)}
+                <option value="" onClick={()=>setSubOptions(null)}>Cancel</option>
+                {SubOptions?.map(subcategory => <option key={subcategory._id} value={subcategory._id}>{subcategory.name}</option>)}
               </select>
               <label className='ms-2' htmlFor="subCategory">Subcategory</label>
               {AddNewFormik.errors.subCategory && AddNewFormik.touched.subCategory ? (<div className="alert text-danger ">{AddNewFormik.errors.subCategory}</div>) : null}
@@ -251,9 +282,10 @@ const minDate = new Date();
 
           {(sec !== 'subSubCategory') &&
             <div className="form-floating mb-2">
-              <select className="form-select" id="subSubCategory" name="subSubCategory" value={AddNewFormik.values.subSubCategory} onChange={(e)=>{ AddNewFormik.handleChange(e)}} onBlur={AddNewFormik.handleBlur}>
+              <select className="form-select" id="subSubCategory" name="subSubCategory" value={AddNewFormik.values.subSubCategory} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur}>
                 <option value="" disabled>Select Sub-Subcategory</option>
-                {filteredSubSubcategories.map(subsubcategory => <option key={subsubcategory._id} value={subsubcategory._id}>{subsubcategory.name}</option>)}
+                <option value="" onClick={()=>setSubSubOptions(null)}>Cancel</option>
+                {SubSubOptions?.map(subsubcategory => <option key={subsubcategory._id} value={subsubcategory._id}>{subsubcategory.name}</option>)}
               </select>
               <label className='ms-2' htmlFor="subSubCategory">Sub-Subcategory</label>
               {AddNewFormik.errors.subSubCategory && AddNewFormik.touched.subSubCategory ? (<div className="alert text-danger ">{AddNewFormik.errors.subSubCategory}</div>) : null}

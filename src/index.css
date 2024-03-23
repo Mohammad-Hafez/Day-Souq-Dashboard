@@ -508,3 +508,11 @@ list-style: none;
   -ms-border-radius: 10px;
   -o-border-radius: 10px;
 }
+/* *ANCHOR - add product */
+.p-dropdown-items{
+  padding-left: 0;
+}
+.p-dropdown-label.p-inputtext{
+  width: 100%;
+  padding-top: 2px;
+}
