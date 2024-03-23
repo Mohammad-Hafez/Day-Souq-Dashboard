@@ -80,7 +80,7 @@ export default function BiddingDetailsDialog({ headers, hideDialog, SelectedProd
               .filter(bidding => bidding.variant.product.id === SelectedProducts)
                 .map((bidding ,index )=><div className="container" key={index}>
                   <h6 className='fs-5 font-roboto pb-2 fw-bold'>User : <span>{bidding?.user.email }</span></h6>
-                  <h6 className='fs-5 font-roboto pb-2 fw-bold'>Amount : <span>{bidding?.amount}</span></h6>
+                  <h6 className='fs-5 font-roboto pb-2 fw-bold'>Amount : <span>{bidding?.amount} JOD</span></h6>
                   <h6 className='fs-5 font-roboto pb-2 fw-bold'>Time: <span>{formatDateTime(bidding?.createdAt)}</span></h6>
                   <hr />
                 </div>
