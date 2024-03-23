@@ -6,7 +6,6 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { Dialog } from 'primereact/dialog';
 import { Calendar } from 'primereact/calendar';
-import { Dropdown } from 'primereact/dropdown';
 
 export default function AddProduct({ LoaderBtn,headers, displayAddNewDialog,sec , secName , secId ,SecProductsRefetch, brandsNameResponse, categoriesNameResponse, SubcategoriesNameResponse,subSubcategoriesNameResponse, hideDialog, setLoaderBtn , AllRefetch }) {
 const [AddNewError, setAddNewError] = useState(null);
@@ -46,6 +45,9 @@ const minDate = new Date();
   };
   // *ANCHOR - get sub and sub-Sub depends on category => subCategory selection
   // *ANCHOR - get category for current subcategory depends on id from url
+  const filteredSubcategories = SubcategoriesNameResponse?.filter(subcategory => subcategory?.category._id === selectedCategoryId);
+  const filteredSubSubcategories = subSubcategoriesNameResponse?.filter(subsubcategory => subsubcategory?.subCategory._id === selectedSubcategoryId);
+
   const getCatForSub = SubcategoriesNameResponse
   ?.filter(subcategory => subcategory?._id === secId )
   .map(subcategory => subcategory?.category);
@@ -254,27 +256,11 @@ const minDate = new Date();
 
           {(sec !== 'subCategory' && sec !== 'subSubCategory') &&
             <div className="form-floating mb-2">
-{/* <Dropdown 
-  id="subCategory" 
-  name="subCategory" 
-  value={AddNewFormik.values.subCategory} 
-  onChange={(e) => { 
-    AddNewFormik.setFieldValue("subCategory", e.value);
-    handleSubcategoryChange(e.value);
-  }} 
-  onBlur={AddNewFormik.handleBlur}
-  optionLabel="name"
-  optionValue="_id"
-  // placeholder="Select Subcategory"
-  filter
-  showClear
-  className="form-select"
-  options={SubOptions? SubOptions : "No SubC"} 
-/> */}
  <select className="form-select" id="subCategory" name="subCategory" value={AddNewFormik.values.subCategory} onChange={(e) => { AddNewFormik.handleChange(e); handleSubcategoryChange(e.target.value); }} onBlur={AddNewFormik.handleBlur}>
                 <option value="" disabled>Select Subcategory</option>
-                <option value="" onClick={()=>setSubOptions(null)}>Cancel</option>
-                {SubOptions?.map(subcategory => <option key={subcategory._id} value={subcategory._id}>{subcategory.name}</option>)}
+                <option value="" className='text-danger' onClick={()=>setSubOptions(null)}>Clear Selection</option>
+                <hr className='opacity-25 bg-light-grey py-2 border-0 bg-opacity-25' />
+                 {filteredSubcategories?.map(subcategory => <option key={subcategory._id} value={subcategory._id}>{subcategory.name}</option>)}
               </select>
               <label className='ms-2' htmlFor="subCategory">Subcategory</label>
               {AddNewFormik.errors.subCategory && AddNewFormik.touched.subCategory ? (<div className="alert text-danger ">{AddNewFormik.errors.subCategory}</div>) : null}
@@ -284,7 +270,9 @@ const minDate = new Date();
             <div className="form-floating mb-2">
               <select className="form-select" id="subSubCategory" name="subSubCategory" value={AddNewFormik.values.subSubCategory} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur}>
                 <option value="" disabled>Select Sub-Subcategory</option>
-                <option value="" onClick={()=>setSubSubOptions(null)}>Cancel</option>
+                <option value="" className='text-danger' onClick={()=>setSubSubOptions(null)}>Cancel</option>
+                <hr className='opacity-25 bg-light-grey py-2 border-0 bg-opacity-25' />
+
                 {SubSubOptions?.map(subsubcategory => <option key={subsubcategory._id} value={subsubcategory._id}>{subsubcategory.name}</option>)}
               </select>
               <label className='ms-2' htmlFor="subSubCategory">Sub-Subcategory</label>
