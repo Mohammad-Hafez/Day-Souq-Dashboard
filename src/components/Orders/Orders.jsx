@@ -20,7 +20,7 @@ export default function Orders() {
   const [AllOrders, setAllOrders] = useState([]);
   const [searchValue, setSearchValue] = useState('');
 
-  const getAllOrders = ()=> axios.get( ApiBaseUrl + `orders`,{headers});
+  const getAllOrders = ()=> axios.get( ApiBaseUrl + `orders?dashboard=true`,{headers});
   let { data: AllOrdersResponse, isLoading: AllOrdersLoading, refetch: AllOrdersRefetch } = useQuery(
     'All-Orders',
     getAllOrders,

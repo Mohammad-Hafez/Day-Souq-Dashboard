@@ -29,7 +29,7 @@ export default function Categories() {
   const [DiscountDialogVisible, setDiscountDialogVisible] = useState(false)
   const [ErrMsg, setErrMsg] = useState(null)
 
-  const getCategories = () => axios.get(ApiBaseUrl + `categories`);
+  const getCategories = () => axios.get(ApiBaseUrl + `categories?dashboard=true`);
   let { data, refetch , isLoading} = useQuery('All-Categories', getCategories, { cacheTime: 50000 });
   useEffect(() => {
     if (data) {

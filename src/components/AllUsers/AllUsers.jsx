@@ -22,7 +22,7 @@ export default function AllUsers() {
   const [displayToUser, setDisplayToUser] = useState(false);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [ErrMsg, setErrMsg] = useState(null)
-  const getAllUsers = () => axios.get(ApiBaseUrl + `users`, { headers });
+  const getAllUsers = () => axios.get(ApiBaseUrl + `users?dashboard=true`, { headers });
   let { data: UsersResponse, isLoading: UserLoading, refetch: userRefetch } = useQuery(
     'get All Users',
     getAllUsers,

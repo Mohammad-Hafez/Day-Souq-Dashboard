@@ -25,7 +25,7 @@ export default function Brands() {
   const [Brands, setBrands] = useState([]);
   const [filteredBrands, setFilteredBrands] = useState([]);
 
-  const getBrands = () => axios.get(ApiBaseUrl + `brands`);
+  const getBrands = () => axios.get(ApiBaseUrl + `brands?dashboard=true`);
   let { data, refetch , isLoading } = useQuery('All-Brands', getBrands, { cacheTime: 50000 });
 
   useEffect(() => {

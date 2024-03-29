@@ -27,7 +27,7 @@ export default function ProductVariants() {
   const [AddError, setAddError] = useState(null)
   const [EditError, setEditError] = useState(null)
 
-  const fetchProductVariants = ()=> axios.get(ApiBaseUrl + `products/${productId}/variants`)
+  const fetchProductVariants = ()=> axios.get(ApiBaseUrl + `products/${productId}/variants?dashboard=true`)
 
   let {data: ProductVariantsResponse , refetch: ProductVariantsRefetch , isLoading: ProductVariantsLoading} = useQuery('Product Variants' , fetchProductVariants , {cacheTime : 50000 })
   

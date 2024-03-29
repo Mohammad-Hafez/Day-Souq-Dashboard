@@ -27,7 +27,7 @@ export default function SubSubCategory() {
   const [SubSubCategory, setSubSubCategory] = useState([]);
   const [filteredSubCategory, setFilteredSubCategory] = useState([]);
 
-  const getSubSubCategories = () => axios.get(ApiBaseUrl + `subSubCategories/${SubId}/subCategory`);
+  const getSubSubCategories = () => axios.get(ApiBaseUrl + `subSubCategories/${SubId}/subCategory?dashboard=true`);
   let { data:subForSubCategoryResponse, refetch: subForCategoryRefetch , isLoading: subForCategoryLoading} = useQuery('sub SubCategory', getSubSubCategories, { cacheTime: 50000});
 
   useEffect(() => {

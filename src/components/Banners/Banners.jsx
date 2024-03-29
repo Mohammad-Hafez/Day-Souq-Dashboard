@@ -20,7 +20,7 @@ export default function Banners() {
   const [displayDeleteDialog, setDisplayDeleteDialog] = useState(false)
   const [displayAddNewDialog, setDisplayAddNewDialog] = useState(false)
 
-  const getBanners = () => axios.get(ApiBaseUrl + `banners`)
+  const getBanners = () => axios.get(ApiBaseUrl + `banners?dashboard=true`)
   let {data: bannerResponse , isLoading : bannerLoading  , refetch:bannerRefetch} = useQuery('get banners' , getBanners , {cacheTime : 10000})
 
   let AddNewInitial = {

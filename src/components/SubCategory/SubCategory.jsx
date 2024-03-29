@@ -27,13 +27,13 @@ export default function SubCategory() {
   const [SubCategory, setSubCategory] = useState([]);
   const [filteredSubCategory, setFilteredSubCategory] = useState([]);
 
-  const getSubCategory = () => axios.get(ApiBaseUrl + `categories/${id}/subCategories`);
+  const getSubCategory = () => axios.get(ApiBaseUrl + `categories/${id}/subCategories?dashboard=true`);
   let { data:subForCategoryResponse, refetch: subForCategoryRefetch , isLoading: subForCategoryLoading} = useQuery('sub category', getSubCategory, { cacheTime: 50000 , enabled : !!CategoryName });
 
-  const getAllSubCategories = ()=> axios.get(ApiBaseUrl + `subcategories`)
+  const getAllSubCategories = ()=> axios.get(ApiBaseUrl + `subcategories?dashboard=true`)
   let {data:AllSubcategoriesResponse , isLoading :AllSubLoading , refetch:AllSubRefetch } = useQuery("all sbCategories" , getAllSubCategories , {cacheTime : 10000 , enabled : !!all})
 
-  const getAllCatgories = ()=> axios.get(ApiBaseUrl+`categories`)
+  const getAllCatgories = ()=> axios.get(ApiBaseUrl+`categories?dashboard=true`)
   let {data:AllCategoriesPesponse} = useQuery('getCategories' , getAllCatgories , {cacheTime:10000 , enabled:!!all});
 
   useEffect(() => {

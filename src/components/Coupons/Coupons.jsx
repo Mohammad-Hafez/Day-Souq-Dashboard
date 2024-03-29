@@ -24,7 +24,7 @@ export default function Coupons() {
   const [ErrMsg, setErrMsg] = useState(null)
   const [displayAddNewDialog, setDisplayAddNewDialog] = useState(false)
 
-  const getAllCoupons = ()=> axios.get( ApiBaseUrl + `Coupons`,{headers});
+  const getAllCoupons = ()=> axios.get( ApiBaseUrl + `Coupons?dashboard=true`,{headers});
   let { data: AllCouponsResponse, isLoading: AllCouponsLoading, refetch: AllCouponsRefetch } = useQuery(
     'All-Coupons',
     getAllCoupons,

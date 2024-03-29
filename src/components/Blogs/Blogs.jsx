@@ -23,7 +23,7 @@ export default function Blogs() {
   const [searchValue, setSearchValue] = useState('');
   const [displayAddNewDialog, setDisplayAddNewDialog] = useState(false)
 
-  const getAllBlogs = ()=> axios.get( ApiBaseUrl + `blogs`,{headers});
+  const getAllBlogs = ()=> axios.get( ApiBaseUrl + `blogs?dashboard=true`,{headers});
   let { data: AllBlogsResponse, isLoading: AllBlogsLoading, refetch: AllBlogsRefetch } = useQuery(
     'All-Blogs',
     getAllBlogs,

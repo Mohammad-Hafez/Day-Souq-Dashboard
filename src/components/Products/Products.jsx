@@ -46,10 +46,10 @@ export default function Products() {
   const [ErrMsg, setErrMsg] = useState(null)
   const [BiddingStatus, setBiddingStatus] = useState('')
   // *ANCHOR - get brands / cat. / sub-cat. / sub-subCat. for drop downs at edit & add forms
-  const getAllBrands = () => axios.get(ApiBaseUrl + `brands`)
-  const getAllCategories = () => axios.get(ApiBaseUrl + `categories`)
-  const getAllSubcategories = ()=> axios.get(ApiBaseUrl +`subcategories`)
-  const getAllSubSubCategories = ()=> axios.get(ApiBaseUrl +`subSubCategories`)
+  const getAllBrands = () => axios.get(ApiBaseUrl + `brands?dashboard=true`)
+  const getAllCategories = () => axios.get(ApiBaseUrl + `categories?dashboard=true`)
+  const getAllSubcategories = ()=> axios.get(ApiBaseUrl +`subcategories?dashboard=true`)
+  const getAllSubSubCategories = ()=> axios.get(ApiBaseUrl +`subSubCategories?dashboard=true`)
   
   let {data: brandsNameResponse} = useQuery(
     'get brands', getAllBrands, { cacheTime: 10000, enabled: sec !=='brand'});

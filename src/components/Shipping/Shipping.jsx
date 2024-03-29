@@ -22,7 +22,7 @@ export default function Shipping() {
   const [displayAddNewDialog, setDisplayAddNewDialog] = useState(false)
   const [ErrorMsg, setErrorMsg] = useState(null)
 
-  const getAllShippings = () => axios.get(ApiBaseUrl + `Shippings`, { headers });
+  const getAllShippings = () => axios.get(ApiBaseUrl + `Shippings?dashboard=true`, { headers });
   let { data: AllShippingsResponse, isLoading: AllShippingsLoading, refetch: AllShippingsRefetch } = useQuery(
     'All-Shippings',
     getAllShippings,
