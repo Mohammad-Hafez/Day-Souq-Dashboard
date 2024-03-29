@@ -93,7 +93,7 @@ const minDate = new Date();
     subCategory:Yup.string(),
     subSubCategory:Yup.string(),
     sku: Yup.string()
-    .matches(/^\d{8}$/, 'SKU must be exactly 8 digits')
+    .matches(/^\d{10}$/, 'SKU must be exactly 10 digits')
     .required('SKU is Required'),
     imageCover: Yup.mixed().required('imageCover Is Required'),
     images: Yup.mixed().required('images Is Required'),
@@ -175,7 +175,7 @@ const minDate = new Date();
           </div>
 
           <div className="form-floating mb-2">
-            <input type="text" placeholder='sku' className="form-control" id="sku" name="sku" maxLength={8} value={AddNewFormik.values.sku} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur} />
+            <input type="text" placeholder='sku' className="form-control" id="sku" name="sku" maxLength={10} value={AddNewFormik.values.sku} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur} />
             <label className='ms-2' htmlFor="sku">sku</label>
             {AddNewFormik.errors.sku && AddNewFormik.touched.sku ? (<div className="alert text-danger">{AddNewFormik.errors.sku}</div>) : null}
           </div>
