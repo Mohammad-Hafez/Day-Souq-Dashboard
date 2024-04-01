@@ -11,6 +11,7 @@ import { ApiBaseUrl, ImgBaseURL } from '../ApiBaseUrl';
 import { useQuery } from 'react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 import Loader from '../Loader/Loader';
+import HideItemDialog from '../HideItemDialog/HideItemDialog';
 
 export default function SubSubCategory() {
   const user = localStorage.getItem("DaySooqDashUser") ;
@@ -26,6 +27,8 @@ export default function SubSubCategory() {
   const [LoaderBtn, setLoaderBtn] = useState(false);
   const [SubSubCategory, setSubSubCategory] = useState([]);
   const [filteredSubCategory, setFilteredSubCategory] = useState([]);
+  const [ErrMsg, setErrMsg] = useState(null)
+  const [HideDialogVisible, setHideDialogVisible] = useState(false)
 
   const getSubSubCategories = () => axios.get(ApiBaseUrl + `subSubCategories/${SubId}/subCategory?dashboard=true`);
   let { data:subForSubCategoryResponse, refetch: subForCategoryRefetch , isLoading: subForCategoryLoading} = useQuery('sub SubCategory', getSubSubCategories, { cacheTime: 50000});
@@ -42,6 +45,7 @@ export default function SubSubCategory() {
     name: '',
     image: ''
   };
+
   let subSubValidation = Yup.object().shape({
     name: Yup.string().required('Category Name Is Required'),
     image: Yup.string().required('Category Image is Required')
@@ -56,6 +60,7 @@ export default function SubSubCategory() {
 
   const AddNewSubCategory = async (values) => {
     setLoaderBtn(true);
+    setErrMsg(null)
     const AddformData = new FormData();
     AddformData.append('name', values.name);
     AddformData.append('image', values.image);
@@ -66,6 +71,7 @@ export default function SubSubCategory() {
       subForCategoryRefetch();
       hideDialog();
     } catch (error) {
+      setErrMsg(error.response.data.message)
       console.error(error);
       setLoaderBtn(false);
     }
@@ -75,7 +81,7 @@ export default function SubSubCategory() {
   let editFormik = useFormik({
     initialValues: subSubInitial,
     validationSchema:subSubValidation,
-    onSubmit: (values) => editCategory(SelectedSubCategory._id, values)
+    onSubmit: (values) => editSubSub(SelectedSubCategory._id, values)
   });
 
   useEffect(() => {
@@ -87,8 +93,9 @@ export default function SubSubCategory() {
     }
   }, [SelectedSubCategory]);
 
-  const editCategory = async (id, values) => {
+  const editSubSub = async (id, values) => {
     setLoaderBtn(true);
+    setErrMsg(null)
     const formData = new FormData();
     formData.append('name', values.name);
     formData.append('image', values.image);
@@ -97,29 +104,54 @@ export default function SubSubCategory() {
       subForCategoryRefetch();
       hideDialog();
     } catch (error) {
+      setErrMsg(error.response.data.message)
       console.error(error);
       setLoaderBtn(false);
     }
   };
 
+  // *ANCHOR - hide subcategory from website
+  const hide=(status, id)=>{
+    setErrMsg(null);
+    setLoaderBtn(true)
+    axios.patch(ApiBaseUrl +`subSubCategories/${id}`,{isShown:!status},{headers : headers})
+    .then(response=>{
+      subForCategoryRefetch()
+      hideDialog()
+      setLoaderBtn(false)
+    }).catch (error =>{
+      setErrMsg(error.response.data.message);
+      console.error(error);
+      setLoaderBtn(false)
+    })
+  }
+
   // Delete a sub category
-  const deleteCategory = async (id) => {
+  const deleteSubSub = (id) => {
     setLoaderBtn(true);
-    try {
-      await axios.delete(ApiBaseUrl + `subSubCategories/${id}`, { headers });
+    setErrMsg(null)
+    axios.delete(ApiBaseUrl + `subSubCategories/${id}`, { headers })
+    .then(response=>{
       subForCategoryRefetch();
       hideDialog();
-    } catch (error) {
+    })
+    .catch (error=>{
+      setErrMsg(error.response.data.message)
       console.error(error);
       setLoaderBtn(false);
-    }
-  };
+  });
+}
 
   // Actions at table for each row
   const actionTemplate = (rowData) => {
     return (
       <div className='d-flex justify-content-center align-items-center '>
         <Button icon="pi pi-pencil" className='TabelButton approve rounded-circle mx-1' onClick={() => { setDisplayEditDialog(true); setSelectedSubCategory(rowData) }} />
+        {rowData.isShown === true ? 
+          <Button onClick={() => {setSelectedSubCategory(rowData); setHideDialogVisible(true)}} icon="pi pi-lock-open" className='TabelButton rounded-circle mx-auto' outlined severity="secondary" />
+        :
+          <Button onClick={() => {setSelectedSubCategory(rowData); setHideDialogVisible(true)}} icon="pi pi-lock" className='TabelButton rounded-circle mx-auto' outlined severity="secondary" />
+        }
         <Button icon="pi pi-trash" className='TabelButton Cancel rounded-circle mx-1' onClick={() => { setSelectedSubCategory(rowData._id); setDisplayDeleteDialog(true) }} />
       </div>
     );
@@ -139,7 +171,9 @@ export default function SubSubCategory() {
     setDisplayEditDialog(false);
     setDisplayDeleteDialog(false);
     setDisplayAddNewDialog(false);
+    setHideDialogVisible(false);
     setLoaderBtn(false)
+    setErrMsg(null)
     editFormik.resetForm();
     AddNewFormik.resetForm();
   }
@@ -211,6 +245,7 @@ export default function SubSubCategory() {
                 <div className="alert text-danger  py-1">{editFormik.errors.image}</div>
               ) : null}
             </div>
+            {ErrMsg ? <div className='alert text-danger'>{ErrMsg}</div> :null}
             <div className="btns ms-auto w-100 d-flex justify-content-center mt-3">
               {LoaderBtn ? <button className='btn btn-primary text-light w-50' disabled><i className="fa fa-spin fa-spinner"></i></button> :
                 <Button label="SUBMIT" type="submit" icon="pi pi-check" disabled={!(editFormik.isValid && editFormik.dirty)} className="btn btn-primary text-light w-50" />
@@ -222,9 +257,10 @@ export default function SubSubCategory() {
           <h5>Are you sure you want to delete this subcategory?</h5>
           <p>NOTE : By deleteing this Sub-SubCategory you will delete all products in it</p>
           <hr />
+          {ErrMsg ? <div className='alert text-danger'>{ErrMsg}</div> :null}
           <div className="d-flex align-items-center justify-content-around">
           {LoaderBtn ? <button className='btn w-50 mx-2 btn-danger px-4' disabled><i className="fa fa-spin fa-spinner"></i></button> :
-            <button className='btn w-50 mx-2 btn-danger px-4' onClick={() => { deleteCategory(SelectedSubCategory) }}>Yes</button>
+            <button className='btn w-50 mx-2 btn-danger px-4' onClick={() => { deleteSubSub(SelectedSubCategory) }}>Yes</button>
             } 
             <button className='btn w-50 mx-2 btn-primary  px-4' onClick={() => { setDisplayDeleteDialog(false) }}>No</button>
           </div>
@@ -252,6 +288,7 @@ export default function SubSubCategory() {
                 <div className="alert text-danger  py-1">{AddNewFormik.errors.image}</div>
               ) : null}
             </div>
+            {ErrMsg ? <div className='alert text-danger'>{ErrMsg}</div> :null}
             <div className="btns ms-auto w-100 d-flex justify-content-center mt-3">
               {LoaderBtn ? <button className='btn btn-primary text-light w-50' disabled><i className="fa fa-spin fa-spinner"></i></button> :
                 <Button label="SUBMIT" type="submit" icon="pi pi-check" disabled={!(AddNewFormik.isValid && AddNewFormik.dirty)} className="btn btn-primary text-light w-50" />
@@ -259,6 +296,8 @@ export default function SubSubCategory() {
             </div>
           </form>
         </Dialog>
+        <HideItemDialog Dialog={Dialog} target={'SubCategory'} LoaderBtn={LoaderBtn} ErrMsg={ErrMsg} HideDialogVisible={HideDialogVisible} hideDialog={hideDialog} hide={hide} Selectedtarget={SelectedSubCategory} setHideDialogVisible={setHideDialogVisible}/>
+
       </div>
       }
     </>

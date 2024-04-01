@@ -11,6 +11,7 @@ import { ApiBaseUrl, ImgBaseURL } from '../ApiBaseUrl';
 import { useQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import Loader from '../Loader/Loader';
+import HideItemDialog from '../HideItemDialog/HideItemDialog';
 
 export default function Brands() {
   const user = localStorage.getItem("DaySooqDashUser") ;
@@ -24,6 +25,8 @@ export default function Brands() {
   const [LoaderBtn, setLoaderBtn] = useState(false);
   const [Brands, setBrands] = useState([]);
   const [filteredBrands, setFilteredBrands] = useState([]);
+  const [ErrMsg, setErrMsg] = useState(null);
+  const [HideDialogVisible, setHideDialogVisible] = useState(false)
 
   const getBrands = () => axios.get(ApiBaseUrl + `brands?dashboard=true`);
   let { data, refetch , isLoading } = useQuery('All-Brands', getBrands, { cacheTime: 50000 });
@@ -47,8 +50,8 @@ export default function Brands() {
   let AddNewInitial = {
     name :'', 
     image : ''
-
   }
+
   let AddNewFormik = useFormik({
     initialValues : AddNewInitial, 
     validationSchema : Yup.object().shape({
@@ -57,20 +60,22 @@ export default function Brands() {
     }),
     onSubmit:(values)=>AddNewCategory(values)
   })
-  const AddNewCategory = async (values) => {
+  const AddNewCategory = (values) => {
+    setErrMsg(null);
     setLoaderBtn(true)
     const AddformData = new FormData();
     AddformData.append('name', values.name);
     AddformData.append('image', values.image); 
-    try {
-      await axios.post(ApiBaseUrl + `categories`, AddformData, { headers });
+    axios.post(ApiBaseUrl + `categories`, AddformData, { headers })
+    .then(response=>{
       hideDialog()
       refetch()
       setLoaderBtn(false)
-    } catch (error) {
+    }).catch (error=>{
+      setErrMsg(error.response.data.message);
       console.error(error);
       setLoaderBtn(false)
-    }
+    })
   };
 
   let editInitial = {
@@ -78,13 +83,14 @@ export default function Brands() {
     image : ''
 
   }
+
   let editFormik = useFormik({
     initialValues : editInitial, 
     validationSchema : Yup.object().shape({
       name :Yup.string().required('Brand Name Is Required') ,
       image : Yup.string().required('Brand Image is Required')
     }),
-    onSubmit:(values)=>editCategory(SelectedBrand._id , values)
+    onSubmit:(values)=>editBrand(SelectedBrand._id , values)
   })
 
   useEffect(()=>{
@@ -96,42 +102,69 @@ export default function Brands() {
     }
   },[SelectedBrand]);
 
-  const editCategory = async (id, values) => {
+  const editBrand = async (id, values) => {
     setLoaderBtn(true)
+    setErrMsg(null);
     const editFormData = new FormData();
     editFormData.append('name', values.name);
     editFormData.append('image', values.image); 
-    try {
-      await axios.patch(ApiBaseUrl + `brands/${id}`, editFormData, { headers });
+    axios.patch(ApiBaseUrl + `brands/${id}`, editFormData, { headers })
+    .then(response=>{
       hideDialog()
       refetch()
       setLoaderBtn(false)
-    } catch (error) {
+    }).catch (error=>{
+      setErrMsg(error.response.data.message);
       console.error(error);
       setLoaderBtn(false)
-    }
+    })
   };
   
-  const deleteCategory =async (id)=>{
-    try {
-      await axios.delete(ApiBaseUrl + `brands/${id}` , { headers })
+  const hide=(status, id)=>{
+    setErrMsg(null);
+    setLoaderBtn(true)
+    axios.patch(ApiBaseUrl +`brands/${id}`,{isShown:!status},{headers : headers})
+    .then(response=>{
       refetch()
       hideDialog()
-    } catch (error) {
+      setLoaderBtn(false)
+    }).catch (error =>{
+      setErrMsg(error.response.data.message);
       console.error(error);
-    }
+      setLoaderBtn(false)
+    })
+  }
+
+  const deleteBrand =(id)=>{
+    setErrMsg(null);
+    setLoaderBtn(true)
+    axios.delete(ApiBaseUrl + `brands/${id}` , { headers })
+    .then(response=>{
+      refetch()
+      hideDialog()
+      setLoaderBtn(false)
+    }).catch (error=>{
+      setErrMsg(error.response.data.message);
+      console.error(error);
+      setLoaderBtn(false)
+    })
   }
   
   const actionTemplate = (rowData) => {
     return (
       <div className='d-flex justify-content-center align-items-center '>
         <Button  icon="pi pi-pencil" className='TabelButton approve rounded-circle mx-1' onClick={() => {setDisplayEditDialog(true); setSelectedBrand(rowData)}} />
+        {rowData.isShown === true ? 
+          <Button onClick={() => {setSelectedBrand(rowData); setHideDialogVisible(true)}} icon="pi pi-lock-open" className='TabelButton rounded-circle mx-auto' outlined severity="secondary" />
+        :
+          <Button onClick={() => {setSelectedBrand(rowData); setHideDialogVisible(true)}} icon="pi pi-lock" className='TabelButton rounded-circle mx-auto' outlined severity="secondary" />
+        }
         <Button  icon="pi pi-trash" className='TabelButton Cancel rounded-circle mx-1' onClick={() => {setSelectedBrand(rowData._id) ; setDisplayDeleteDialog(true)}} />
       </div>
     );
   };
 
-  const catImage = (rowData) => {
+  const brandImage = (rowData) => {
     return rowData.image ? <img src={ImgBaseURL + rowData.image} alt={rowData.name + ' image'} className='w-25' /> : null;
   };
   
@@ -141,13 +174,16 @@ export default function Brands() {
 
   const hideDialog = () => {
     setDisplayEditDialog(false);
-    setDisplayDeleteDialog(false)
-    setDisplayAddNewDialog(false)
+    setDisplayDeleteDialog(false);
+    setDisplayAddNewDialog(false);
+    setHideDialogVisible(false);
+    setErrMsg(null);
+    setLoaderBtn(false)
     editFormik.resetForm();
     AddNewFormik.resetForm();
   };
 
-  const categoriesHeaderBody = () => {
+  const brandssHeaderBody = () => {
     return (
       <div className="d-flex align-items-center justify-content-between">
         <div className="headerLabel">
@@ -180,8 +216,8 @@ export default function Brands() {
     </Helmet>
     {isLoading ? <Loader/> :
     <div className="container">
-      <DataTable value={filteredBrands} header={categoriesHeaderBody} paginator selectionMode="single" className={`dataTabel mb-4 text-capitalize AllList`} dataKey="_id" scrollable scrollHeight="100vh" tableStyle={{ minWidth: "50rem" }} rows={10} responsive="scroll">
-        <Column field="image" header="Image" body={catImage} style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
+      <DataTable value={filteredBrands} header={brandssHeaderBody} paginator selectionMode="single" className={`dataTabel mb-4 text-capitalize AllList`} dataKey="_id" scrollable scrollHeight="100vh" tableStyle={{ minWidth: "50rem" }} rows={10} responsive="scroll">
+        <Column field="image" header="Image" body={brandImage} style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
         <Column field="name" header="Name" sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
         <Column field="createdAt" header="Created At" body={createdAtBody} sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
         <Column header="Products" body={getBrandProducts}  style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
@@ -210,6 +246,7 @@ export default function Brands() {
                   <div className="alert text-danger  py-1">{editFormik.errors.image}</div>
                 ) : null}
               </div>
+              {ErrMsg ? <div className='alert text-danger'>{ErrMsg}</div> :null}
               <div className="btns ms-auto w-100 d-flex justify-content-center mt-3">
               {LoaderBtn ? <button className='btn btn-primary text-light w-50' disabled><i className="fa fa-spin fa-spinner"></i></button>:
                 <Button label="SUBMIT" type="submit" icon="pi pi-check" disabled={!(editFormik.isValid && editFormik.dirty)} className="btn btn-primary text-light w-50"/>
@@ -220,8 +257,9 @@ export default function Brands() {
       <Dialog header={'Delete Brands'} className='container editDialog' visible={displayDeleteDialog} onHide={hideDialog} modal>
         <h5>you want delete this category ?</h5>
         <hr />
+        {ErrMsg ? <div className='alert text-danger'>{ErrMsg}</div> :null}
         <div className="d-flex align-items-center justify-content-around">
-        <button className='btn w-50 mx-2 btn-danger px-4' onClick={()=>{deleteCategory(SelectedBrand)}}>Yes</button>
+        <button className='btn w-50 mx-2 btn-danger px-4' onClick={()=>{deleteBrand(SelectedBrand)}}>Yes</button>
         <button className='btn w-50 mx-2 btn-primary  px-4' onClick={()=>{setDisplayDeleteDialog(false)}}>No</button>
         </div>
       </Dialog>  
@@ -248,6 +286,7 @@ export default function Brands() {
                   <div className="alert text-danger  py-1">{AddNewFormik.errors.image}</div>
                 ) : null}
               </div>
+              {ErrMsg ? <div className='alert text-danger'>{ErrMsg}</div> :null}
               <div className="btns ms-auto w-100 d-flex justify-content-center mt-3">
               {LoaderBtn ? <button className='btn btn-primary text-light w-50' disabled><i className="fa fa-spin fa-spinner"></i></button>:
                 <Button label="SUBMIT" type="submit" icon="pi pi-check" disabled={!(AddNewFormik.isValid && AddNewFormik.dirty)} className="btn btn-primary text-light w-50"/>
@@ -255,6 +294,7 @@ export default function Brands() {
               </div>
           </form>
       </Dialog>
+      <HideItemDialog Dialog={Dialog} target={'Brand'} LoaderBtn={LoaderBtn} ErrMsg={ErrMsg} HideDialogVisible={HideDialogVisible} hideDialog={hideDialog} hide={hide} Selectedtarget={SelectedBrand} setHideDialogVisible={setHideDialogVisible}/>
     </div>
     }
     </>

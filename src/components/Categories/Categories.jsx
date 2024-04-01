@@ -13,9 +13,11 @@ import { useNavigate } from 'react-router-dom';
 import Loader from '../Loader/Loader';
 import { BiSolidDiscount } from "react-icons/bi";
 import DiscountDialog from '../DiscountDialog/DiscountDialog';
+import HideItemDialog from '../HideItemDialog/HideItemDialog';
 
 export default function Categories() {
   const user = localStorage.getItem("DaySooqDashUser") ;
+
   let headers = { 'Authorization': `Bearer ${user}` };
 
   let navigate = useNavigate();
@@ -30,7 +32,9 @@ export default function Categories() {
   const [ErrMsg, setErrMsg] = useState(null)
 
   const getCategories = () => axios.get(ApiBaseUrl + `categories?dashboard=true`);
+
   let { data, refetch , isLoading} = useQuery('All-Categories', getCategories, { cacheTime: 50000 });
+
   useEffect(() => {
     if (data) {
       setCategories(data?.data.data.data);
@@ -42,6 +46,7 @@ export default function Categories() {
     name: '',
     image: ''
   };
+
   let AddNewFormik = useFormik({
     initialValues: AddNewInitial,
     validationSchema: Yup.object().shape({
@@ -50,6 +55,7 @@ export default function Categories() {
     }),
     onSubmit: (values) => AddNewCategory(values)
   });
+
   const AddNewCategory = async (values) => {
     setLoaderBtn(true);
     const AddformData = new FormData();
@@ -65,10 +71,12 @@ export default function Categories() {
       setLoaderBtn(false);
     }
   };
+
   let editInitial = {
     name: '',
     image: ''
   };
+
   let editFormik = useFormik({
     initialValues: editInitial,
     validationSchema: Yup.object().shape({
@@ -77,6 +85,7 @@ export default function Categories() {
     }),
     onSubmit: (values) => editCategory(SelectedCategory._id, values)
   });
+
   useEffect(() => {
     if (SelectedCategory) {
       editFormik.setValues({
@@ -135,6 +144,21 @@ export default function Categories() {
         setLoaderBtn(false)
       });
   };
+  const [HideDialogVisible, setHideDialogVisible] = useState(false)
+  const hide=(status, id)=>{
+    setErrMsg(null);
+    setLoaderBtn(true)
+    axios.patch(ApiBaseUrl +`categories/${id}`,{isShown:!status},{headers : headers})
+    .then(response=>{
+      refetch()
+      hideDialog()
+      setLoaderBtn(false)
+    }).catch (error =>{
+      setErrMsg(error.response.data.message);
+      console.error(error);
+      setLoaderBtn(false)
+    })
+  }
 
   const deleteCategory = async (id) => {
     try {
@@ -151,7 +175,9 @@ export default function Categories() {
     setDisplayDeleteDialog(false);
     setDisplayAddNewDialog(false);
     setDiscountDialogVisible(false);
+    setHideDialogVisible(false);
     setSelectedCategory(null);
+    setErrMsg(null);
     editFormik.resetForm();
     AddNewFormik.resetForm();
     editDiscountFormik.resetForm();
@@ -163,6 +189,11 @@ export default function Categories() {
       <div className='d-flex justify-content-center align-items-center '>
         <BiSolidDiscount  className='TabelButton discount rounded-circle mx-1 p-1' onClick={()=>{setDiscountDialogVisible(true); setSelectedCategory(rowData)}}/>
         <Button icon="pi pi-pencil" className='TabelButton approve rounded-circle mx-1' onClick={() => { setDisplayEditDialog(true); setSelectedCategory(rowData) }} />
+        {rowData.isShown === true ? 
+          <Button onClick={() => {setSelectedCategory(rowData); setHideDialogVisible(true)}} icon="pi pi-lock-open" className='TabelButton rounded-circle mx-auto' outlined severity="secondary" />
+        :
+          <Button onClick={() => {setSelectedCategory(rowData); setHideDialogVisible(true)}} icon="pi pi-lock" className='TabelButton rounded-circle mx-auto' outlined severity="secondary" />
+        }
         <Button icon="pi pi-trash" className='TabelButton Cancel rounded-circle mx-1' onClick={() => { setSelectedCategory(rowData._id); setDisplayDeleteDialog(true) }} />
       </div>
     );
@@ -244,6 +275,7 @@ export default function Categories() {
               <div className="alert text-danger  py-1">{editFormik.errors.image}</div>
             ) : null}
           </div>
+          {ErrMsg ? <div className='alert text-danger'>{ErrMsg}</div> :null}
           <div className="btns ms-auto w-100 d-flex justify-content-center mt-3">
             {LoaderBtn ? <button className='btn btn-primary text-light w-50' disabled><i className="fa fa-spin fa-spinner"></i></button> :
               <Button label="SUBMIT" type="submit" icon="pi pi-check" disabled={!(editFormik.isValid && editFormik.dirty)} className="btn btn-primary text-light w-50" />
@@ -252,11 +284,14 @@ export default function Categories() {
         </form>
       </Dialog>
 
+      <HideItemDialog Dialog={Dialog} target={'Category'} LoaderBtn={LoaderBtn} ErrMsg={ErrMsg} HideDialogVisible={HideDialogVisible} hideDialog={hideDialog} hide={hide} Selectedtarget={SelectedCategory} setHideDialogVisible={setHideDialogVisible}/>
+
       <DiscountDialog on={'category'} Dialog={Dialog} ErrMsg={ErrMsg} LoaderBtn={LoaderBtn} Button={Button} hideDialog={hideDialog}  editDiscountFormik={editDiscountFormik} DiscountDialogVisible={DiscountDialogVisible}/>
       
       <Dialog header={'Delete Category'} className='container editDialog' visible={displayDeleteDialog} onHide={hideDialog} modal>
         <h5>you want delete this category ?</h5>
         <hr />
+        {ErrMsg ? <div className='alert text-danger'>{ErrMsg}</div> :null}
         <div className="d-flex align-items-center justify-content-around">
           <button className='btn w-50 mx-2 btn-danger px-4' onClick={() => { deleteCategory(SelectedCategory) }}>Yes</button>
           <button className='btn w-50 mx-2 btn-primary  px-4' onClick={() => { setDisplayDeleteDialog(false) }}>No</button>
@@ -286,6 +321,7 @@ export default function Categories() {
               <div className="alert text-danger  py-1">{AddNewFormik.errors.image}</div>
             ) : null}
           </div>
+          {ErrMsg ? <div className='alert text-danger'>{ErrMsg}</div> :null}
           <div className="btns ms-auto w-100 d-flex justify-content-center mt-3">
             {LoaderBtn ? <button className='btn btn-primary text-light w-50' disabled><i className="fa fa-spin fa-spinner"></i></button> :
               <Button label="SUBMIT" type="submit" icon="pi pi-check" disabled={!(AddNewFormik.isValid && AddNewFormik.dirty)} className="btn btn-primary text-light w-50" />

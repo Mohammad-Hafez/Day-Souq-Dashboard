@@ -10,6 +10,7 @@ import { useQuery } from 'react-query';
 import Loader from '../Loader/Loader';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import HideItemDialog from '../HideItemDialog/HideItemDialog';
 
 export default function Blogs() {
   const user = localStorage.getItem("DaySooqDashUser") ;
@@ -22,7 +23,7 @@ export default function Blogs() {
   const [AllBlogs, setAllBlogs] = useState([]);
   const [searchValue, setSearchValue] = useState('');
   const [displayAddNewDialog, setDisplayAddNewDialog] = useState(false)
-
+  const [ErrMsg, setErrMsg] = useState(null)
   const getAllBlogs = ()=> axios.get( ApiBaseUrl + `blogs?dashboard=true`,{headers});
   let { data: AllBlogsResponse, isLoading: AllBlogsLoading, refetch: AllBlogsRefetch } = useQuery(
     'All-Blogs',
@@ -66,25 +67,42 @@ export default function Blogs() {
     onSubmit:(values)=>AddNewBlog(values)
   })
 
-  const AddNewBlog = async (values) => {
+  const AddNewBlog = (values) => {
     setLoaderBtn(true)
+    setErrMsg(null);
     const AddformData = new FormData();
     AddformData.append('title', values.title);
     AddformData.append('content', values.content);
     AddformData.append('author', values.author);
     AddformData.append('type', values.type);
     AddformData.append('image', values.image); 
-    try {
-      await axios.post(ApiBaseUrl + `blogs`, AddformData, { headers });
+    axios.post(ApiBaseUrl + `blogs`, AddformData, { headers })
+    .then(response=>{
       hideDialog()
       AllBlogsRefetch()
       setLoaderBtn(false)
-    } catch (error) {
+    }).catch (error=>{
+      setErrMsg(error.response.data.message);
       console.error(error);
       setLoaderBtn(false)
-    }
+    })
   };
 
+  const [HideDialogVisible, setHideDialogVisible] = useState(false)
+  const hide=(status, id)=>{
+    setErrMsg(null);
+    setLoaderBtn(true)
+    axios.patch(ApiBaseUrl +`blogs/${id}`,{isShown:!status},{headers : headers})
+    .then(response=>{
+      AllBlogsRefetch()
+      hideDialog()
+      setLoaderBtn(false)
+    }).catch (error =>{
+      setErrMsg(error.response.data.message);
+      console.error(error);
+      setLoaderBtn(false)
+    })
+  }
 
   const deleteBlog = async (id) => {
     setLoaderBtn(true);
@@ -101,7 +119,10 @@ export default function Blogs() {
 
   const hideDialog = () => {
     setDisplayDeleteDialog(false);
+    setHideDialogVisible(false);
     setSelectedBlogs(null);
+    setErrMsg(null);
+    setLoaderBtn(false)
     setDisplayAddNewDialog(false)
     AddNewFormik.resetForm()
   };
@@ -109,6 +130,11 @@ export default function Blogs() {
   const actionTemplate = (rowData) => {
     return (
       <div className='d-flex justify-content-center align-items-center'>
+        {rowData.isShown === true ? 
+          <Button onClick={() => {setSelectedBlogs(rowData); setHideDialogVisible(true)}} icon="pi pi-lock-open" className='TabelButton rounded-circle mx-auto' outlined severity="secondary" />
+        :
+          <Button onClick={() => {setSelectedBlogs(rowData); setHideDialogVisible(true)}} icon="pi pi-lock" className='TabelButton rounded-circle mx-auto' outlined severity="secondary" />
+        }
         <Button icon="pi pi-trash" className='TabelButton Cancel rounded-circle mx-1' onClick={() => { setDisplayDeleteDialog(true); setSelectedBlogs(rowData._id) }} />
       </div>
     );
@@ -174,6 +200,7 @@ export default function Blogs() {
         <Dialog header={'Delete Blog'} className='container editDialog' visible={displayDeleteDialog} onHide={hideDialog} modal>
         <h5>you want delete this Blog ?</h5>
         <hr />
+        {ErrMsg ? <div className='alert text-danger'>{ErrMsg}</div> :null}
         <div className="d-flex align-items-center justify-content-around">
         {LoaderBtn ? <button className='btn btn-danger  w-50 mx-2 px-4' disabled><i className='fa fa-spin fa-spinner'></i></button>: 
         <button className='btn btn-danger  w-50 mx-2 px-4' onClick={()=>{deleteBlog(SelectedBlogs)}}>Yes</button>}
@@ -222,6 +249,7 @@ export default function Blogs() {
                   <div className="alert text-danger py-1">{AddNewFormik.errors.image}</div>
                 ) : null}
               </div>
+              {ErrMsg ? <div className='alert text-danger'>{ErrMsg}</div> :null}
               <div className="btns ms-auto w-100 d-flex justify-content-center mt-3">
               {LoaderBtn ? <button className='btn btn-primary text-light w-50' disabled><i className="fa fa-spin fa-spinner"></i></button>:
                 <Button label="SUBMIT" type="submit" icon="pi pi-check" disabled={!(AddNewFormik.isValid && AddNewFormik.dirty)} className="btn btn-primary text-light w-50"/>
@@ -229,6 +257,8 @@ export default function Blogs() {
               </div>
           </form>
       </Dialog>
+      <HideItemDialog Dialog={Dialog} target={'Blog'} LoaderBtn={LoaderBtn} ErrMsg={ErrMsg} HideDialogVisible={HideDialogVisible} hideDialog={hideDialog} hide={hide} Selectedtarget={SelectedBlogs} setHideDialogVisible={setHideDialogVisible}/>
+
       </div>
     }
     </>

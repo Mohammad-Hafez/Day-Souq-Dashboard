@@ -17,7 +17,7 @@ import { BiSolidDiscount } from "react-icons/bi";
 import DeleteDialog from '../DelDialog/DelDialog';
 import DiscountDialog from '../DiscountDialog/DiscountDialog';
 import DescriptionDialog from '../DescriptionDialog/DescriptionDialog';
-import HideProductDialog from '../HideProductDialog/HideProductDialog';
+import HideItemDialog from '../HideItemDialog/HideItemDialog';
 import BiddingDetailsDialog from '../BiddingDetailsDialog/BiddingDetailsDialog';
 import { RiAuctionLine } from "react-icons/ri";
 
@@ -179,7 +179,7 @@ export default function Products() {
   });
   
   // *ANCHOR - Hide Product from website
-  const hideProduct=(status, id)=>{
+  const hide=(status, id)=>{
     setErrMsg(null);
     setLoaderBtn(true)
     axios.patch(ApiBaseUrl +`products/${id}`,{isShown:!status},{headers : headers})
@@ -247,10 +247,8 @@ export default function Products() {
     )
   }
   const actionTemplate = (rowData) => {
-    // console.log(rowData);
     return (
       <div className='d-flex justify-content-center align-items-center '>
-        
         <Button icon="pi pi-pencil" className='TabelButton approve rounded-circle mx-1' onClick={() => { setDisplayEditDialog(true); setSelectedProducts(rowData) }} />
         <BiSolidDiscount  className='TabelButton discount rounded-circle mx-1 p-1' onClick={()=>{setDiscountDialogVisible(true); setSelectedDiscount(rowData)}}/>
         {rowData.isShown === true ? 
@@ -304,7 +302,7 @@ return <>
           <DiscountDialog Dialog={Dialog} AllDiscount={AllDiscount} on={SelectedDiscount?.name} ErrMsg={ErrMsg} LoaderBtn={LoaderBtn} Button={Button} hideDialog={hideDialog}  editDiscountFormik={editDiscountFormik} DiscountDialogVisible={DiscountDialogVisible}/>
       
           <DescriptionDialog Dialog={Dialog} ProductDescriptionVisible={ProductDescriptionVisible} hideDialog={hideDialog} ProductDescription={ProductDescription}/>
-          <HideProductDialog Dialog={Dialog} LoaderBtn={LoaderBtn} ErrMsg={ErrMsg} HideDialogVisible={HideDialogVisible} hideDialog={hideDialog} hideProduct={hideProduct} SelectedProducts={SelectedProducts} setHideDialogVisible={setHideDialogVisible}/>
+          <HideItemDialog Dialog={Dialog} target={'Product'} LoaderBtn={LoaderBtn} ErrMsg={ErrMsg} HideDialogVisible={HideDialogVisible} hideDialog={hideDialog} hide={hide} Selectedtarget={SelectedProducts} setHideDialogVisible={setHideDialogVisible}/>
           {DisplayBiddingDialog &&
           <BiddingDetailsDialog headers={headers} BiddingStatus={BiddingStatus} LoaderBtn={LoaderBtn} ErrMsg={ErrMsg} hideDialog={hideDialog} SelectedProducts={SelectedProducts} DisplayBiddingDialog={DisplayBiddingDialog}/>
           }

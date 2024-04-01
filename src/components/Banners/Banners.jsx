@@ -10,6 +10,7 @@ import axios from 'axios';
 import { ApiBaseUrl, ImgBaseURL } from '../ApiBaseUrl';
 import { useQuery } from 'react-query';
 import Loader from '../Loader/Loader';
+import HideItemDialog from '../HideItemDialog/HideItemDialog';
 
 export default function Banners() {
   const user = localStorage.getItem("DaySooqDashUser") ;
@@ -19,7 +20,7 @@ export default function Banners() {
   const [SelectedBanner, setSelectedBanner] = useState(null)
   const [displayDeleteDialog, setDisplayDeleteDialog] = useState(false)
   const [displayAddNewDialog, setDisplayAddNewDialog] = useState(false)
-
+  const [ErrMsg, setErrMsg] = useState(null)
   const getBanners = () => axios.get(ApiBaseUrl + `banners?dashboard=true`)
   let {data: bannerResponse , isLoading : bannerLoading  , refetch:bannerRefetch} = useQuery('get banners' , getBanners , {cacheTime : 10000})
 
@@ -40,36 +41,62 @@ export default function Banners() {
     onSubmit:(values)=>AddNewBanner(values)
   })
 
-  const AddNewBanner = async (values) => {
-    setLoaderBtn(true)
+  const AddNewBanner = (values) => {
+    setLoaderBtn(true);
+    setErrMsg(null);
     const AddformData = new FormData();
     AddformData.append('description', values.description);
     AddformData.append('type', values.type);
     AddformData.append('image', values.image); 
-    try {
-      await axios.post(ApiBaseUrl + `banners`, AddformData, { headers });
+    axios.post(ApiBaseUrl + `banners`, AddformData, { headers })
+    .then(response=>{
       hideDialog()
       bannerRefetch()
       setLoaderBtn(false)
-    } catch (error) {
+    }).catch (error=>{
+      setErrMsg(error.response.data.message);
       console.error(error);
       setLoaderBtn(false)
-    }
+    })
   };
   
-  const deleteBanner =async (id)=>{
-    try {
-      await axios.delete(ApiBaseUrl + `banners/${id}` , { headers })
+  const [HideDialogVisible, setHideDialogVisible] = useState(false)
+  const hide=(status, id)=>{
+    setErrMsg(null);
+    setLoaderBtn(true)
+    axios.patch(ApiBaseUrl +`banners/${id}`,{isShown:!status},{headers : headers})
+    .then(response=>{
       bannerRefetch()
       hideDialog()
-    } catch (error) {
+      setLoaderBtn(false)
+    }).catch (error =>{
+      setErrMsg(error.response.data.message);
       console.error(error);
-    }
+      setLoaderBtn(false)
+    })
+  }
+
+  const deleteBanner =(id)=>{
+    setErrMsg(null);
+    setLoaderBtn(true)
+    axios.delete(ApiBaseUrl + `banners/${id}` , { headers })
+    .then(response=>{
+      bannerRefetch()
+      hideDialog()
+      setLoaderBtn(false)
+    }).catch (error=>{
+      setErrMsg(error.response.data.message);
+      console.error(error);
+      setLoaderBtn(false)
+    })
   }
 
   const hideDialog = () => {
     setDisplayDeleteDialog(false)
     setDisplayAddNewDialog(false)
+    setHideDialogVisible(false)
+    setErrMsg(null);
+    setLoaderBtn(false)
     AddNewFormik.resetForm();
   };
 
@@ -78,6 +105,11 @@ export default function Banners() {
   const actionTemplate = (rowData) => {
     return (
       <div className='d-flex justify-content-center align-items-center '>
+        {rowData.isShown === true ? 
+          <Button onClick={() => {setSelectedBanner(rowData); setHideDialogVisible(true)}} icon="pi pi-lock-open" className='TabelButton rounded-circle mx-auto' outlined severity="secondary" />
+        :
+          <Button onClick={() => {setSelectedBanner(rowData); setHideDialogVisible(true)}} icon="pi pi-lock" className='TabelButton rounded-circle mx-auto' outlined severity="secondary" />
+        }
         <Button  icon="pi pi-trash" className='TabelButton Cancel rounded-circle mx-1' onClick={() => { setDisplayDeleteDialog(true); setSelectedBanner(rowData._id)}} />
       </div>
     );
@@ -113,6 +145,7 @@ export default function Banners() {
       <Dialog header={'Delete Banner'} className='container editDialog' visible={displayDeleteDialog} onHide={hideDialog} modal>
         <h5>you want delete this Banner ?</h5>
         <hr />
+        {ErrMsg ? <div className='alert text-danger'>{ErrMsg}</div> :null}
         <div className="d-flex align-items-center justify-content-around">
         <button className='btn btn-danger  w-50 mx-2 px-4' onClick={()=>{deleteBanner(SelectedBanner)}}>Yes</button>
         <button className='btn btn-primary w-50 mx-2  px-4' onClick={()=>{setDisplayDeleteDialog(false)}}>No</button>
@@ -167,6 +200,8 @@ export default function Banners() {
               </div>
           </form>
       </Dialog>
+      
+      <HideItemDialog Dialog={Dialog} target={'Banner'} LoaderBtn={LoaderBtn} ErrMsg={ErrMsg} HideDialogVisible={HideDialogVisible} hideDialog={hideDialog} hide={hide} Selectedtarget={SelectedBanner} setHideDialogVisible={setHideDialogVisible}/>
 
     </div>
 }
