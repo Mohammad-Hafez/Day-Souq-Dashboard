@@ -224,6 +224,14 @@ export default function Products() {
     setFilteredProducts(filteredData);
   };
 
+  const handleSkuSearch = (e) => {
+    const searchValue = e.target.value;
+    const filteredData = Products.filter(product =>
+      product.variants[0].sku.startsWith(searchValue)
+    );
+    setFilteredProducts(filteredData);
+  };
+
   // *ANCHOR - actions at table and handle data response for each row
   const ProductsHeaderBody = () => {
     return (
@@ -235,6 +243,9 @@ export default function Products() {
         <div className="d-flex flex-column">
         <div className="searchCategory mb-2">
           <input type="text" placeholder="Search by product name" className='form-control' onChange={handleSearch} />
+        </div>
+        <div className="searchCategory mb-2">
+          <input type="text" placeholder="Search by SKU Number" className='form-control' onChange={handleSkuSearch} />
         </div>
         <div className="addCategory w-100 d-flex">
           <button className={`btn btn-secondary ${sec==='all' ? `w-50` : `w-100`} me-2`} onClick={() => { setDisplayAddNewDialog(true) }}>Add New</button>

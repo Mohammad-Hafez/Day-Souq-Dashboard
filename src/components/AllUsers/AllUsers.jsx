@@ -35,7 +35,8 @@ export default function AllUsers() {
     const filteredData = UsersResponse.data.data.data.filter((user) =>
       user.firstName.toLowerCase().includes(searchValue) ||
       user.lastName.toLowerCase().includes(searchValue) ||
-      user.phone.toLowerCase().includes(searchValue)
+      user.phone.toLowerCase().startsWith(searchValue) ||
+      user.email.toLowerCase().startsWith(searchValue)
     );
     setFilteredUsers(filteredData);
   };
@@ -137,7 +138,7 @@ export default function AllUsers() {
           </span>
           <input
             type="text"
-            placeholder="Search by name or phone"
+            placeholder="Enter name or phone or email"
             className="form-control rounded-start-0"
             onChange={handleSearch}
           />
