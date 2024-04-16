@@ -130,7 +130,7 @@ export default function SubSubCategory() {
   const deleteSubSub = (id) => {
     setLoaderBtn(true);
     setErrMsg(null)
-    axios.delete(ApiBaseUrl + `subSubCategories/soft/${id}`, { headers })
+    axios.delete(ApiBaseUrl + `subSubCategories/${id}`, { headers })
     .then(response=>{
       subForCategoryRefetch();
       hideDialog();
