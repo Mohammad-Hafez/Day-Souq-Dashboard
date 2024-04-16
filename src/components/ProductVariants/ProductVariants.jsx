@@ -141,7 +141,7 @@ export default function ProductVariants() {
   // *ANCHOR - delete product
   const deleteCategory = async (id)=>{
     try {
-      await axios.delete(ApiBaseUrl + `variants/${id}` , { headers })
+      await axios.delete(ApiBaseUrl + `variants/soft/${id}` , { headers })
         ProductVariantsRefetch()
         hideDialog()
     } catch (error) {
