@@ -1,5 +1,7 @@
 import React from 'react'
-export default function DeleteDialog({Dialog ,LoaderBtn, ErrMsg, displayDeleteDialog, hideDialog, deleteProduct, SelectedProducts, setDisplayDeleteDialog}) {
+import { Dialog } from 'primereact/dialog';
+
+export default function DeleteDialog({LoaderBtn, ErrMsg, displayDeleteDialog, hideDialog, deleteProduct, SelectedProducts, setDisplayDeleteDialog}) {
   return <>
             <Dialog header={'Delete Product'} className='container editDialog' visible={displayDeleteDialog} onHide={hideDialog} modal>
             <h5 className='mb-2'>you want delete this Products ?</h5>

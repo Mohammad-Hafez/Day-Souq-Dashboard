@@ -53,6 +53,7 @@ export default function HeaderSearch({ UserToken, Logout }) {
           <NavItem  to={'Shipping'} activeLink={activeLink} onClick={setActiveLink} name={'Shipping'} icon={'pi-truck'} />
           <NavItem  to={'Coupons'} activeLink={activeLink} onClick={setActiveLink} name={'Coupon'} icon={'pi-money-bill'} />
           <NavItem  to={'Users'} activeLink={activeLink} onClick={setActiveLink} name={'Users & notifications'} icon={'pi-users'}/>
+          <NavItem  to={'Trash'} activeLink={activeLink} onClick={setActiveLink} name={'Trash'} icon={'pi-trash'}/>
           <Link className={`nav-link px-1 my-4 dark-grey-text fw-bolder`} onClick={()=>{Logout(); setVisibleSidebar(!visibleSidebar)}}>
               <FiLogOut className="fs-4 pb-1 cursor-pointer"/> Logout
           </Link>

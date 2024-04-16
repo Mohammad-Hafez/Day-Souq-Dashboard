@@ -47,7 +47,7 @@ const minDate = new Date();
   // *ANCHOR - get category for current subcategory depends on id from url
   const filteredSubcategories = SubcategoriesNameResponse?.filter(subcategory => subcategory?.category._id === selectedCategoryId);
   const filteredSubSubcategories = subSubcategoriesNameResponse?.filter(subsubcategory => subsubcategory?.subCategory._id === selectedSubcategoryId);
-
+  console.log("subSubcategoriesNameResponse" , subSubcategoriesNameResponse);
   const getCatForSub = SubcategoriesNameResponse
   ?.filter(subcategory => subcategory?._id === secId )
   .map(subcategory => subcategory?.category);
@@ -113,7 +113,8 @@ const minDate = new Date();
     validationSchema,
     onSubmit: (values) => AddNewProducts(values),
   });
-
+  console.log(getParentsForSubSub);
+console.log(AddNewFormik.values);
   const AddNewProducts =  (values) => {
     console.log(values);
     setLoaderBtn(true);

@@ -93,7 +93,7 @@ export default function Products() {
   const deleteProduct = async (id) => {
     setErrMsg(null);
     setLoaderBtn(true)
-      await axios.delete(ApiBaseUrl + `products/${id}`, { headers })
+      await axios.delete(ApiBaseUrl + `products/soft/${id}`, { headers })
       .then(response =>{
       if (sec!=='all') {
         SecProductsRefetch()
@@ -211,6 +211,7 @@ export default function Products() {
     setHideDialogVisible(false);
     setDisplayBiddingDialog(false);
     setLoaderBtn(false);
+    setErrMsg(null)
     setBiddingStatus('')
     editDiscountFormik.resetForm()
   };
@@ -236,9 +237,10 @@ export default function Products() {
   const ProductsHeaderBody = () => {
     return (
       <div className='d-flex align-items-center justify-content-between'>
-        <div className="headerLabel">
+        <div className="headerLabel d-flex flex-column justify-content-center align-items-center">
           {sec!=='all' && <h3>Products For <span className='cursor-pointer'>{secName}</span></h3>}
           {sec==='all' && <h3>All Products</h3>} 
+          {/* <h6 className='text-danger mt-3 cursor-pointer text-decoration-underline'><i className='fa fa-trash'></i> Trash</h6> */}
         </div>
         <div className="d-flex flex-column">
         <div className="searchCategory mb-2">
@@ -263,15 +265,15 @@ export default function Products() {
         <Button icon="pi pi-pencil" className='TabelButton approve rounded-circle mx-1' onClick={() => { setDisplayEditDialog(true); setSelectedProducts(rowData) }} />
         <BiSolidDiscount  className='TabelButton discount rounded-circle mx-1 p-1' onClick={()=>{setDiscountDialogVisible(true); setSelectedDiscount(rowData)}}/>
         {rowData.isShown === true ? 
-          <Button onClick={() => {setSelectedProducts(rowData); setHideDialogVisible(true)}} icon="pi pi-lock-open" className='TabelButton rounded-circle mx-auto' outlined severity="secondary" />
+          <Button onClick={() => {setSelectedProducts(rowData); setHideDialogVisible(true)}} icon="pi pi-lock-open" className='TabelButton rounded-circle mx-1' outlined severity="secondary" />
         :
-          <Button onClick={() => {setSelectedProducts(rowData); setHideDialogVisible(true)}} icon="pi pi-lock" className='TabelButton rounded-circle mx-auto' outlined severity="secondary" />
+          <Button onClick={() => {setSelectedProducts(rowData); setHideDialogVisible(true)}} icon="pi pi-lock" className='TabelButton rounded-circle mx-1' outlined severity="secondary" />
         }
         <Button icon="pi pi-trash" className='TabelButton Cancel rounded-circle mx-1' onClick={() => { setSelectedProducts(rowData._id); setDisplayDeleteDialog(true);}} />
       </div>
     );
   };  
-  const productImage = (rowData) => rowData?.variants?.map((variant, index) => <img key={index} src={ImgBaseURL + variant.imageCover} alt={variant.name + 'image'} className='w-50' />)?.slice(0, 1)
+  const productImage = (rowData) => <img src={ImgBaseURL + rowData.variants[0].imageCover} alt={rowData.name.slice(0,7) + ' image'} className='w-50'/>
   const getProductVariants = (rowData) => <Button onClick={() => navigate(`/ProductVariants/${rowData?.name}/${rowData._id}`)} icon="pi pi-eye" className='TabelButton dark-blue-text blue-brdr bg-transparent rounded-circle mx-auto' />
   const productStatus = (rowData) => rowData?.isUsed ? 'Used' : 'New'
   const sizesBody = (rowData) => rowData?.sizes?.map((size, index) => <span key={index} className='d-block'>{size}</span>)
@@ -292,13 +294,13 @@ return <>
     <div className="container-fluid">
       {ProductsLoading || AllLoading? <Loader /> : <>
           <DataTable value={filteredProducts} header={ProductsHeaderBody} paginator selectionMode="single" className={`dataTabel mb-4 text-capitalize AllList`} dataKey="_id" scrollable scrollHeight="100vh" tableStyle={{ minWidth: "50rem" }} rows={10} responsive="scroll">
-            <Column header="Images" body={productImage} style={{ width: "8%", borderBottom: '1px solid #dee2e6' }} />
+            <Column header="Image" body={productImage} style={{ width: "8%", borderBottom: '1px solid #dee2e6' }} />
             <Column field="name" header="Name" sortable style={{ width: "15%", borderBottom: '1px solid #dee2e6' }} />
-            <Column header="description" body={descriptionBody} style={{ width: "5%", borderBottom: '1px solid #dee2e6' }} />
+            <Column header="details" body={descriptionBody} style={{ width: "5%", borderBottom: '1px solid #dee2e6' }} />
             <Column header="sizes" body={sizesBody} sortable style={{ width: "8%", borderBottom: '1px solid #dee2e6' }} />
             <Column field="price" header="Price (JOD)" sortable style={{ width: "8%", borderBottom: '1px solid #dee2e6' }} />
             <Column header="Disc" body={discountBody} style={{ width: "5%", borderBottom: '1px solid #dee2e6' }} />
-            <Column header="Cat Disc" body={catDiscountBody} style={{ width: "5%", borderBottom: '1px solid #dee2e6' }} />
+            <Column header="Cat. Disc" body={catDiscountBody} style={{ width: "5%", borderBottom: '1px solid #dee2e6' }} />
             <Column header="All Disc" body={allDiscountBody} style={{ width: "5%", borderBottom: '1px solid #dee2e6' }} />
             <Column field="priceAfterDiscount" header="Final Price (JOD)" sortable style={{ width: "8%", borderBottom: '1px solid #dee2e6' }} />
             <Column field="quantity" header="quantity" sortable style={{ width: "5%", borderBottom: '1px solid #dee2e6' }} />
@@ -308,7 +310,7 @@ return <>
             <Column header="Actions" body={actionTemplate} style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
           </DataTable>
 
-          <DeleteDialog Dialog={Dialog} LoaderBtn={LoaderBtn} ErrMsg={ErrMsg} displayDeleteDialog={displayDeleteDialog} hideDialog={hideDialog} deleteProduct={deleteProduct} SelectedProducts={SelectedProducts} setDisplayDeleteDialog={setDisplayDeleteDialog} />
+          <DeleteDialog LoaderBtn={LoaderBtn} ErrMsg={ErrMsg} displayDeleteDialog={displayDeleteDialog} hideDialog={hideDialog} deleteProduct={deleteProduct} SelectedProducts={SelectedProducts} setDisplayDeleteDialog={setDisplayDeleteDialog} />
           
           <DiscountDialog Dialog={Dialog} AllDiscount={AllDiscount} on={SelectedDiscount?.name} ErrMsg={ErrMsg} LoaderBtn={LoaderBtn} Button={Button} hideDialog={hideDialog}  editDiscountFormik={editDiscountFormik} DiscountDialogVisible={DiscountDialogVisible}/>
       
