@@ -30,7 +30,6 @@ export default function Brands() {
 
   const getBrands = () => axios.get(ApiBaseUrl + `brands?dashboard=true`);
   let { data, refetch , isLoading } = useQuery('All-Brands', getBrands, { cacheTime: 50000 });
-
   useEffect(() => {
     if (data) {
       setBrands(data?.data.data.data);
@@ -55,18 +54,18 @@ export default function Brands() {
   let AddNewFormik = useFormik({
     initialValues : AddNewInitial, 
     validationSchema : Yup.object().shape({
-      name :Yup.string().required('Category Name Is Required') ,
-      // image : Yup.string().required('Category Image is Required')
+      name :Yup.string().required('Brand Name Is Required') ,
+      // image : Yup.string().required('Brand Image is Required')
     }),
-    onSubmit:(values)=>AddNewCategory(values)
+    onSubmit:(values)=>AddNewBrand(values)
   })
-  const AddNewCategory = (values) => {
+  const AddNewBrand = (values) => {
     setErrMsg(null);
     setLoaderBtn(true)
     const AddformData = new FormData();
-    AddformData.append('name', values.name);
-    AddformData.append('image', values.image); 
-    axios.post(ApiBaseUrl + `categories`, AddformData, { headers })
+    AddformData.append('name', values);
+    // AddformData.append('image', values.image); 
+    axios.post(ApiBaseUrl + `brands`, AddformData, { headers })
     .then(response=>{
       hideDialog()
       refetch()
@@ -78,6 +77,15 @@ export default function Brands() {
     })
   };
 
+  // const addAll = ()=>{
+  //   let apiBrand = data?.data.data.data.map(b=>b.name)
+  //   let allBrand = brands.map(brand=> brand.name)
+  //   let nonDuplicatedBrands = allBrand.filter(brand => !apiBrand.includes(brand));
+  //   console.log("api=>" , apiBrand);
+  //   console.log("allBrand=>" , allBrand);
+  //   console.log(nonDuplicatedBrands);
+  //   nonDuplicatedBrands.map(brand=>AddNewBrand(brand))
+  // }
   let editInitial = {
     name :'', 
     image : ''
@@ -188,9 +196,10 @@ export default function Brands() {
       <div className="d-flex align-items-center justify-content-between">
         <div className="headerLabel">
           <h3>All Brands</h3>
+          {/* <button className='btn btn-success' onClick={addAll}>add all</button> */}
         </div>
         <div className="d-flex flex-column">
-        <div className="searchCategory mb-2">
+        <div className="searchBrand mb-2">
           <input
             type="text"
             placeholder="Search by brand name"
@@ -198,7 +207,7 @@ export default function Brands() {
             onChange={handleSearch}
           />
         </div>
-        <div className="addCategory">
+        <div className="addBrand">
           <button className="btn btn-secondary w-100" onClick={() => { setDisplayAddNewDialog(true); }} >
             Add New
           </button>
@@ -219,6 +228,7 @@ export default function Brands() {
       <DataTable value={filteredBrands} header={brandssHeaderBody} paginator selectionMode="single" className={`dataTabel mb-4 text-capitalize AllList`} dataKey="_id" scrollable scrollHeight="100vh" tableStyle={{ minWidth: "50rem" }} rows={10} responsive="scroll">
         <Column field="image" header="Image" body={brandImage} style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
         <Column field="name" header="Name" sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
+        <Column field="_id" header="ID" sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
         <Column field="createdAt" header="Created At" body={createdAtBody} sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
         <Column header="Products" body={getBrandProducts}  style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
         <Column header="edit" body={actionTemplate}  style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
@@ -255,7 +265,7 @@ export default function Brands() {
           </form>
       </Dialog>
       <Dialog header={'Delete Brands'} className='container editDialog' visible={displayDeleteDialog} onHide={hideDialog} modal>
-        <h5>you want delete this category ?</h5>
+        <h5>you want delete this Brand ?</h5>
         <hr />
         {ErrMsg ? <div className='alert text-danger'>{ErrMsg}</div> :null}
         <div className="d-flex align-items-center justify-content-around">
@@ -299,3 +309,419 @@ export default function Brands() {
     }
     </>
 }
+ let brands = [
+  {
+   "name": "FEEX"
+  },
+  {
+   "name": "ANKER"
+  },
+  {
+   "name": "Promate"
+  },
+  {
+   "name": "VIKUSHA"
+  },
+  {
+   "name": "HUAWEI"
+  },
+  {
+   "name": "Belkin"
+  },
+  {
+   "name": "RAV Power"
+  },
+  {
+   "name": "APPLE"
+  },
+  {
+   "name": "WIWU"
+  },
+  {
+   "name": "Funko"
+  },
+  {
+   "name": "Xiaomi"
+  },
+  {
+   "name": "Divoom"
+  },
+  {
+   "name": "Dell"
+  },
+  {
+   "name": "PICOCICI"
+  },
+  {
+   "name": "JOYROOM"
+  },
+  {
+   "name": "MyCandy"
+  },
+  {
+   "name": "Rockrose"
+  },
+  {
+   "name": "Samsung"
+  },
+  {
+   "name": "SONY"
+  },
+  {
+   "name": "Mpow"
+  },
+  {
+   "name": "JBL"
+  },
+  {
+   "name": "Google"
+  },
+  {
+   "name": "Mcdodo"
+  },
+  {
+   "name": "Nothing Ear 2"
+  },
+  {
+   "name": "MOMAX"
+  },
+  {
+   "name": "COTEETCI"
+  },
+  {
+   "name": "Galaxy"
+  },
+  {
+   "name": "GREEN"
+  },
+  {
+   "name": "VIVA"
+  },
+  {
+   "name": "Keephone"
+  },
+  {
+   "name": "Green Lion"
+  },
+  {
+   "name": "TOTU"
+  },
+  {
+   "name": "Santa Barbara"
+  },
+  {
+   "name": "Yesido"
+  },
+  {
+   "name": "XUNDD"
+  },
+  {
+   "name": "PATHFINDER"
+  },
+  {
+   "name": "KAZE"
+  },
+  {
+   "name": "Youngkit"
+  },
+  {
+   "name": "UNIQ"
+  },
+  {
+   "name": "Raigor Inverse"
+  },
+  {
+   "name": "Viva Madrid"
+  },
+  {
+   "name": "KZDOO"
+  },
+  {
+   "name": "Ajax"
+  },
+  {
+   "name": "Baseus"
+  },
+  {
+   "name": "XO"
+  },
+  {
+   "name": "Jokade"
+  },
+  {
+   "name": "Choetech"
+  },
+  {
+   "name": "LENYES"
+  },
+  {
+   "name": "HP"
+  },
+  {
+   "name": "Lenovo"
+  },
+  {
+   "name": "LG"
+  },
+  {
+   "name": "AOC"
+  },
+  {
+   "name": "Powerology"
+  },
+  {
+   "name": "vertux"
+  },
+  {
+   "name": "Cooler Master"
+  },
+  {
+   "name": "XPG"
+  },
+  {
+   "name": "Crown"
+  },
+  {
+   "name": "PORODO"
+  },
+  {
+   "name": "YANKEE"
+  },
+  {
+   "name": "MARVO"
+  },
+  {
+   "name": "HYPERX"
+  },
+  {
+   "name": "AULA"
+  },
+  {
+   "name": "TP-Link"
+  },
+  {
+   "name": "Canon"
+  },
+  {
+   "name": "Silicon Power"
+  },
+  {
+   "name": "ADATA"
+  },
+  {
+   "name": "Kingston"
+  },
+  {
+   "name": "IMATION"
+  },
+  {
+   "name": "SANDISK"
+  },
+  {
+   "name": "Vention"
+  },
+  {
+   "name": "Goui"
+  },
+  {
+   "name": "UGREEN"
+  },
+  {
+   "name": "HAING"
+  },
+  {
+   "name": "D-Link"
+  },
+  {
+   "name": "OPPO"
+  },
+  {
+   "name": "Infinix"
+  },
+  {
+   "name": "TECNO"
+  },
+  {
+   "name": "Realme"
+  },
+  {
+   "name": "HONOR"
+  },
+  {
+   "name": "BLACK VIEW"
+  },
+  {
+   "name": "TELCAST"
+  },
+  {
+   "name": "Matex"
+  },
+  {
+   "name": "OnePlus"
+  },
+  {
+   "name": "CONTI"
+  },
+  {
+   "name": "Samix"
+  },
+  {
+   "name": "Braun"
+  },
+  {
+   "name": "PHILIPS"
+  },
+  {
+   "name": "TEKMAZ"
+  },
+  {
+   "name": "PANASONIC"
+  },
+  {
+   "name": "Kenwood"
+  },
+  {
+   "name": "DAEWOO"
+  },
+  {
+   "name": "TEFAL"
+  },
+  {
+   "name": "SONA"
+  },
+  {
+   "name": "SENCOR"
+  },
+  {
+   "name": "SHARP"
+  },
+  {
+   "name": "BLACK & DECKER"
+  },
+  {
+   "name": "Electrolux"
+  },
+  {
+   "name": "Mega"
+  },
+  {
+   "name": "KORKMAZ"
+  },
+  {
+   "name": "BOSCH"
+  },
+  {
+   "name": "CAPTIN"
+  },
+  {
+   "name": "Gold Master"
+  },
+  {
+   "name": "PRINCESS"
+  },
+  {
+   "name": "LEXICAL"
+  },
+  {
+   "name": "Ariete"
+  },
+  {
+   "name": "Geepas"
+  },
+  {
+   "name": "SENCOR Vita"
+  },
+  {
+   "name": "Delonghi"
+  },
+  {
+   "name": "El Capo"
+  },
+  {
+   "name": "Moulinex"
+  },
+  {
+   "name": "DOLCE GUSTO"
+  },
+  {
+   "name": "IL CAPO TOCA"
+  },
+  {
+   "name": "PEDRINI"
+  },
+  {
+   "name": "SEVERIN"
+  },
+  {
+   "name": "Hyundai"
+  },
+  {
+   "name": "QUOKKA"
+  },
+  {
+   "name": "DOORBELL"
+  },
+  {
+   "name": "EZVIZ"
+  },
+  {
+   "name": "ARES"
+  },
+  {
+   "name": "MOFKERA"
+  },
+  {
+   "name": "KS"
+  },
+  {
+   "name": "MAGICAL UNIVERSE"
+  },
+  {
+   "name": "MCFARLANE"
+  },
+  {
+   "name": "SMURFS"
+  },
+  {
+   "name": "THE HANGREES"
+  },
+  {
+   "name": "READY TO ROBOT"
+  },
+  {
+   "name": "NICKELODEON"
+  },
+  {
+   "name": "RIP"
+  },
+  {
+   "name": "SUPERMAG"
+  },
+  {
+   "name": "CYBER STRIKE"
+  },
+  {
+   "name": "JAKKS"
+  },
+  {
+   "name": "MGA ENTERTAINMENT"
+  },
+  {
+   "name": "SPLASH TOYS"
+  },
+  {
+   "name": "RESCUE HEROES"
+  },
+  {
+   "name": "APEX LEGENDS"
+  },
+  {
+   "name": "TINY PONG"
+  },
+  {
+   "name": "FORTNITE"
+  },
+  {
+   "name": "QIXELS"
+  }
+ ]
