@@ -60,7 +60,7 @@ export default function SubCategory() {
     initialValues: AddNewInitial,
     validationSchema: Yup.object().shape({
       name: Yup.string().required('Category Name Is Required'),
-      image: Yup.string().required('Category Image is Required')
+      // image: Yup.string().required('Category Image is Required')
     }),
     onSubmit: (values) => AddNewSubCategory(values)
   });
@@ -70,7 +70,7 @@ export default function SubCategory() {
     setErrMsg(null);
     const AddformData = new FormData();
     AddformData.append('name', values.name);
-    AddformData.append('image', values.image);
+    // AddformData.append('image', values.image);
     all ? AddformData.append('category', values.category) : AddformData.append('category', id);
     axios.post(ApiBaseUrl + `subCategories`, AddformData, {headers})
       .then(response=>{
@@ -253,6 +253,7 @@ export default function SubCategory() {
         <DataTable value={filteredSubCategory} header={SubCategoryHeaderBody} paginator selectionMode="single" className={`dataTabel mb-4 text-capitalize AllList`} dataKey="_id" scrollable scrollHeight="100vh" tableStyle={{ minWidth: "50rem" }} rows={10} responsive="scroll">
           <Column field="image" header="Image" body={catImage} style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
           <Column field="name" header="Name" sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
+          <Column field="_id" header="id" sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
           {all && <Column header="Category" body={ParentCategoryName} sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} /> }
           <Column header="Products" body={getProductsForCategory}  style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
           <Column header="Sub-SubCategory" body={getSubForSubCategory}  style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
@@ -353,3 +354,44 @@ export default function SubCategory() {
     </>
   );
 }
+
+let ACCESSORIES_STORE_Sub =  [
+  {"name": "Cables"},
+  {"name": "Chargers & Plugs"},
+  {"name": "Headphones & Sounds"},
+  {"name": "Accessories"},
+  {"name": "Strips & Hubs"},
+  {"name": "Speakers"},
+  {"name": "bands & fitness (smart watches)"},
+  {"name": "Adapters & Connectors"},
+  {"name": "iPad & Tablet Accessories"},
+  {"name": "Backpacks & Luggage"}
+]
+
+
+    let HomeSub = 
+      [
+        {"name": "Smart Devices"},
+        {"name": "Fitness"},
+        {"name": "Kitchen Appliances"},
+        {"name": "Cameras & Security"}
+      ]
+    
+    let funSub =[
+        {"name": "Massage & Relaxation"},
+        {"name": "Notebooks & Agenda"},
+        {"name": "Games & Toys"}
+      ]
+    
+      let computerSub = [
+        {"name": "Laptop"},
+        {"name": "Computer"},
+        {"name": "Screens & Monitors"},
+        {"name": "Keyboards & Mouse"},
+        {"name": "Computer Parts"},
+        {"name": "Printers & Scanners"},
+        {"name": "Storage & RAM's"},
+        {"name": "Accessories"},
+        {"name": "Backpacks & Luggage"}
+      ];
+

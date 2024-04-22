@@ -26,12 +26,13 @@ export default function Categories() {
   const [displayAddNewDialog, setDisplayAddNewDialog] = useState(false);
   const [SelectedCategory, setSelectedCategory] = useState(null);
   const [LoaderBtn, setLoaderBtn] = useState(false);
+  const [HideDialogVisible, setHideDialogVisible] = useState(false)
   const [Categories, setCategories] = useState([]);
   const [filteredCategories, setFilteredCategories] = useState([]);
   const [DiscountDialogVisible, setDiscountDialogVisible] = useState(false)
   const [ErrMsg, setErrMsg] = useState(null)
 
-  const getCategories = () => axios.get(ApiBaseUrl + `categories?dashboard=true`);
+  const getCategories = () => axios.get(ApiBaseUrl + `categories`);
 
   let { data, refetch , isLoading} = useQuery('All-Categories', getCategories, { cacheTime: 50000 });
 
@@ -144,7 +145,7 @@ export default function Categories() {
         setLoaderBtn(false)
       });
   };
-  const [HideDialogVisible, setHideDialogVisible] = useState(false)
+  
   const hide=(status, id)=>{
     setErrMsg(null);
     setLoaderBtn(true)
@@ -245,6 +246,7 @@ export default function Categories() {
       <DataTable value={filteredCategories} header={categoriesHeaderBody} paginator selectionMode="single" className={`dataTabel mb-4 text-capitalize AllList`} dataKey="_id" scrollable scrollHeight="100vh" tableStyle={{ minWidth: "50rem" }} rows={10} responsive="scroll">
         <Column field="image" header="Image" body={catImage} style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
         <Column field="name" header="Name" sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
+        <Column field="_id" header="id" sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
         <Column header="Discount" body={discountBody} sortable style={{ width: "5%", borderBottom: '1px solid #dee2e6' }} />
         <Column header="Products" body={getProductsForCategory}  style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
         <Column field="createdAt" header="Created At" body={createdAtBody} sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
@@ -334,3 +336,24 @@ export default function Categories() {
     }
   </>;
 }
+
+let categories = [
+  {
+   "name": "ACCESSORIES STORE"
+  },
+  {
+   "name": "Home Smart devices & appliances"
+  },
+  {
+   "name": "Fun & play"
+  },
+  {
+   "name": "Computer& Laptop"
+  },
+  {
+   "name": "Mobile"
+  },
+  {
+   "name": "Tablet "
+  }
+ ]

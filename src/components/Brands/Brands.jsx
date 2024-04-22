@@ -64,7 +64,7 @@ export default function Brands() {
     setLoaderBtn(true)
     const AddformData = new FormData();
     AddformData.append('name', values);
-    // AddformData.append('image', values.image); 
+    AddformData.append('image', values.image); 
     axios.post(ApiBaseUrl + `brands`, AddformData, { headers })
     .then(response=>{
       hideDialog()
@@ -77,15 +77,6 @@ export default function Brands() {
     })
   };
 
-  // const addAll = ()=>{
-  //   let apiBrand = data?.data.data.data.map(b=>b.name)
-  //   let allBrand = brands.map(brand=> brand.name)
-  //   let nonDuplicatedBrands = allBrand.filter(brand => !apiBrand.includes(brand));
-  //   console.log("api=>" , apiBrand);
-  //   console.log("allBrand=>" , allBrand);
-  //   console.log(nonDuplicatedBrands);
-  //   nonDuplicatedBrands.map(brand=>AddNewBrand(brand))
-  // }
   let editInitial = {
     name :'', 
     image : ''
@@ -196,7 +187,6 @@ export default function Brands() {
       <div className="d-flex align-items-center justify-content-between">
         <div className="headerLabel">
           <h3>All Brands</h3>
-          {/* <button className='btn btn-success' onClick={addAll}>add all</button> */}
         </div>
         <div className="d-flex flex-column">
         <div className="searchBrand mb-2">
