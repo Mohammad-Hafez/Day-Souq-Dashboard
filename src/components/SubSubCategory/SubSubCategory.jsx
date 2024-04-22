@@ -48,7 +48,7 @@ export default function SubSubCategory() {
 
   let subSubValidation = Yup.object().shape({
     name: Yup.string().required('Category Name Is Required'),
-    image: Yup.string().required('Category Image is Required')
+    // image: Yup.string().required('Category Image is Required')
   })
 
   // Add new sub category
@@ -63,7 +63,7 @@ export default function SubSubCategory() {
     setErrMsg(null)
     const AddformData = new FormData();
     AddformData.append('name', values.name);
-    AddformData.append('image', values.image);
+    // AddformData.append('image', values.image);
     AddformData.append('category', CatId);
     AddformData.append('subCategory', SubId);
     try {
@@ -178,7 +178,7 @@ export default function SubSubCategory() {
     AddNewFormik.resetForm();
   }
 const addAll =()=>{
-
+  phoneAccessoriesSubSub.map(subsub=>AddNewSubCategory(subsub))
 }
   // Header body
   const SubCategoryHeaderBody = () => {
@@ -222,6 +222,7 @@ const addAll =()=>{
         <DataTable value={filteredSubCategory} header={SubCategoryHeaderBody} paginator selectionMode="single" className={`dataTabel mb-4 text-capitalize AllList`} dataKey="_id" scrollable scrollHeight="100vh" tableStyle={{ minWidth: "50rem" }} rows={10} responsive="scroll">
           <Column field="image" header="Image" body={catImage} style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
           <Column field="name" header="Name" sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
+          <Column field="_id" header="id" sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
           <Column field="createdAt" header="Created At" body={createdAtBody} sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
           <Column header="Products" body={getProductsForSubSub}  style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
           <Column header="edit" body={actionTemplate} style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
@@ -319,6 +320,3 @@ let phoneAccessoriesSubSub = [
   {"name": "Cases & Covers"}
 ];
 
-let AdaptersSubSub = [
-  {"name": "Power Bank"}
-];

@@ -98,7 +98,7 @@ export default function SubCategory() {
     initialValues: editInitial,
     validationSchema: Yup.object().shape({
       name: Yup.string().required('Category Name Is Required'),
-      image: Yup.string().required('Category Image is Required')
+      // image: Yup.string().required('Category Image is Required')
     }),
     onSubmit: (values) => editSubCategory(SelectedSubCategory._id, values)
   });
