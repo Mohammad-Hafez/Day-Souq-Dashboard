@@ -53,7 +53,7 @@ export default function EditProduct({
     };
     
     // *ANCHOR - get sub and sub-Sub depends on category => subCategory selection
-    const filteredSubcategories = SubcategoriesNameResponse?.filter(subcategory => subcategory?.category._id === selectedCategoryId);
+    const filteredSubcategories = SubcategoriesNameResponse?.filter(subcategory => subcategory?.category?._id === selectedCategoryId);
     const filteredSubSubcategories = subSubcategoriesNameResponse?.filter(subsubcategory => subsubcategory?.subCategory === selectedSubcategoryId);
     // *ANCHOR - get category for current subcategory depends on id from url
     const getCatForSub = SubcategoriesNameResponse
@@ -147,7 +147,7 @@ export default function EditProduct({
           })
         })
       }
-    }, [SelectedProducts , secName , secId , getParentsForSubSub]);
+    }, [SelectedProducts]);
     
     // *NOTE - edit new product function
     const editCategory = (id, values) => {

@@ -6,6 +6,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { Dialog } from 'primereact/dialog';
 import { Calendar } from 'primereact/calendar';
+import { accessProducts } from '../Brands';
 
 export default function AddProduct({ LoaderBtn,headers, displayAddNewDialog,sec , secName , secId ,SecProductsRefetch, brandsNameResponse, categoriesNameResponse, SubcategoriesNameResponse,subSubcategoriesNameResponse, hideDialog, setLoaderBtn , AllRefetch }) {
 const [AddNewError, setAddNewError] = useState(null);
@@ -45,9 +46,9 @@ const minDate = new Date();
   };
   // *ANCHOR - get sub and sub-Sub depends on category => subCategory selection
   // *ANCHOR - get category for current subcategory depends on id from url
-  const filteredSubcategories = SubcategoriesNameResponse?.filter(subcategory => subcategory?.category._id === selectedCategoryId);
+  const filteredSubcategories = SubcategoriesNameResponse?.filter(subcategory => subcategory?.category?._id === selectedCategoryId);
   const filteredSubSubcategories = subSubcategoriesNameResponse?.filter(subsubcategory => subsubcategory?.subCategory._id === selectedSubcategoryId);
-  console.log("subSubcategoriesNameResponse" , subSubcategoriesNameResponse);
+  // console.log("subSubcategoriesNameResponse" , subSubcategoriesNameResponse);
   const getCatForSub = SubcategoriesNameResponse
   ?.filter(subcategory => subcategory?._id === secId )
   .map(subcategory => subcategory?.category);
@@ -95,8 +96,8 @@ const minDate = new Date();
     sku: Yup.string()
     .matches(/^\d{10}$/, 'SKU must be exactly 10 digits')
     .required('SKU is Required'),
-    imageCover: Yup.mixed().required('imageCover Is Required'),
-    images: Yup.mixed().required('images Is Required'),
+    // imageCover: Yup.mixed().required('imageCover Is Required'),
+    // images: Yup.mixed().required('images Is Required'),
     ...((secName?.toLowerCase() === 'auction' || getCatForSub[0]?.name?.toLowerCase()=== 'auction')&& {
       startDate: Yup.date().required('Start date is required'),
       biddingPrice: Yup.number().required('Bidding price is required'),
@@ -113,8 +114,7 @@ const minDate = new Date();
     validationSchema,
     onSubmit: (values) => AddNewProducts(values),
   });
-  console.log(getParentsForSubSub);
-console.log(AddNewFormik.values);
+
   const AddNewProducts =  (values) => {
     console.log(values);
     setLoaderBtn(true);
@@ -124,21 +124,21 @@ console.log(AddNewFormik.values);
     formData.append('price', values.price);
     formData.append('description', values.description);
     formData.append('brand', values.brand);
-    formData.append('isUsed', values.isUsed);
+    formData.append('isUsed', "false");
     formData.append('category', values.category);
     values.subCategory !== '' &&  formData.append('subCategory', values.subCategory) 
     values.subSubCategory !== '' && formData.append('subSubCategory', values.subSubCategory) 
     formData.append('number_quantity', values.number_quantity);
     formData.append('size', values.size);
     formData.append('color', values.color);
-    formData.append('sku', values.sku);
-    formData.append('imageCover', values.imageCover);
+    formData.append('sku', '0'+values.sku);
+    // formData.append('imageCover', values.imageCover);
     values.startDate  &&  formData.append('startDate', values.startDate) ;
     values.biddingPrice  &&  formData.append('biddingPrice', values.biddingPrice) ;
     values.startBidding  &&  formData.append('startBidding', String(values.startBidding)) ;
     values.duration  &&  formData.append('duration', (values.duration * 60)) ;
     values.biddingGap  &&  formData.append('biddingGap', values.biddingGap) ;
-    for (let i = 0; i < values.images.length; i++) {
+    for (let i = 0; i < values?.images?.length; i++) {
       formData.append('images', values.images[i]);
     }
     console.log(formData);
@@ -158,11 +158,16 @@ console.log(AddNewFormik.values);
       setLoaderBtn(false);
     })
   };
+
+  // 
+  const addAll =()=>{
+    accessProducts.map(product=>AddNewProducts(product))
+  }
   return (
     <>
       <Dialog header={'Add New Product'} className='container editDialog' visible={displayAddNewDialog} onHide={hideDialog} modal>
         <form onSubmit={AddNewFormik.handleSubmit} className='bg-light p-3 border shadow-sm rounded'>
-
+          <button onClick={addAll}>add all</button>
           <div className="form-floating mb-2">
             <input type="text" placeholder='Name' className="form-control" id="name" name="name" value={AddNewFormik.values.name} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur} />
             <label className='ms-2' htmlFor="username">NAME</label>

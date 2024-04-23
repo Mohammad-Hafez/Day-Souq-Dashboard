@@ -273,7 +273,7 @@ export default function Products() {
       </div>
     );
   };  
-  const productImage = (rowData) => <img src={ImgBaseURL + rowData.variants[0].imageCover} alt={rowData.name.slice(0,7) + ' image'} className='w-50'/>
+  const productImage = (rowData) => <img src={ImgBaseURL + rowData.variants[0]?.imageCover} alt={rowData.name.slice(0,7) + ' image'} className='w-50'/>
   const getProductVariants = (rowData) => <Button onClick={() => navigate(`/ProductVariants/${rowData?.name}/${rowData._id}`)} icon="pi pi-eye" className='TabelButton dark-blue-text blue-brdr bg-transparent rounded-circle mx-auto' />
   const productStatus = (rowData) => rowData?.isUsed ? 'Used' : 'New'
   const sizesBody = (rowData) => rowData?.sizes?.map((size, index) => <span key={index} className='d-block'>{size}</span>)
