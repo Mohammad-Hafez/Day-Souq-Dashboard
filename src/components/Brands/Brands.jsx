@@ -63,7 +63,7 @@ export default function Brands() {
     setErrMsg(null);
     setLoaderBtn(true)
     const AddformData = new FormData();
-    AddformData.append('name', values);
+    AddformData.append('name', values.name);
     AddformData.append('image', values.image); 
     axios.post(ApiBaseUrl + `brands`, AddformData, { headers })
     .then(response=>{
@@ -87,7 +87,7 @@ export default function Brands() {
     initialValues : editInitial, 
     validationSchema : Yup.object().shape({
       name :Yup.string().required('Brand Name Is Required') ,
-      image : Yup.string().required('Brand Image is Required')
+      // image : Yup.string().required('Brand Image is Required')
     }),
     onSubmit:(values)=>editBrand(SelectedBrand._id , values)
   })
@@ -187,6 +187,7 @@ export default function Brands() {
       <div className="d-flex align-items-center justify-content-between">
         <div className="headerLabel">
           <h3>All Brands</h3>
+          {/* <button className='btn btn-success' onClick={addAll}>add all</button> */}
         </div>
         <div className="d-flex flex-column">
         <div className="searchBrand mb-2">
@@ -208,7 +209,10 @@ export default function Brands() {
   };
 
   const getBrandProducts = (rowData)=> <Button onClick={()=>navigate(`/Products/brand/${rowData.name}/${rowData._id}`)} icon="pi pi-eye" className='TabelButton dark-blue-text blue-brdr bg-transparent rounded-circle mx-auto'/>
-  
+  const addAll =()=>{
+    console.log(allbrands.length);
+    allbrands.map(brand=>AddNewBrand(brand))
+  }
   return <>
     <Helmet>
       <title>Brands</title>
@@ -299,419 +303,143 @@ export default function Brands() {
     }
     </>
 }
- let brands = [
-  {
-   "name": "FEEX"
-  },
-  {
-   "name": "ANKER"
-  },
-  {
-   "name": "Promate"
-  },
-  {
-   "name": "VIKUSHA"
-  },
-  {
-   "name": "HUAWEI"
-  },
-  {
-   "name": "Belkin"
-  },
-  {
-   "name": "RAV Power"
-  },
-  {
-   "name": "APPLE"
-  },
-  {
-   "name": "WIWU"
-  },
-  {
-   "name": "Funko"
-  },
-  {
-   "name": "Xiaomi"
-  },
-  {
-   "name": "Divoom"
-  },
-  {
-   "name": "Dell"
-  },
-  {
-   "name": "PICOCICI"
-  },
-  {
-   "name": "JOYROOM"
-  },
-  {
-   "name": "MyCandy"
-  },
-  {
-   "name": "Rockrose"
-  },
-  {
-   "name": "Samsung"
-  },
-  {
-   "name": "SONY"
-  },
-  {
-   "name": "Mpow"
-  },
-  {
-   "name": "JBL"
-  },
-  {
-   "name": "Google"
-  },
-  {
-   "name": "Mcdodo"
-  },
-  {
-   "name": "Nothing Ear 2"
-  },
-  {
-   "name": "MOMAX"
-  },
-  {
-   "name": "COTEETCI"
-  },
-  {
-   "name": "Galaxy"
-  },
-  {
-   "name": "GREEN"
-  },
-  {
-   "name": "VIVA"
-  },
-  {
-   "name": "Keephone"
-  },
-  {
-   "name": "Green Lion"
-  },
-  {
-   "name": "TOTU"
-  },
-  {
-   "name": "Santa Barbara"
-  },
-  {
-   "name": "Yesido"
-  },
-  {
-   "name": "XUNDD"
-  },
-  {
-   "name": "PATHFINDER"
-  },
-  {
-   "name": "KAZE"
-  },
-  {
-   "name": "Youngkit"
-  },
-  {
-   "name": "UNIQ"
-  },
-  {
-   "name": "Raigor Inverse"
-  },
-  {
-   "name": "Viva Madrid"
-  },
-  {
-   "name": "KZDOO"
-  },
-  {
-   "name": "Ajax"
-  },
-  {
-   "name": "Baseus"
-  },
-  {
-   "name": "XO"
-  },
-  {
-   "name": "Jokade"
-  },
-  {
-   "name": "Choetech"
-  },
-  {
-   "name": "LENYES"
-  },
-  {
-   "name": "HP"
-  },
-  {
-   "name": "Lenovo"
-  },
-  {
-   "name": "LG"
-  },
-  {
-   "name": "AOC"
-  },
-  {
-   "name": "Powerology"
-  },
-  {
-   "name": "vertux"
-  },
-  {
-   "name": "Cooler Master"
-  },
-  {
-   "name": "XPG"
-  },
-  {
-   "name": "Crown"
-  },
-  {
-   "name": "PORODO"
-  },
-  {
-   "name": "YANKEE"
-  },
-  {
-   "name": "MARVO"
-  },
-  {
-   "name": "HYPERX"
-  },
-  {
-   "name": "AULA"
-  },
-  {
-   "name": "TP-Link"
-  },
-  {
-   "name": "Canon"
-  },
-  {
-   "name": "Silicon Power"
-  },
-  {
-   "name": "ADATA"
-  },
-  {
-   "name": "Kingston"
-  },
-  {
-   "name": "IMATION"
-  },
-  {
-   "name": "SANDISK"
-  },
-  {
-   "name": "Vention"
-  },
-  {
-   "name": "Goui"
-  },
-  {
-   "name": "UGREEN"
-  },
-  {
-   "name": "HAING"
-  },
-  {
-   "name": "D-Link"
-  },
-  {
-   "name": "OPPO"
-  },
-  {
-   "name": "Infinix"
-  },
-  {
-   "name": "TECNO"
-  },
-  {
-   "name": "Realme"
-  },
-  {
-   "name": "HONOR"
-  },
-  {
-   "name": "BLACK VIEW"
-  },
-  {
-   "name": "TELCAST"
-  },
-  {
-   "name": "Matex"
-  },
-  {
-   "name": "OnePlus"
-  },
-  {
-   "name": "CONTI"
-  },
-  {
-   "name": "Samix"
-  },
-  {
-   "name": "Braun"
-  },
-  {
-   "name": "PHILIPS"
-  },
-  {
-   "name": "TEKMAZ"
-  },
-  {
-   "name": "PANASONIC"
-  },
-  {
-   "name": "Kenwood"
-  },
-  {
-   "name": "DAEWOO"
-  },
-  {
-   "name": "TEFAL"
-  },
-  {
-   "name": "SONA"
-  },
-  {
-   "name": "SENCOR"
-  },
-  {
-   "name": "SHARP"
-  },
-  {
-   "name": "BLACK & DECKER"
-  },
-  {
-   "name": "Electrolux"
-  },
-  {
-   "name": "Mega"
-  },
-  {
-   "name": "KORKMAZ"
-  },
-  {
-   "name": "BOSCH"
-  },
-  {
-   "name": "CAPTIN"
-  },
-  {
-   "name": "Gold Master"
-  },
-  {
-   "name": "PRINCESS"
-  },
-  {
-   "name": "LEXICAL"
-  },
-  {
-   "name": "Ariete"
-  },
-  {
-   "name": "Geepas"
-  },
-  {
-   "name": "SENCOR Vita"
-  },
-  {
-   "name": "Delonghi"
-  },
-  {
-   "name": "El Capo"
-  },
-  {
-   "name": "Moulinex"
-  },
-  {
-   "name": "DOLCE GUSTO"
-  },
-  {
-   "name": "IL CAPO TOCA"
-  },
-  {
-   "name": "PEDRINI"
-  },
-  {
-   "name": "SEVERIN"
-  },
-  {
-   "name": "Hyundai"
-  },
-  {
-   "name": "QUOKKA"
-  },
-  {
-   "name": "DOORBELL"
-  },
-  {
-   "name": "EZVIZ"
-  },
-  {
-   "name": "ARES"
-  },
-  {
-   "name": "MOFKERA"
-  },
-  {
-   "name": "KS"
-  },
-  {
-   "name": "MAGICAL UNIVERSE"
-  },
-  {
-   "name": "MCFARLANE"
-  },
-  {
-   "name": "SMURFS"
-  },
-  {
-   "name": "THE HANGREES"
-  },
-  {
-   "name": "READY TO ROBOT"
-  },
-  {
-   "name": "NICKELODEON"
-  },
-  {
-   "name": "RIP"
-  },
-  {
-   "name": "SUPERMAG"
-  },
-  {
-   "name": "CYBER STRIKE"
-  },
-  {
-   "name": "JAKKS"
-  },
-  {
-   "name": "MGA ENTERTAINMENT"
-  },
-  {
-   "name": "SPLASH TOYS"
-  },
-  {
-   "name": "RESCUE HEROES"
-  },
-  {
-   "name": "APEX LEGENDS"
-  },
-  {
-   "name": "TINY PONG"
-  },
-  {
-   "name": "FORTNITE"
-  },
-  {
-   "name": "QIXELS"
-  }
- ]
+let allbrands = [
+  {"name": "FEEX"},
+  {"name": "ANKER"},
+  {"name": "Promate"},
+  {"name": "VIKUSHA"},
+  {"name": "HUAWEI"},
+  {"name": "Belkin"},
+  {"name": "RAV Power"},
+  {"name": "APPLE"},
+  {"name": "WIWU"},
+  {"name": "Funko"},
+  {"name": "Xiaomi"},
+  {"name": "Divoom"},
+  {"name": "Dell"},
+  {"name": "PICOCICI"},
+  {"name": "JOYROOM"},
+  {"name": "MyCandy"},
+  {"name": "Rockrose"},
+  {"name": "Samsung"},
+  {"name": "SONY"},
+  {"name": "Mpow"},
+  {"name": "JBL"},
+  {"name": "Google"},
+  {"name": "Mcdodo"},
+  {"name": "Nothing Ear 2"},
+  {"name": "MOMAX"},
+  {"name": "COTEETCI"},
+  {"name": "Galaxy"},
+  {"name": "GREEN"},
+  {"name": "VIVA"},
+  {"name": "Keephone"},
+  {"name": "Green Lion"},
+  {"name": "TOTU"},
+  {"name": "Santa Barbara"},
+  {"name": "Yesido"},
+  {"name": "XUNDD"},
+  {"name": "PATHFINDER"},
+  {"name": "KAZE"},
+  {"name": "Youngkit"},
+  {"name": "UNIQ"},
+  {"name": "Raigor Inverse"},
+  {"name": "Viva Madrid"},
+  {"name": "KZDOO"},
+  {"name": "Ajax"},
+  {"name": "Baseus"},
+  {"name": "XO"},
+  {"name": "Jokade"},
+  {"name": "Choetech"},
+  {"name": "LENYES"},
+  {"name": "HP"},
+  {"name": "Lenovo"},
+  {"name": "LG"},
+  {"name": "AOC"},
+  {"name": "Powerology"},
+  {"name": "vertux"},
+  {"name": "Cooler Master"},
+  {"name": "XPG"},
+  {"name": "Crown"},
+  {"name": "PORODO"},
+  {"name": "YANKEE"},
+  {"name": "MARVO"},
+  {"name": "HYPERX"},
+  {"name": "AULA"},
+  {"name": "TP-Link"},
+  {"name": "Canon"},
+  {"name": "Silicon Power"},
+  {"name": "ADATA"},
+  {"name": "Kingston"},
+  {"name": "IMATION"},
+  {"name": "SANDISK"},
+  {"name": "Vention"},
+  {"name": "Goui"},
+  {"name": "UGREEN"},
+  {"name": "HAING"},
+  {"name": "D-Link"},
+  {"name": "OPPO"},
+  {"name": "Infinix"},
+  {"name": "TECNO"},
+  {"name": "Realme"},
+  {"name": "HONOR"},
+  {"name": "BLACK VIEW"},
+  {"name": "TELCAST"},
+  {"name": "Matex"},
+  {"name": "OnePlus"},
+  {"name": "CONTI"},
+  {"name": "Samix"},
+  {"name": "Braun"},
+  {"name": "PHILIPS"},
+  {"name": "TEKMAZ"},
+  {"name": "PANASONIC"},
+  {"name": "Kenwood"},
+  {"name": "DAEWOO"},
+  {"name": "TEFAL"},
+  {"name": "SONA"},
+  {"name": "SENCOR"},
+  {"name": "SHARP"},
+  {"name": "BLACK & DECKER"},
+  {"name": "Electrolux"},
+  {"name": "Mega"},
+  {"name": "KORKMAZ"},
+  {"name": "BOSCH"},
+  {"name": "CAPTIN"},
+  {"name": "Gold Master"},
+  {"name": "PRINCESS"},
+  {"name": "LEXICAL"},
+  {"name": "Ariete"},
+  {"name": "Geepas"},
+  {"name": "SENCOR Vita"},
+  {"name": "Delonghi"},
+  {"name": "El Capo"},
+  {"name": "Moulinex"},
+  {"name": "DOLCE GUSTO"},
+  {"name": "IL CAPO TOCA"},
+  {"name": "PEDRINI"},
+  {"name": "SEVERIN"},
+  {"name": "Hyundai"},
+  {"name": "QUOKKA"},
+  {"name": "DOORBELL"},
+  {"name": "EZVIZ"},
+  {"name": "ARES"},
+  {"name": "MOFKERA"},
+  {"name": "KS"},
+  {"name": "MAGICAL UNIVERSE"},
+  {"name": "MCFARLANE"},
+  {"name": "SMURFS"},
+  {"name": "THE HANGREES"},
+  {"name": "READY TO ROBOT"},
+  {"name": "NICKELODEON"},
+  {"name": "RIP"},
+  {"name": "SUPERMAG"},
+  {"name": "CYBER STRIKE"},
+  {"name": "JAKKS"},
+  {"name": "MGA ENTERTAINMENT"},
+  {"name": "SPLASH TOYS"},
+  {"name": "RESCUE HEROES"},
+  {"name": "APEX LEGENDS"},
+  {"name": "TINY PONG"},
+  {"name": "FORTNITE"},
+  {"name": "QIXELS"}
+];

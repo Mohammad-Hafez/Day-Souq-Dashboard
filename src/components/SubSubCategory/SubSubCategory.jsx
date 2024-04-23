@@ -177,17 +177,12 @@ export default function SubSubCategory() {
     editFormik.resetForm();
     AddNewFormik.resetForm();
   }
-const addAll =()=>{
-  phoneAccessoriesSubSub.map(subsub=>AddNewSubCategory(subsub))
-}
   // Header body
   const SubCategoryHeaderBody = () => {
     return (
       <div className='d-flex align-items-center justify-content-between'>
         <div className="headerLabel">
           <h3>Sub-SubCategories  <span onClick={() => navigate(`/Categories`)} className='cursor-pointer'>{CategoryName && `For ${CategoryName}` }</span></h3>
-          <button className='btn btn-success' onClick={addAll}>add all</button>
-
         </div>
         <div className="d-flex flex-column">
         <div className="searchCategory mb-2">
@@ -308,15 +303,3 @@ const addAll =()=>{
     </>
   );
 }
-
-
-let phoneAccessoriesSubSub = [
-  {"name": "Micro USB"},
-  {"name": "Lightning Cables"},
-  {"name": "Type-C Cables"},
-  {"name": "PD & Fast Charger"},
-  {"name": "Charger"},
-  {"name": "Wired Headphones"},
-  {"name": "Cases & Covers"}
-];
-
