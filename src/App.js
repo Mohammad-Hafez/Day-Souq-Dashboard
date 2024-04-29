@@ -80,6 +80,7 @@ function App() {
           <Route path="SubCategory/:CategoryName/:id" element={<ProtectedRoutes> <SubCategory UserToken={UserToken}/> </ProtectedRoutes> } /> 
           <Route path="Products/:sec/:secName/:secId" element={<ProtectedRoutes> <Products UserToken={UserToken}/> </ProtectedRoutes> } /> 
           <Route path="ProductVariants/:productName/:productId" element={<ProtectedRoutes> <ProductVariants UserToken={UserToken}/> </ProtectedRoutes> } /> 
+          <Route path="ProductVariants/:productName/:productSize/:productId" element={<ProtectedRoutes> <ProductVariants UserToken={UserToken}/> </ProtectedRoutes> } /> 
           <Route path="*" element={<NotFound/>} /> 
           </Route>
         </Routes>

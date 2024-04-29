@@ -256,7 +256,7 @@ export default function ProductVariants() {
                 {addFormik.errors.quantity && addFormik.touched.quantity ? (<div className="alert text-danger">{addFormik.errors.quantity}</div>) : null}
               </div>
               <div className="form-floating mb-2">
-                <input type="text" placeholder='sku' className="form-control" id="sku" name="sku" maxLength={8} value={addFormik.values.sku} onChange={addFormik.handleChange} onBlur={addFormik.handleBlur} />
+                <input type="text" placeholder='sku' className="form-control" id="sku" name="sku" maxLength={11} value={addFormik.values.sku} onChange={addFormik.handleChange} onBlur={addFormik.handleBlur} />
                 <label className='ms-2' htmlFor="sku">sku</label>
                 {addFormik.errors.sku && addFormik.touched.sku ? (<div className="alert text-danger">{addFormik.errors.sku}</div>) : null}
               </div>
