@@ -108,7 +108,7 @@ export default function Products() {
       setLoaderBtn(false)
     })
   }
-
+const delAll =()=> filteredProducts?.map(prd=>deleteProduct(prd._id))
   // *ANCHOR - Edit product discount
   const editDiscount = (id, values) => {
     setLoaderBtn(true)
@@ -240,6 +240,7 @@ export default function Products() {
         <div className="headerLabel d-flex flex-column justify-content-center align-items-center">
           {sec!=='all' && <h3>Products For <span className='cursor-pointer'>{secName}</span></h3>}
           {sec==='all' && <h3>All Products</h3>} 
+          <button onClick={delAll}>delete</button>
           {/* <h6 className='text-danger mt-3 cursor-pointer text-decoration-underline'><i className='fa fa-trash'></i> Trash</h6> */}
         </div>
         <div className="d-flex flex-column">
@@ -286,7 +287,7 @@ export default function Products() {
     <Button icon={<RiAuctionLine/>} className='TabelButton rounded-circle mx-auto Cancel' onClick={()=>{setSelectedProducts(rowData?._id); setDisplayBiddingDialog(true);setBiddingStatus('end')}}/> : 
     <Button onClick={() => {setDisplayBiddingDialog(true) ; setSelectedProducts(rowData?._id);setBiddingStatus('active') }} icon={<RiAuctionLine/>} className='TabelButton rounded-circle mx-auto approve'/> :
     'not bidding' ;
-  
+      
 return <>
     <Helmet>
       <title>Products</title>
@@ -296,6 +297,7 @@ return <>
           <DataTable value={filteredProducts} header={ProductsHeaderBody} paginator selectionMode="single" className={`dataTabel mb-4 text-capitalize AllList`} dataKey="_id" scrollable scrollHeight="100vh" tableStyle={{ minWidth: "50rem" }} rows={10} responsive="scroll">
             <Column header="Image" body={productImage} style={{ width: "8%", borderBottom: '1px solid #dee2e6' }} />
             <Column field="name" header="Name" sortable style={{ width: "15%", borderBottom: '1px solid #dee2e6' }} />
+            <Column field="_id" header="id" sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
             <Column header="details" body={descriptionBody} style={{ width: "5%", borderBottom: '1px solid #dee2e6' }} />
             <Column header="sizes" body={sizesBody} sortable style={{ width: "8%", borderBottom: '1px solid #dee2e6' }} />
             <Column field="price" header="Price (JOD)" sortable style={{ width: "8%", borderBottom: '1px solid #dee2e6' }} />
@@ -342,6 +344,7 @@ return <>
 
           {displayAddNewDialog &&
             <AddProduct
+            AllProducts={filteredProducts}
               headers={headers}
               sec={sec}
               secName={secName}

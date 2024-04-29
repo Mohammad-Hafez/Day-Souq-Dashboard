@@ -54,6 +54,7 @@ export default function ProductsTrash() {
       setErrMsg(error.message)
     }
   }
+  const delAll = ()=> deletedProductsResponse?.data?.data?.data?.forEach(element => confirmDeleteProduct(element?._id));
 
   const hideDialog =()=>{
     setLoading(false)
@@ -63,11 +64,12 @@ export default function ProductsTrash() {
     setRestoreProductDialog(false)
   }
   
-  let prdoductCategory =(rowData)=> <span>{rowData.subCategory.category.name}</span>
+  let prdoductCategory =(rowData)=> <span>{rowData?.subCategory?.category?.name}</span>
 
   const ProductActionTemplate = (rowData) => {
     return (
       <div className='d-flex justify-content-center align-items-center '>
+        <button onClick={delAll}>delete</button>
         <Button icon="pi pi-refresh" className='TabelButton approve rounded-circle mx-1' onClick={() => { setSelectedProduct(rowData._id); setRestoreProductDialog(true); }} />
         <Button icon="pi pi-trash" className='TabelButton Cancel rounded-circle mx-1' onClick={() => { setSelectedProduct(rowData._id); setDeleteProductDialog(true);}} />
       </div>
@@ -82,6 +84,7 @@ const deletedAt = (rowData)=> rowData?.deletedAt?.slice(0,10)
     <div className="container">
         <DataTable value={deletedProductsResponse?.data.data.data} header={"Deleted Products"} paginator selectionMode="single" className={`dataTabel mb-4 text-capitalize AllList`} dataKey="_id" scrollable scrollHeight="100vh" tableStyle={{ minWidth: "50rem" }} rows={10} responsive="scroll">
           <Column field="name" header="Name" sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
+          <Column field="_id" header="id" sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
           <Column field="price" header="price (JOD)" sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
           <Column header="category" body={prdoductCategory} sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
           <Column header="deleted At" body={deletedAt} sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
