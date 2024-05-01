@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -39,7 +39,9 @@ export default function ProductsTrash() {
       setErrMsg(error.message)
     }
   }
-
+useEffect(()=>{
+  deletedProductsRefetch()
+},[deletedProductsResponse])
   const confirmDeleteProduct = (id)=>{
     setLoading(true)
     setErrMsg(null)

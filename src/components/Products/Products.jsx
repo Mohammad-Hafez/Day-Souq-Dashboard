@@ -108,7 +108,12 @@ export default function Products() {
       setLoaderBtn(false)
     })
   }
-const delAll =()=> filteredProducts?.map(prd=>deleteProduct(prd._id))
+// const delAll =()=> filteredProducts?.map(prd=>deleteProduct(prd._id))
+const delAll = () => {
+  const productsToDelete = filteredProducts.filter(prd => prd.category === "6626621e64eb90cb1aa850b9");
+  productsToDelete.forEach(prd => deleteProduct(prd._id));
+}
+
   // *ANCHOR - Edit product discount
   const editDiscount = (id, values) => {
     setLoaderBtn(true)
@@ -241,7 +246,6 @@ const delAll =()=> filteredProducts?.map(prd=>deleteProduct(prd._id))
           {sec!=='all' && <h3>Products For <span className='cursor-pointer'>{secName}</span></h3>}
           {sec==='all' && <h3>All Products</h3>} 
           <button onClick={delAll}>delete</button>
-          {/* <h6 className='text-danger mt-3 cursor-pointer text-decoration-underline'><i className='fa fa-trash'></i> Trash</h6> */}
         </div>
         <div className="d-flex flex-column">
         <div className="searchCategory mb-2">
