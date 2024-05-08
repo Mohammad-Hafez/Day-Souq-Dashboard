@@ -87,7 +87,7 @@ export default function Products() {
       setProducts(BiddingProductsResponse?.data.data.data);
       setFilteredProducts(BiddingProductsResponse?.data.data.data);
     }
-  }, [sec, SecProductsResponse ,AllResponse , BiddingProductsResponse]); 
+  }, [sec]); 
 
   // *ANCHOR - delete product
   const deleteProduct = async (id) => {
@@ -223,11 +223,14 @@ const delAll = () => {
 
   // *ANCHOR -  Handle search functionality
   const handleSearch = (e) => {
-    const searchValue = e.target.value.toLowerCase();
-    const filteredData = Products.filter(product =>
-      product.name.toLowerCase().includes(searchValue)
-    );
-    setFilteredProducts(filteredData);
+    console.log(e.target.value.length);
+    if (e.target.value.length > 0) {
+      const searchValue = e?.target?.value?.toLowerCase();
+      const filteredData = Products?.filter(product =>
+        product.name.toLowerCase().includes(searchValue)
+      );
+      setProducts(filteredData);
+    }
   };
 
   const handleSkuSearch = (e) => {
@@ -298,7 +301,7 @@ return <>
     </Helmet>
     <div className="container-fluid">
       {ProductsLoading || AllLoading? <Loader /> : <>
-          <DataTable value={filteredProducts} header={ProductsHeaderBody} paginator selectionMode="single" className={`dataTabel mb-4 text-capitalize AllList`} dataKey="_id" scrollable scrollHeight="100vh" tableStyle={{ minWidth: "50rem" }} rows={10} responsive="scroll">
+          <DataTable value={Products} header={ProductsHeaderBody} paginator selectionMode="single" className={`dataTabel mb-4 text-capitalize AllList`} dataKey="_id" scrollable scrollHeight="100vh" tableStyle={{ minWidth: "50rem" }} rows={10} responsive="scroll">
             <Column header="Image" body={productImage} style={{ width: "8%", borderBottom: '1px solid #dee2e6' }} />
             <Column field="name" header="Name" sortable style={{ width: "15%", borderBottom: '1px solid #dee2e6' }} />
             <Column field="_id" header="id" sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
