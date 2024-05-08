@@ -108,11 +108,6 @@ export default function Products() {
       setLoaderBtn(false)
     })
   }
-// const delAll =()=> filteredProducts?.map(prd=>deleteProduct(prd._id))
-const delAll = () => {
-  const productsToDelete = filteredProducts.filter(prd => prd.category === "6626621e64eb90cb1aa850b9");
-  productsToDelete.forEach(prd => deleteProduct(prd._id));
-}
 
   // *ANCHOR - Edit product discount
   const editDiscount = (id, values) => {
@@ -248,7 +243,6 @@ const delAll = () => {
         <div className="headerLabel d-flex flex-column justify-content-center align-items-center">
           {sec!=='all' && <h3>Products For <span className='cursor-pointer'>{secName}</span></h3>}
           {sec==='all' && <h3>All Products</h3>} 
-          <button onClick={delAll}>delete</button>
         </div>
         <div className="d-flex flex-column">
         <div className="searchCategory mb-2">

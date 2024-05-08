@@ -71,20 +71,28 @@ useEffect(()=>{
   const ProductActionTemplate = (rowData) => {
     return (
       <div className='d-flex justify-content-center align-items-center '>
-        <button onClick={delAll}>delete</button>
         <Button icon="pi pi-refresh" className='TabelButton approve rounded-circle mx-1' onClick={() => { setSelectedProduct(rowData._id); setRestoreProductDialog(true); }} />
         <Button icon="pi pi-trash" className='TabelButton Cancel rounded-circle mx-1' onClick={() => { setSelectedProduct(rowData._id); setDeleteProductDialog(true);}} />
       </div>
     );
   };  
 const deletedAt = (rowData)=> rowData?.deletedAt?.slice(0,10)
+
+const trashHeader = ()=>{
+  return(
+    <div className='d-flex justify-content-between align-items-center'>
+      <h3>Products Trash</h3>
+      <button className='btn btn-danger' onClick={delAll}>delete</button>
+    </div>
+  )
+}
   return <>
     <Helmet>
       <title>Trash</title>
     </Helmet>
     {DeletedProductsLoad ? <Loader/> : 
     <div className="container">
-        <DataTable value={deletedProductsResponse?.data.data.data} header={"Deleted Products"} paginator selectionMode="single" className={`dataTabel mb-4 text-capitalize AllList`} dataKey="_id" scrollable scrollHeight="100vh" tableStyle={{ minWidth: "50rem" }} rows={10} responsive="scroll">
+        <DataTable value={deletedProductsResponse?.data.data.data} header={trashHeader} paginator selectionMode="single" className={`dataTabel mb-4 text-capitalize AllList`} dataKey="_id" scrollable scrollHeight="100vh" tableStyle={{ minWidth: "50rem" }} rows={10} responsive="scroll">
           <Column field="name" header="Name" sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
           <Column field="_id" header="id" sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
           <Column field="price" header="price (JOD)" sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />

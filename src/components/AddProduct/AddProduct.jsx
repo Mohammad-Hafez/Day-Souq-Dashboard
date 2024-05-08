@@ -160,7 +160,6 @@ const minDate = new Date();
     <>
       <Dialog header={'Add New Product'} className='container editDialog' visible={displayAddNewDialog} onHide={hideDialog} modal>
         <form onSubmit={AddNewFormik.handleSubmit} className='bg-light p-3 border shadow-sm rounded'>
-          <button onClick={addAll}>add all</button>
           <div className="form-floating mb-2">
             <input type="text"placeholder='Name' className="form-control"id="name"name="name"value={AddNewFormik.values.name} onChange={AddNewFormik.handleChange} onBlur={AddNewFormik.handleBlur} />
             <label className='ms-2' htmlFor="username">NAME</label>
