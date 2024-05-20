@@ -82,7 +82,9 @@ const trashHeader = ()=>{
   return(
     <div className='d-flex justify-content-between align-items-center'>
       <h3>Products Trash</h3>
-      <button className='btn btn-danger' onClick={delAll}>delete</button>
+      {Loading? <button>Load...</button>:
+      <button className='btn btn-danger' onClick={delAll}>Delete All</button>
+      }
     </div>
   )
 }

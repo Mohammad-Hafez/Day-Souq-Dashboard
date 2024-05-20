@@ -75,19 +75,37 @@ export default function Products() {
     {enabled: secName!=='all'? true : false}
   );
   let {data:BiddingProductsResponse} = useQuery('get Bidding Products' , getBiddingProducts , {enabled:sec==='auction'})
+
   // *ANCHOR - Show products depends on selected section from sidebar
   useEffect(() => {
-    if (sec!=='all' && sec !=='auction') {
-      setProducts(SecProductsResponse?.data.data.data);
-      setFilteredProducts(SecProductsResponse?.data.data.data);
-    }else if (sec==='all') {
-      setProducts(AllResponse?.data.data.data);
-      setFilteredProducts(AllResponse?.data.data.data);
-    }else if (sec ==='auction') {
-      setProducts(BiddingProductsResponse?.data.data.data);
-      setFilteredProducts(BiddingProductsResponse?.data.data.data);
+    if (sec !== 'all' && sec !== 'auction') {
+      setProducts(SecProductsResponse?.data.data.data || []);
+      setFilteredProducts(SecProductsResponse?.data.data.data || []);
+    } else if (sec === 'all') {
+      setProducts(AllResponse?.data.data.data || []);
+      setFilteredProducts(AllResponse?.data.data.data || []);
+    } else if (sec === 'auction') {
+      setProducts(BiddingProductsResponse?.data.data.data || []);
+      setFilteredProducts(BiddingProductsResponse?.data.data.data || []);
     }
-  }, [sec]); 
+  }, [sec, SecProductsResponse, AllResponse, BiddingProductsResponse]);
+  
+  // *ANCHOR -  Handle search functionality
+  const handleSearch = (e) => {
+    const searchValue = e.target.value.toLowerCase();
+    const filteredData = Products.filter(product =>
+      product.name.toLowerCase().includes(searchValue)
+    );
+    setFilteredProducts(filteredData);
+  };
+
+  const handleSkuSearch = (e) => {
+    const searchValue = e.target.value;
+    const filteredData = Products.filter(product =>
+      product.variants[0].sku.startsWith(searchValue)
+    );
+    setFilteredProducts(filteredData);
+  };
 
   // *ANCHOR - delete product
   const deleteProduct = async (id) => {
@@ -216,26 +234,6 @@ export default function Products() {
     editDiscountFormik.resetForm()
   };
 
-  // *ANCHOR -  Handle search functionality
-  const handleSearch = (e) => {
-    console.log(e.target.value.length);
-    if (e.target.value.length > 0) {
-      const searchValue = e?.target?.value?.toLowerCase();
-      const filteredData = Products?.filter(product =>
-        product.name.toLowerCase().includes(searchValue)
-      );
-      setProducts(filteredData);
-    }
-  };
-
-  const handleSkuSearch = (e) => {
-    const searchValue = e.target.value;
-    const filteredData = Products.filter(product =>
-      product.variants[0].sku.startsWith(searchValue)
-    );
-    setFilteredProducts(filteredData);
-  };
-
   // *ANCHOR - actions at table and handle data response for each row
   const ProductsHeaderBody = () => {
     return (
@@ -289,13 +287,14 @@ export default function Products() {
     <Button onClick={() => {setDisplayBiddingDialog(true) ; setSelectedProducts(rowData?._id);setBiddingStatus('active') }} icon={<RiAuctionLine/>} className='TabelButton rounded-circle mx-auto approve'/> :
     'not bidding' ;
       
+    const delAll =()=> filteredProducts?.map(prd=>deleteProduct(prd._id))
 return <>
     <Helmet>
       <title>Products</title>
     </Helmet>
     <div className="container-fluid">
       {ProductsLoading || AllLoading? <Loader /> : <>
-          <DataTable value={Products} header={ProductsHeaderBody} paginator selectionMode="single" className={`dataTabel mb-4 text-capitalize AllList`} dataKey="_id" scrollable scrollHeight="100vh" tableStyle={{ minWidth: "50rem" }} rows={10} responsive="scroll">
+          <DataTable value={filteredProducts} header={ProductsHeaderBody} paginator selectionMode="single" className={`dataTabel mb-4 text-capitalize AllList`} dataKey="_id" scrollable scrollHeight="100vh" tableStyle={{ minWidth: "50rem" }} rows={10} responsive="scroll">
             <Column header="Image" body={productImage} style={{ width: "8%", borderBottom: '1px solid #dee2e6' }} />
             <Column field="name" header="Name" sortable style={{ width: "15%", borderBottom: '1px solid #dee2e6' }} />
             <Column field="_id" header="id" sortable style={{ width: "10%", borderBottom: '1px solid #dee2e6' }} />
@@ -345,7 +344,6 @@ return <>
 
           {displayAddNewDialog &&
             <AddProduct
-            AllProducts={filteredProducts}
               headers={headers}
               sec={sec}
               secName={secName}

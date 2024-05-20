@@ -53,10 +53,10 @@ export default function ProductVariants() {
     color :Yup.string().required('color Is Required') ,
     extraPrice :Yup.number().required('extraPrice Is Required') ,
     sku: Yup.string()
-    // .matches(/^\d{11}$/, 'SKU must be exactly 11 digits')
+    .matches(/^\d{11}$/, 'SKU must be exactly 11 digits')
     .required('SKU is Required'),
-    // imageCover: Yup.mixed().required('imageCover Is Required'),
-    // images: Yup.mixed().required('images Is Required')
+    imageCover: Yup.mixed().required('imageCover Is Required'),
+    images: Yup.mixed().required('images Is Required')
   })
 
   let addFormik = useFormik({
@@ -80,10 +80,10 @@ export default function ProductVariants() {
     formData.append('color', values.color);
     formData.append('sku', values.sku);
     formData.append('extraPrice', values.extraPrice);
-    // formData.append('imageCover', values.imageCover);
-    // for (let i = 0; i < values.images.length; i++) {
-    //   formData.append('images', values.images[i]);
-    // }
+    formData.append('imageCover', values.imageCover);
+    for (let i = 0; i < values.images.length; i++) {
+      formData.append('images', values.images[i]);
+    }
     axios.post(ApiBaseUrl + `products/${productId}/variants`, formData, { headers })
       .then( response =>{
       ProductVariantsRefetch()
